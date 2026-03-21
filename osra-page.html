@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSRA — Operational Substrate Risk Audit | Marco Brondani</title>
+<meta name="description" content="OSRA is a four-phase methodology for identifying where AI operational risk converges beneath the governance layer. Open-source framework by Marco Brondani.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0c;
+  --bg-elevated: #131318;
+  --bg-card: #18181f;
+  --border: #2a2a35;
+  --text: #e8e6e1;
+  --text-muted: #8a8892;
+  --text-dim: #5a5865;
+  --accent: #c9a84c;
+  --accent-dim: #8a7433;
+  --phase1: #3b82f6;
+  --phase2: #ef4444;
+  --phase3: #f59e0b;
+  --phase4: #8b5cf6;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Newsreader', Georgia, serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.wide-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 6rem 0 4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 3.2rem;
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.hero-subtitle {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+  max-width: 600px;
+}
+
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 2.5rem;
+  letter-spacing: 0.05em;
+}
+
+.hero-meta span { margin-right: 2rem; }
+
+/* ── Sections ── */
+section {
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+section:last-of-type { border-bottom: none; }
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 1.2rem;
+  max-width: 680px;
+}
+
+p strong { color: var(--text); font-weight: 600; }
+
+/* ── Phase Flow ── */
+.phase-flow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin: 2.5rem 0;
+  border: 1px solid var(--border);
+}
+
+.phase-card {
+  background: var(--bg-card);
+  padding: 2rem 2.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.phase-number {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid;
+  white-space: nowrap;
+  margin-top: 0.15rem;
+}
+
+.phase-card:nth-child(1) .phase-number { color: var(--phase1); border-color: var(--phase1); }
+.phase-card:nth-child(2) .phase-number { color: var(--phase2); border-color: var(--phase2); }
+.phase-card:nth-child(3) .phase-number { color: var(--phase3); border-color: var(--phase3); }
+.phase-card:nth-child(4) .phase-number { color: var(--phase4); border-color: var(--phase4); }
+
+.phase-content h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.phase-question {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.phase-artefact {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── Stats Row ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+.stat {
+  background: var(--bg-card);
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Audience Grid ── */
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+.audience-card {
+  background: var(--bg-card);
+  padding: 2rem;
+}
+
+.audience-card h4 {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.audience-card p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ── CTA ── */
+.cta-section {
+  padding: 4rem 0;
+}
+
+.cta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.btn {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.9rem 2rem;
+  border: 1px solid;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn-secondary {
+  color: var(--text-muted);
+  background: transparent;
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+/* ── Integration List ── */
+.integration-list {
+  list-style: none;
+  margin: 1.5rem 0;
+}
+
+.integration-list li {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1rem;
+}
+
+.integration-list li strong {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.2rem; }
+  .audience-grid { grid-template-columns: 1fr; }
+  .phase-card { grid-template-columns: 1fr; }
+  .integration-list li { grid-template-columns: 1fr; gap: 0.3rem; }
+  .hero-meta span { display: block; margin-bottom: 0.3rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <div class="hero-label">Open-Source Methodology</div>
+    <h1>OSRA<br><em>Operational Substrate Risk Audit</em></h1>
+    <p class="hero-subtitle">A four-phase methodology for identifying where AI operational risk converges beneath the governance layer — in the infrastructure substrate that no existing framework audits.</p>
+    <div class="hero-meta">
+      <span>v1.1</span>
+      <span>CC BY-SA 4.0</span>
+      <span>Marco Brondani</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="section-label">The gap</div>
+    <h2>Governance frameworks audit what should happen. OSRA audits what the system actually depends on.</h2>
+    <p>Twelve major AI governance frameworks were analysed — NIST AI RMF, ISO 42001, EU AI Act, DORA, and eight others. <strong>None achieves full coverage on infrastructure dependency mapping, failure mode analysis, trust verification, or convergence risk.</strong></p>
+    <p>Fifteen existing risk methodologies were surveyed. None provides a unified approach that maps infrastructure dependencies, failure modes per dependency, unverified trust signals, and where all three converge.</p>
+    <p>OSRA fills that gap. It sits beneath and complements existing governance — providing the infrastructure visibility that regulations are beginning to enforce but no framework yet delivers.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wide-container">
+    <div class="section-label">The methodology</div>
+    <h2>Four phases. Four artefacts. One convergence risk summary.</h2>
+
+    <div class="phase-flow">
+      <div class="phase-card">
+        <span class="phase-number">Phase 1</span>
+        <div class="phase-content">
+          <h3>Substrate Mapping</h3>
+          <div class="phase-question">"What does this AI system actually depend on to function?"</div>
+          <div class="phase-artefact">→ Artefact: The Substrate Map</div>
+        </div>
+      </div>
+      <div class="phase-card">
+        <span class="phase-number">Phase 2</span>
+        <div class="phase-content">
+          <h3>Failure Surface Analysis</h3>
+          <div class="phase-question">"For each dependency, what does failure look like, and who would notice?"</div>
+          <div class="phase-artefact">→ Artefact: The Failure Surface Register</div>
+        </div>
+      </div>
+      <div class="phase-card">
+        <span class="phase-number">Phase 3</span>
+        <div class="phase-content">
+          <h3>Trust Surface Audit</h3>
+          <div class="phase-question">"Where is the organisation trusting a signal it hasn't verified?"</div>
+          <div class="phase-artefact">→ Artefact: The Trust Surface Register</div>
+        </div>
+      </div>
+      <div class="phase-card">
+        <span class="phase-number">Phase 4</span>
+        <div class="phase-content">
+          <h3>Convergence Mapping</h3>
+          <div class="phase-question">"Where do substrate risks, undetected failures, and unverified trust overlap?"</div>
+          <div class="phase-artefact">→ Artefact: The Convergence Risk Summary</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wide-container">
+    <div class="section-label">Evidence base</div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-number">12</div>
+        <div class="stat-label">Governance frameworks analysed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">15</div>
+        <div class="stat-label">Existing methodologies surveyed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">25</div>
+        <div class="stat-label">Convergence points scored</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Sectors calibrated</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">22</div>
+        <div class="stat-label">Remediation actions catalogued</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wide-container">
+    <div class="section-label">Audience</div>
+    <h2>One methodology, three altitudes</h2>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <h4>Board / NEDs</h4>
+        <p>A convergence risk summary: the 3-5 points where your AI deployment is most exposed, the regulatory liability at each point, and what to do about it. The document that answers the DORA Art. 15 question.</p>
+      </div>
+      <div class="audience-card">
+        <h4>CISOs</h4>
+        <p>The full four-phase methodology with integration into existing risk management, vendor assessment, and compliance evidence. A programme of work: what to fix first, how to report upward.</p>
+      </div>
+      <div class="audience-card">
+        <h4>CTOs</h4>
+        <p>Infrastructure dependency maps, detection gap analysis, and engineering remediation priorities. What to build, what to monitor, what to renegotiate, in what order.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">Integration</div>
+    <h2>OSRA complements — does not replace — existing frameworks</h2>
+    <ul class="integration-list">
+      <li><strong>NIST AI RMF</strong> Phase 1 feeds Map function. Phase 2 extends Measure to infrastructure level.</li>
+      <li><strong>ISO 42001</strong> Phase 1 provides infrastructure detail that Annex A.9 requires but doesn't specify.</li>
+      <li><strong>EU AI Act</strong> Phase 1 fulfils Annex IV documentation at genuine depth. Phase 4 provides Art. 9 evidence.</li>
+      <li><strong>DORA</strong> Phase 2 provides Art. 25-26 resilience scenarios. Phase 4 directly answers Art. 15.</li>
+      <li><strong>MITRE ATLAS</strong> Phase 2 incorporates ATLAS threat model, extends to operational resilience.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="section-label">Get started</div>
+    <h2>OSRA is open source. Download it. Run it. Contribute.</h2>
+    <p>The complete methodology, fillable templates, action catalogue, and scoring calibration are available under CC BY-SA 4.0. Use it, adapt it, improve it — just give credit and share alike.</p>
+    <div class="cta-row">
+      <a href="https://github.com/marcobrondani/osra" class="btn btn-primary">View on GitHub</a>
+      <a href="mailto:marco@marcobrondani.com?subject=OSRA" class="btn btn-secondary">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>OSRA v1.1 — Operational Substrate Risk Audit — © 2026 Marco Brondani</p>
+    <p style="margin-top: 0.5rem;">Licensed under Creative Commons Attribution-ShareAlike 4.0 International</p>
+  </div>
+</footer>
+
+</body>
+</html>
