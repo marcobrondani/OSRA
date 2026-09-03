@@ -1,4 +1,4 @@
-# OSRA ACTION CATALOGUE v1.1
+# OSRA ACTION CATALOGUE v1.2
 
 ## Purpose
 
@@ -198,6 +198,5 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 
 ---
 
-*OSRA Worked Example and Action Catalogue v1.1 — 21 March 2026*
-*Scoring model updated: six factors including Materialisation Horizon; four convergence categories including Concentration Risk*
-*Pre-publication working draft — not for distribution*
+*OSRA Action Catalogue v1.2 — September 2026. v1.1 published 21 March 2026.*
+*Scoring model: six factors including Materialisation Horizon; four convergence categories including Concentration Risk. Actions unchanged in v1.2.*

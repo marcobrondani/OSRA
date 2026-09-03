@@ -1,13 +1,17 @@
-# OSRA — PHASE 4 SCORING CALIBRATION
+# OSRA — PHASE 4 SCORING CALIBRATION (v1.2)
 
-## Four Sector Scenarios
+## Five Sector Scenarios
 
-**Purpose:** Test whether the Phase 4 convergence scoring model produces meaningful differentiation across different sectors, deployment patterns, and risk profiles. Each scenario runs the full convergence matrix and scoring. At the end, a cross-scenario comparison assesses whether the model works or needs adjustment.
+**Purpose:** Test whether the Phase 4 convergence scoring model produces meaningful differentiation across different sectors, deployment patterns, and risk profiles. Each scenario runs the full convergence matrix and scoring. At the end, a cross-scenario comparison assesses whether the model works or needs adjustment, and a sensitivity check tests whether the factor weights change the result.
 
-**Scoring Formula (from v0.1):**
+**How the five scenarios relate.** The finance scenario, EuroBank Sentinel, is the worked example and is scored in full on the six-factor v1.1 model at [marcobrondani.com/osra/eurobank-sentinel](https://marcobrondani.com/osra/eurobank-sentinel). The four scenarios in this document were scored during calibration on the five-factor v0.1 model below, and it was this calibration that produced the sixth factor. In the cross-scenario comparison EuroBank appears on the same five-factor basis as the other four, so the numbers are comparable.
+
+**Scoring Formula (v0.1, five factors):**
 Convergence Risk Score = (Regulatory Exposure × 1.5) + Detection Deficit + Trust Depth + (Blast Radius × 1.5) + Remediation Complexity
 
-**Score Range:** Minimum 7.5 (all factors = 1), Maximum 37.5 (all factors = 5)
+**Score Range (five factors):** Minimum 6.0 (all factors = 1), Maximum 30.0 (all factors = 5)
+
+**Correction in v1.2.** The v1.1 release stated the five-factor range as 7.5 to 37.5 and the six-factor range as 9.5 to 42.5. Both were wrong; the correct ranges are 6.0 to 30.0 and 7.0 to 35.0. The v1.1 EuroBank totals used in the cross-scenario comparison (33.0, 32.0, 31.0, 20.0, 18.5) also did not follow from their own factor scores; the corrected figures (28.0, 26.5, 26.0, 18.5, 17.0) are used below. The order of EuroBank's three critical convergences is unchanged; the two convergence points swap, with GPU silent data corruption (18.5) now above vendor knowledge concentration (17.0). No other scenario's figures were affected. Every total in this document can be recomputed with `weight_sensitivity.py`.
 
 ---
 
@@ -68,7 +72,7 @@ StreamPay holds a PSD2 licence and is regulated under DORA (as a payment institu
 
 ### Scoring Notes
 
-- SP-CP1 scores 28.0 — high but notably lower than EuroBank's CP1 (33.0). The difference is remediation complexity: StreamPay could, in theory, switch to a different LLM API more easily than EuroBank could replace a fine-tuned model with hosted weights. However, the blast radius and regulatory exposure are comparable.
+- SP-CP1 scores 28.0, the same as EuroBank's CP1 on five factors. Both are total dependencies on an externally hosted model with maximum regulatory exposure and blast radius. StreamPay scores one point lower on detection deficit and one point higher on remediation complexity, and the two cancel.
 - SP-CP2 (19.0) and SP-CP4 (18.5) cluster tightly, which is a potential calibration concern — are these really equivalently risky? SP-CP2 is a silent technical failure; SP-CP4 is a slow-moving regulatory gap. They feel different in urgency. The scoring model doesn't capture temporal urgency (how fast could this convergence materialise?). **Flag for model refinement.**
 - SP-CP3 scores lowest (16.5) because the trust depth is low (internal system) and remediation is straightforward. This feels correct.
 
@@ -213,10 +217,10 @@ TransLogik is subject to the EU AI Act (likely not high-risk — logistics optim
 
 ### Scoring Notes
 
-- TL-CP1 scores 20.0 — the highest in this scenario but significantly lower than the financial (33.0) and healthcare (30.0) top scores. This is correct: logistics AI failure is commercially damaging but does not carry the criminal liability, patient safety, or sanctions exposure of the other sectors.
+- TL-CP1 scores 20.0 — the highest in this scenario but significantly lower than the healthcare (30.0), energy (28.5) and finance (28.0) top scores. This is correct: logistics AI failure is commercially damaging but does not carry the criminal liability, patient safety, or sanctions exposure of the other sectors.
 - TL-CP4 (GCP single region) scored 16.5 despite having only 1/3 convergence conditions met. It didn't qualify as a convergence point in the matrix but the scoring still produces a meaningful number because of the extreme blast radius (840K daily decisions). **This reveals a model tension: should non-convergence-points still be scored?** Currently Phase 4 says "score convergence points only." But TL-CP4 is a clear single-point-of-failure risk that the scoring model captures well. **Recommendation: allow scoring of single-point-of-failure risks even if they don't meet the 2/3 convergence threshold, but flag them separately as "concentration risks" rather than "convergence points."**
 - TL-CP5 (weather data) scores 10.5 — the lowest score across all four scenarios. Good floor differentiation.
-- The overall range for logistics (10.5 to 20.0) is narrower than finance (18.5 to 33.0) or healthcare (14.5 to 30.0). This correctly reflects that logistics AI risk, while real, is less concentrated and less severely regulated. **The scoring model naturally produces sector-appropriate ranges.**
+- The overall range for logistics (10.5 to 20.0) is narrower than finance (17.0 to 28.0) or healthcare (14.5 to 30.0). This correctly reflects that logistics AI risk, while real, is less concentrated and less severely regulated. **The scoring model naturally produces sector-appropriate ranges.**
 
 ---
 
@@ -299,7 +303,7 @@ NordWind is subject to NIS2 (energy sector critical entity), the EU AI Act (deba
 
 | Scenario | CP1 (highest) | CP2 | CP3 | CP4 | CP5 (lowest) | Range | Spread |
 |---|---|---|---|---|---|---|---|
-| **EuroBank (Finance)** | 33.0 | 32.0 | 31.0 | 20.0 | 18.5 | 18.5–33.0 | 14.5 |
+| **EuroBank (Finance)** | 28.0 | 26.5 | 26.0 | 18.5 | 17.0 | 17.0–28.0 | 11.0 |
 | **MedAssist (Healthcare)** | 30.0 | 28.0 | 23.0 | 18.5 | 14.5 | 14.5–30.0 | 15.5 |
 | **StreamPay (Digital Services)** | 28.0 | 19.0 | 18.5 | 16.5 | — | 16.5–28.0 | 11.5 |
 | **RouteOptima (Logistics)** | 20.0 | 16.5 | 15.0 | 14.5 | 10.5 | 10.5–20.0 | 9.5 |
@@ -307,21 +311,21 @@ NordWind is subject to NIS2 (energy sector critical entity), the EU AI Act (deba
 
 ## Key Observations
 
-### 1. The model produces meaningful cross-sector differentiation
+### 1. The model separates the regulated sectors from logistics, and does not separate them from each other
 
-The highest-scoring convergence point in finance (33.0) is significantly higher than logistics (20.0). Healthcare (30.0) and energy (28.5) sit in between. This correctly reflects the relative severity of AI failure in each sector: financial and healthcare AI failures carry the highest regulatory, liability, and human-impact consequences.
+The highest-scoring convergence points in healthcare (30.0), energy (28.5), finance (28.0) and digital services (28.0) sit within two points of one another. Logistics (20.0) is clearly lower. That is the differentiation the calibration set supports: sectors with enforceable regulatory consequence and organisation-wide blast radius score higher than a sector without them. The model should not be read as ranking finance above healthcare or energy; on this evidence it does not, and it was not designed to.
 
 ### 2. Within-sector differentiation works
 
 Every scenario produces a clear separation between the highest and lowest convergence points. The minimum spread is 9.5 (logistics), the maximum is 15.5 (healthcare). A practitioner looking at these scores can immediately identify which convergence points demand urgent attention and which can be managed through normal risk processes.
 
-### 3. The Regulatory Exposure weighting (×1.5) is validated
+### 3. The weightings drive the cross-sector picture, and this calibration cannot validate them
 
-The 1.5 weighting on regulatory exposure is the primary driver of cross-sector differentiation. Finance and healthcare score higher not because they have worse infrastructure (they don't, necessarily) but because their regulatory consequences are more severe. This is the correct behaviour — the framework should prioritise risks that carry enforcement consequences.
+The 1.5 weighting on regulatory exposure is the main reason the regulated sectors score above logistics, and the 1.5 weighting on blast radius is the main reason organisation-wide points score above isolated ones within each scenario. Both behaviours are what the weights were chosen to produce, so observing them here is confirmation that the arithmetic works, not evidence that 1.5 is the right number. The v1.1 text called the weights validated on this basis; v1.2 withdraws that wording. What can be tested is whether the weights matter to the result, which is the subject of the sensitivity section below.
 
-### 4. The Blast Radius weighting (×1.5) is validated
+### 4. Within-scenario ordering is what the score is for
 
-The 1.5 weighting on blast radius correctly elevates organisation-wide risks above isolated ones. In every scenario, the convergence points affecting all transactions/decisions/patients score meaningfully higher than those affecting a subset. This drives the right remediation priorities.
+OSRA does not recommend comparing scores across organisations. The category, which comes from the three convergence conditions rather than from the score, decides the remediation clock; the score orders findings within a category so remediation has a sequence. The relevant question for the weights is therefore whether they change that sequence.
 
 ### 5. Identified model limitations
 
@@ -331,13 +335,31 @@ The 1.5 weighting on blast radius correctly elevates organisation-wide risks abo
 
 **The "human behaviour as trust surface" dimension.** The healthcare scenario (MH-CP4: physician over-reliance) revealed a trust surface that's unique and important: the human-in-the-loop is itself an unverified trust signal. The framework should explicitly call out "human override effectiveness" as a trust signal category in Phase 3. **Recommendation: add "Human-in-the-loop effectiveness" as a standard trust signal category in the Phase 3 template.**
 
-## Revised Scoring Formula (Proposed v1.1)
+## Weight Sensitivity (v1.2)
+
+Every convergence point in the five scenarios was rescored with the two weighted factors, regulatory exposure and blast radius, set to each of (1.0, 1.0), (1.5, 1.5), (2.0, 2.0), (1.5, 1.0), (1.0, 1.5), (2.0, 1.5), (1.5, 2.0) and, as a stress case, (3.0, 3.0). For the within-scenario rankings, the four calibration scenarios were rescored on five factors and EuroBank on six, each on the factors it was scored with. For the cross-scenario comparison every scenario, EuroBank included, is scored on five factors so the bases match. The script is `weight_sensitivity.py` in this directory and prints both tables.
+
+| Scenario | Points | Weights from 1.0 to 2.0 on either factor | Weights at 3.0, 3.0 |
+|---|---|---|---|
+| EuroBank Sentinel (finance, six factors) | 5 | Ranking unchanged, top point unchanged | Unchanged |
+| StreamPay (digital services) | 4 | Ranking unchanged, top point unchanged | SP-CP2 and SP-CP4 swap (Kendall tau 0.67) |
+| MedAssist (healthcare) | 5 | Ranking unchanged, top point unchanged | Unchanged |
+| RouteOptima (logistics) | 5 | Ranking unchanged, top point unchanged | Unchanged |
+| GridSense (energy) | 5 | Ranking unchanged, top point unchanged | Unchanged |
+
+Cross-scenario, on five factors, the order of scenario maxima at every weight pair from 1.0 to 2.0 is healthcare first, then energy, digital services and finance within a point of one another, then logistics. Digital services and finance are level throughout; energy sits just above them and draws level when regulatory exposure is weighted at 2.0. That is the one place the weights change a cross-scenario comparison, and cross-scenario comparison is not what the score is for.
+
+**What this shows.** On the 24 calibration points, the choice of weight between 1.0 and 2.0 does not change which finding a practitioner would remediate first, or in what order, in any scenario. The weights change the magnitude of the score, which matters only if scores are compared across organisations, and OSRA does not recommend that. The 1.5 figure remains a stated judgement that regulatory consequence and blast radius carry more weight than the other four factors. Organisations may set their own weights, and the script is there so they can see what that does to their own ranking before they do.
+
+**What this does not show.** Insensitivity on 24 points designed by one author is not proof that the ranking will be stable on every estate. The test that matters is independent execution: practitioners who did not design OSRA scoring the same system and comparing rankings. That is the open item in Part VI of the architecture document.
+
+## Revised Scoring Formula (v1.1)
 
 Based on calibration findings:
 
 **Convergence Risk Score = (Regulatory Exposure × 1.5) + Detection Deficit + Trust Depth + (Blast Radius × 1.5) + Remediation Complexity + Materialisation Horizon**
 
-New score range: Minimum 9.5, Maximum 42.5
+Score range (six factors): Minimum 7.0, Maximum 35.0
 
 The addition of Materialisation Horizon as an unweighted factor adds temporal sensitivity without distorting the primary risk drivers.
 
@@ -352,5 +374,4 @@ The addition of Materialisation Horizon as an unweighted factor adds temporal se
 
 ---
 
-*Phase 4 Scoring Calibration v1.0 — 21 March 2026*
-*Pre-publication working draft — not for distribution*
+*OSRA Phase 4 Scoring Calibration v1.2 — September 2026. Calibration run 21 March 2026; EuroBank totals, score ranges and weighting language corrected, sensitivity check added, September 2026.*

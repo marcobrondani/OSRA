@@ -1,13 +1,13 @@
-# THE OSRA METHODOLOGY AND FRAMEWORK — v1.1
+# THE OSRA METHODOLOGY AND FRAMEWORK — v1.2
 
 ## Operational Substrate Risk Audit (OSRA)
 
 ## Architecture Document
 
-**Status:** Working draft for review — incorporates scoring calibration refinements
-**Date:** 21 March 2026
+**Status:** Published. v1.2 incorporates the response to an external review of v1.1 (see Part VI)
+**Date:** September 2026 (v1.1: 21 March 2026)
 **Author:** Marco Brondani
-**Classification:** Pre-publication — not for distribution
+**Licence:** CC BY-SA 4.0
 
 ---
 
@@ -15,7 +15,7 @@
 
 ### What This Framework Is
 
-A repeatable methodology for identifying where AI operational risk actually lives — beneath the governance layer, inside the infrastructure substrate — and where it converges into compound exposure that no existing framework detects.
+A repeatable methodology for identifying where AI operational risk actually lives — beneath the governance layer, inside the infrastructure substrate — and where it converges into compound exposure. The convergence is the claim: a substrate dependency, a failure nobody would detect and a trust signal nobody has verified can each sit comfortably inside an existing risk register, and where all three land on one dependency the exposure is of a different kind. Frameworks that audit each dimension in isolation, if they audit it at all, are not built to see that intersection.
 
 It is designed to be executed, not interpreted. Each phase produces specific artefacts. Each artefact translates to a specific audience. The methodology can be applied to any AI system deployed in a regulated environment, regardless of vendor, model, or cloud provider.
 
@@ -28,11 +28,13 @@ It is designed to be executed, not interpreted. Each phase produces specific art
 
 ### The Gap It Fills
 
-Twelve major governance, risk, and regulatory frameworks were analysed (NIST AI RMF, ISO 42001, EU AI Act, DORA, EU CRA, NIS2, US EO 14110, Singapore MAIGF, Japan AI Guidelines, UK AI Regulation White Paper, NIST CSF 2.0, ISO 27001). None achieves full coverage on any of five critical dimensions: infrastructure mapping, failure mode analysis, dependency chain risk, trust verification, or convergence risk. All address the governance and policy layer. None systematically addresses the infrastructure substrate.
+Twelve major governance, risk, and regulatory frameworks were analysed (NIST AI RMF, ISO 42001, EU AI Act, DORA, EU CRA, NIS2, US EO 14110, Singapore MAIGF, Japan AI Guidelines, UK AI Regulation White Paper, NIST CSF 2.0, ISO 27001) and rated on five dimensions: infrastructure mapping, failure mode analysis, dependency chain risk, trust verification, and convergence risk. Most of them cover a piece. DORA Article 6 asks for asset and dependency documentation, NIST CSF 2.0 has supplier management under GV.SC, ISO 27001 has cloud service and supply chain controls under A.5.21 to A.5.23. None of the twelve requires all five, none goes below the process level (which suppliers are used) to the substrate level (which regions, chips, data feeds, energy supplies and contracts the system runs on), and none addresses convergence. The clause-level matrix is published as Appendix A (`evidence/WS1_Governance_Framework_Gap_Matrix.md`).
 
-Fifteen existing methodologies were surveyed (MITRE ATLAS, CSA AICM, ENISA, OWASP AI, NIST SP 800-161, AIBOM/MLBOM, WWT ARMOR, vendor-specific frameworks from Microsoft/Google/AWS, CISA OT, semiconductor supply chain research, model provenance tools, energy impact frameworks, academic supply chain research). None provides a unified methodology that maps infrastructure dependencies, failure modes per layer, unverified trust signals, and where all three converge.
+Fifteen existing methodologies were surveyed (MITRE ATLAS, CSA AICM, ENISA, OWASP AI, NIST SP 800-161, AIBOM/MLBOM, WWT ARMOR, vendor-specific frameworks from Microsoft/Google/AWS, CISA OT, semiconductor supply chain research, model provenance tools, energy impact frameworks, academic supply chain research). Each holds a slice, and OSRA incorporates or builds on most of them. What the survey did not find is one methodology that maps the substrate, analyses failure detectability per dependency, audits implicit trust, and identifies where those converge, as a single sequence. The survey is published as Appendix C (`evidence/WS4_Methodology_Landscape.md`).
 
-The closest peer is WWT/NVIDIA ARMOR, which addresses operational resilience across seven domains but stops short of substrate-level dependency mapping, trust surface auditing, and convergence analysis.
+The closest peer is WWT/NVIDIA ARMOR, which addresses operational resilience across seven domains but stops short of substrate-level dependency mapping, trust surface auditing, and convergence analysis. Adjacent disciplines outside the survey, cloud security architecture, software supply chain security, operational resilience practice, threat modelling, third-party risk management and model risk management, each hold pieces of the same problem inside their own boundaries. OSRA's contribution is the unified sequence and the convergence step, not the discovery that infrastructure carries risk.
+
+OSRA is an operational risk methodology for systems that contain AI rather than a framework about the AI model. The model is one of the dependencies, and in the worked example it is the most exposed one, but the identity, API, cloud, data pipeline, monitoring, vendor and contractual dependencies, and the human approval steps the organisation assumes are working, are all still there when the model is replaced. That is why the method is expected to outlast any particular class of model.
 
 ### Regulatory Urgency
 
@@ -45,7 +47,7 @@ The global regulatory landscape is creating enforceable liability for AI operati
 - **US State-Level**: Colorado SB24-205 (operative June 2026), New York S7263 (proposed — strict liability for AI hallucinations with private right of action), Illinois AI Video Interview Act (enacted).
 - **APAC**: South Korea Framework Act on AI (operative January 2026), Singapore PDPC guidance, Japan AI Promotion Act (November 2025), Australia policy review pending 2026.
 
-Organisations face liability for AI failures. No existing framework gives them a method to identify where those failures will originate at the infrastructure level.
+Organisations face liability for AI failures. The frameworks they already run were not built to show where those failures will originate at the infrastructure level, and the methodologies that go deeper each cover a slice.
 
 ---
 
@@ -301,22 +303,24 @@ A **convergence point** exists when a dependency meets two or more of these cond
 | **Concentration Risk** | Single point of dependency with Critical or High severity, regardless of other convergence conditions | Medium-term: exit strategy and redundancy planning within 6 months |
 | **Monitored Risk** | 1/3 conditions met or Low severity | Standard risk management cycle |
 
-Step 4.2 — **Score convergence points.** For each convergence point:
+**Category and score are decided separately.** The category comes from the three conditions above and it sets the remediation clock. The score in Step 4.2 orders findings within a category so that remediation has a sequence; it does not decide the category, and a change of weights cannot move a finding between categories. Two practitioners with the same evidence should reach the same category before they discuss the score, because the conditions are yes-or-no questions on the Phase 2 and Phase 3 registers.
+
+Step 4.2 — **Score convergence points.** For each convergence point, score each factor on its five-point scale. The anchors below define every point on the scale; where a finding sits between two anchors, take the lower score and record the reason. The anchors for 2 and 4, and the wording of 1, 3 and 5, were written in v1.2 to match how the 24 calibration points and the worked example had actually been scored. They describe that practice rather than re-score it, so a reader can check any published score against them.
 
 | Factor | Weight | Score (1-5) |
 |---|---|---|
-| **Regulatory exposure** | ×1.5 | 1 = no regulatory regime applies, 3 = one mandatory regime, 5 = multiple overlapping regimes with active enforcement |
-| **Detection deficit** | ×1.0 | 1 = fully monitored with automated alerts, 3 = periodic manual review, 5 = no detection mechanism exists |
-| **Trust depth** | ×1.0 | 1 = directly verified by organisation, 3 = vendor-attested but not independently verified, 5 = 3+ layers of transitive unverified trust |
-| **Blast radius** | ×1.5 | 1 = isolated non-critical function, 3 = affects one business unit, 5 = organisation-wide or customer-facing |
-| **Remediation complexity** | ×1.0 | 1 = configuration change or quick fix, 3 = requires vendor negotiation or new tooling, 5 = requires architectural redesign |
-| **Materialisation horizon** | ×1.0 | 1 = years (slow regulatory or contractual evolution), 2 = months, 3 = weeks, 4 = days (known upcoming change), 5 = imminent or already occurring (silent failures that may be active now) |
+| **Regulatory exposure** | ×1.5 | 1 = no regulatory regime applies to this dependency's failure. 2 = a voluntary or non-statutory regime applies, or a mandatory regime whose application to this system is debated. 3 = a mandatory regime with enforcement reaches this failure through general provisions (risk management, third-party management, documentation). 4 = a mandatory regime's operative article addresses this failure directly (resilience testing, robustness, incident detection, screening), or the regime carries personal accountability for named individuals. 5 = more than one regime addresses the failure directly with active enforcement, or the failure carries criminal, sanctions or safety-of-life liability |
+| **Detection deficit** | ×1.0 | 1 = automated alerting on the failure mode itself, routed to an owner, within minutes. 2 = the failure is known or scheduled in advance, or existing monitoring or a continuous counterparty check would surface it within a day. 3 = periodic manual review would catch it within one review cycle. 4 = it would be found only after consequences accumulate: a customer complaint, an audit finding, a reconciliation months later. 5 = no mechanism responds to this failure mode; the monitoring that exists measures something else (availability rather than correctness, volume rather than distribution) and stays green while the failure runs |
+| **Trust depth** | ×1.0 | 1 = the signal was verified by the organisation itself, or the dependency is internal and monitored. 2 = one external party whose attestation the organisation relies on directly and could verify but has not. 3 = two layers: the vendor relies on a provider the organisation has no relationship with, and neither layer is verified. 4 = three or more layers, none verified. 5 = the chain is opaque: the organisation cannot enumerate the layers, or the vendor withholds the model, the data or the method |
+| **Blast radius** | ×1.5 | 1 = isolated, non-critical function. 2 = a subset of transactions or decisions, or a process off the real-time path. 3 = one business unit or customer segment, or the system's lifecycle (retraining, maintenance) rather than its operation. 4 = several business units, or one critical customer-facing function. 5 = organisation-wide: every transaction, every decision or every customer |
+| **Remediation complexity** | ×1.0 | 1 = configuration change or quick fix within the organisation's control, days. 2 = tooling or monitoring the organisation can build itself within a quarter. 3 = a vendor negotiation, a contract change, a knowledge transfer or a new data source, with moderate engineering. 4 = a second provider, a second region, dual running or re-internalising a capability, with significant engineering. 5 = architectural redesign of the system or its monitoring, or replacement of the core model or vendor |
+| **Materialisation horizon** | ×1.0 | 1 = years (slow regulatory or contractual evolution). 2 = months (known contract expiry, scheduled deprecation). 3 = weeks (recurring but unpredictable events such as regional degradation). 4 = days (announced upcoming change). 5 = imminent or already occurring (silent failures that may be active now) |
 
 Convergence Risk Score = (Regulatory Exposure × 1.5) + Detection Deficit + Trust Depth + (Blast Radius × 1.5) + Remediation Complexity + Materialisation Horizon
 
-Score range: 9.5 (minimum) to 42.5 (maximum).
+Score range: 7.0 (minimum, all factors at 1) to 35.0 (maximum, all factors at 5). The v1.1 text gave this range as 9.5 to 42.5, which was an arithmetic error.
 
-The 1.5 weighting on regulatory exposure and blast radius reflects that these two factors carry disproportionate consequence — validated through scoring calibration across finance, healthcare, digital services, logistics, and energy sectors. Materialisation Horizon carries no weighting multiplier; it provides temporal sensitivity without distorting the primary risk drivers. Weightings can be adjusted per organisational context.
+The 1.5 weighting on regulatory exposure and blast radius is a judgement that these two factors carry disproportionate consequence: one decides whether a failure becomes a liability, the other decides how much of the organisation it reaches. It is stated as a judgement rather than as a validated constant. What has been tested is whether the weights change the result: rescoring all 24 calibration points with the weights set anywhere from 1.0 to 2.0, on either factor, changes no ranking in any of the five sector scenarios (see `calibration/OSRA_Scoring_Calibration_v1.2.md`, Weight Sensitivity, and `calibration/weight_sensitivity.py`). Materialisation Horizon carries no weighting multiplier; it provides temporal sensitivity without distorting the primary risk drivers. Weightings can be adjusted per organisational context, and the script shows what a change does to the ranking before it is made.
 
 Step 4.3 — **Produce the Convergence Risk Summary.** Rank all convergence points by score. The top 3-5 convergence points are OSRA's primary output — the points where the organisation is most exposed and least aware.
 
@@ -406,7 +410,20 @@ OSRA is designed to sit beneath and complement — not replace — existing gove
 
 ---
 
-## PART VI: STATUS AND REMAINING WORK
+## PART VI: STATUS AND OPEN WORK
+
+### Changed in v1.2 (September 2026)
+
+v1.2 responds to an external review of v1.1 by a security architect. The review accepted the four-phase structure, the three-way convergence model, the four categories and the three-altitude output, and pressed on four things: the absolute form of the novelty claim, the defensibility of the scoring weights and the definitions behind the factors, the inspectability of the evidence base, and the reproducibility of the worked example. The changes:
+
+1. **Novelty claim restated** in Part I. OSRA does not claim that no framework covers the substrate. It claims that none of the twelve analysed provides one method for all five dimensions and that none addresses convergence, and it names the closest peer and the adjacent disciplines.
+2. **Convergence stated as the claim** in Part I, with the substrate as where the analysis begins, and OSRA positioned as an operational risk methodology for systems containing AI rather than a framework about the model.
+3. **Factor anchors completed** in Phase 4, Step 4.2: every factor now defines all five points on its scale, not only 1, 3 and 5.
+4. **Category and score separated** explicitly in Phase 4: the conditions decide the category and the clock, the score orders findings within it.
+5. **Weights described as a judgement**, with the v1.1 "validated" wording withdrawn and a sensitivity check across all 24 calibration points published with its script.
+6. **Evidence appendices published**: A (framework gap matrix, clause by clause), B (incident and enforcement chain table), C (methodology landscape).
+7. **Arithmetic corrected.** The worked example's v1.1 convergence totals for four of the five EuroBank points did not follow from their own factor scores, and the stated score ranges were wrong. Corrected figures are in the calibration document and on the worked example page; the worked example's ranking is unchanged.
+8. **Pre-publication footers removed.** The documents have been public since v1.1.
 
 ### Completed (v1.1)
 
@@ -414,21 +431,17 @@ OSRA is designed to sit beneath and complement — not replace — existing gove
 2. **Working templates** — Excel workbooks for all four phase artefacts (Substrate Map, Failure Surface Register, Trust Surface Register, Convergence Map) with pre-populated guidance, severity guides, and scoring formulas.
 3. **Full worked example** — "EuroBank Sentinel" (DORA-regulated bank, AI fraud detection) running all four phases with five convergence points ranked, scored, and mapped to recommended actions.
 4. **Action Catalogue** — 22 specific actions across four categories (Detection Gap, Trust Verification, Substrate Resilience, Governance Integration) with effort, ownership, and regulatory alignment per action. Quick-reference action selection table by convergence type.
-5. **Scoring calibration** — Phase 4 scoring model tested across five sectors (finance, healthcare, digital services, logistics, energy/automotive) with 25 convergence points scored. Three refinements integrated: Materialisation Horizon as sixth scoring factor, Concentration Risk as fourth matrix category, Human-in-the-loop effectiveness as trust signal category.
+5. **Scoring calibration** — Phase 4 scoring model tested across five sectors (finance, healthcare, digital services, logistics, energy/automotive) with 24 convergence points scored. Three refinements integrated: Materialisation Horizon as sixth scoring factor, Concentration Risk as fourth matrix category, Human-in-the-loop effectiveness as trust signal category.
 
-### Remaining Before Publication
+### Open work
 
-1. **Name.** OSRA needs a name that is precise, memorable, and does not compete with existing terminology.
+1. **Independent execution.** The test that would show OSRA is a methodology rather than a good way of thinking about risk: three or more practitioners who did not design it run the same system through all four phases independently, and their substrate maps, scores, convergence findings and remediation priorities are compared. Convergent results would be evidence of reproducibility; divergent results would show where the specification is still loose. An external review has been received and acted on in v1.2; independent runs are the next step.
 
-2. **Peer review.** OSRA should be reviewed by at least one practising CISO, one CTO with AI infrastructure experience, and one regulatory/compliance specialist before publication.
+2. **Real-world validation.** At least one execution against a live AI deployment (anonymised as needed) to confirm that the methodology produces actionable findings in practice, not only in worked examples.
 
-3. **Publication strategy.** Essay (thought leadership) + Blueprint (actionable companion) + LinkedIn series (positioning). Sequencing and channel strategy to be determined.
+3. **Visual identity.** Diagrams for the four-phase flow, convergence matrix, and integration map, consistent with marcobrondani.com.
 
-4. **Visual identity.** Diagrams for the four-phase flow, convergence matrix, and integration map. Consistent with marcobrondani.com visual language.
-
-5. **Relationship to Compound Vulnerability.** OSRA extends the Compound Vulnerability thesis into a specific applied domain (AI operational resilience). This relationship should be acknowledged but OSRA should stand independently.
-
-6. **Real-world validation.** At least one execution against a live AI deployment (can be anonymised) to validate that the methodology produces actionable findings in practice, not just in worked examples.
+4. **Relationship to Compound Vulnerability.** OSRA extends the Compound Vulnerability thesis into a specific applied domain (AI operational resilience). The relationship should be acknowledged, and OSRA should stand independently.
 
 ---
 
@@ -436,16 +449,15 @@ OSRA is designed to sit beneath and complement — not replace — existing gove
 
 OSRA architecture draws on five research workstreams:
 
-- **WS1 — Governance Framework Gap Analysis:** 12 frameworks analysed. No framework achieves full coverage on infrastructure mapping, failure mode analysis, dependency chain risk, trust verification, or convergence risk.
-- **WS2 — Governance-Engineering Disconnect:** 15 sources across industry (McKinsey, MIT, Gartner, KPMG, Microsoft), academic research, 11 incident case studies, regulatory enforcement actions. The disconnect is documented, measurable, and consequential.
+- **WS1 — Governance Framework Gap Analysis:** 12 frameworks analysed on five dimensions. None of the twelve earns full coverage on any dimension, and none addresses convergence. Published as Appendix A, `evidence/WS1_Governance_Framework_Gap_Matrix.md`.
+- **WS2 — Governance-Engineering Disconnect:** 14 industry and academic sources (McKinsey, MIT, Gartner, KPMG, Microsoft, IEEE among them), 8 incident case studies and 3 regulatory enforcement actions. The disconnect is documented, measurable, and consequential. The incidents and enforcement actions are published as Appendix B, `evidence/WS2_Incident_Evidence.md`, each laid out along the dependency, failure, detection and trust chain.
 - **WS3 — Regulatory Liability Landscape:** Global mapping across EU, US (federal + state), UK, Japan, Singapore, South Korea, Australia, Canada, Brazil. Liability is expanding, enforcement is accelerating, and infrastructure-level failures are increasingly within regulatory scope.
-- **WS4 — Existing Substrate Methodologies:** 15 frameworks/methodologies surveyed. None provides unified infrastructure dependency + failure mode + trust verification + convergence methodology. WWT ARMOR is closest peer.
+- **WS4 — Existing Substrate Methodologies:** 15 frameworks/methodologies surveyed. Each covers a slice; none provides the unified infrastructure dependency + failure mode + trust verification + convergence sequence. WWT ARMOR is the closest peer. Published as Appendix C, `evidence/WS4_Methodology_Landscape.md`.
 - **WS5 — Model Supply Chain:** Systemic evidence that 78% of organisations rely on third-party models without provenance auditing. 63% of supply chain components contain vulnerabilities. Fine-tuned models 22x more likely to produce harmful outputs. Silent model updates documented across major providers.
 
-Full evidence documents available as companion materials.
+Appendices A, B and C publish the gap matrix, the incident chain table and the methodology landscape. The full workstream documents behind them are held by the author.
 
 ---
 
-*OSRA Methodology and Framework v1.1 — 21 March 2026*
-*Incorporates scoring calibration across five sectors (finance, healthcare, digital services, logistics, energy)*
-*Pre-publication working draft — not for distribution*
+*OSRA Methodology and Framework v1.2 — September 2026. v1.1 published 21 March 2026.*
+*Incorporates scoring calibration across five sectors (finance, healthcare, digital services, logistics, energy) and the v1.2 response to external review.*
