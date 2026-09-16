@@ -15,7 +15,7 @@ Twelve governance, risk and regulatory frameworks were analysed, NIST AI RMF, IS
 
 Fifteen existing methodologies were surveyed to test whether OSRA needed writing at all. Each holds a slice. The closest peer, WWT and NVIDIA's ARMOR framework, covers operational resilience for enterprise AI and stops short of substrate mapping, trust auditing and convergence analysis. The survey is in [Appendix C](evidence/WS4_Methodology_Landscape.md).
 
-Meanwhile the regulatory landscape is creating enforceable liability for AI operational failures: EU AI Act penalties up to 7% of global turnover, DORA mandatory resilience testing, personal accountability under the UK's SM&CR, and emerging US state-level AI liability laws.
+Meanwhile the regulatory landscape is creating enforceable liability for AI operational failures: EU AI Act penalties up to 7% of global turnover for prohibited practices, DORA mandatory resilience testing, personal accountability under the UK's SM&CR, and emerging US state-level AI liability laws.
 
 **Organisations face liability for AI failures, and the frameworks they already run were not built to show where those failures will originate.** OSRA is the method for that.
 
@@ -73,7 +73,7 @@ osra/
 ├── action-catalogue/
 │   └── OSRA_Action_Catalogue_v1.2.md      ← 22 remediation actions
 ├── calibration/
-│   ├── OSRA_Scoring_Calibration_v1.2.md   ← Tested across 5 sectors
+│   ├── OSRA_Scoring_Calibration_v1.2.md   ← Tested across 6 scenarios
 │   └── weight_sensitivity.py              ← Rerun the scoring with your own weights
 ├── evidence/
 │   ├── WS1_Governance_Framework_Gap_Matrix.md   ← Appendix A: 12 frameworks, clause by clause
@@ -94,16 +94,18 @@ For a complete worked example (EuroBank Sentinel — DORA-regulated bank running
 
 ## Key Features
 
-**Four convergence categories**, decided by three yes-or-no conditions on a dependency (high failure severity, silent failure, unverified trust), not by the score:
+**Four convergence categories**, decided by three yes-or-no conditions on a dependency (Critical or High failure severity, silent failure with Low or None detection confidence, unverified trust), not by the score. The first rule that matches decides, so every dependency lands in exactly one category:
 - **Critical Convergence** — 3/3 conditions met → remediation within 30 days
 - **Convergence Point** — 2/3 conditions met → remediation within 90 days
-- **Concentration Risk** — single point of dependency + high severity → exit strategy within 6 months
-- **Monitored Risk** — 1/3 conditions or low severity → standard risk cycle
+- **Concentration Risk** — fewer than 2 conditions, single point of dependency with Critical or High severity → exit strategy within 6 months
+- **Monitored Risk** — everything else → standard risk cycle
 
-**Six-factor convergence scoring**, which orders findings within a category:
+A Critical Convergence or Convergence Point that is also a single point of dependency carries a Concentration flag, which adds the six-month exit strategy clock alongside its own.
+
+**Six-factor convergence scoring**, which orders findings within a category (ties broken by Regulatory Exposure, then Blast Radius, Materialisation Horizon and Detection Deficit):
 Regulatory Exposure (×1.5) + Detection Deficit + Trust Depth + Blast Radius (×1.5) + Remediation Complexity + Materialisation Horizon
 
-Every factor has published anchors for each point on its five-point scale. The 1.5 weights are a stated judgement, and the calibration shows that setting them anywhere between 1.0 and 2.0 changes no ranking in any of the five sector scenarios. Scoring calibrated across finance, healthcare, digital services, logistics and energy.
+Every factor has published anchors for each point on its five-point scale. The 1.5 weights are a stated judgement. The calibration shows that setting them anywhere between 1.0 and 2.0 changes no category and no scenario's first finding, and swaps two adjacent findings in two of the six scenarios, each pair no more than 0.5 points apart. Scoring calibrated across finance, healthcare, digital services, logistics, energy and an agentic system at an IT managed service provider.
 
 **22 structured remediation actions** across four categories:
 - Detection Gap Actions (D1-D6)
@@ -118,9 +120,9 @@ OSRA does not replace existing governance. It provides the substrate layer they'
 | Framework | OSRA Integration |
 |---|---|
 | **NIST AI RMF** | Phase 1 feeds Map function. Phase 2 extends Measure to infrastructure. |
-| **ISO 42001** | Phase 1 provides infrastructure detail for Annex A.9. Phase 3 strengthens certification evidence. |
+| **ISO 42001** | Phase 1 provides infrastructure detail for Annex A.10 (third-party relationships). Phase 3 strengthens certification evidence. |
 | **EU AI Act** | Phase 1 fulfils Annex IV documentation at genuine depth. Phase 4 provides Art. 9 risk management evidence. |
-| **DORA** | Phase 1 extends Art. 6 asset documentation. Phase 2 provides Art. 25-26 resilience scenarios. Phase 4 answers Art. 15. |
+| **DORA** | Phase 1 extends Art. 8 identification of ICT assets and dependencies. Phase 2 provides Art. 25-26 resilience scenarios. Phase 4 gives the management body the evidence Art. 5 makes it responsible for. |
 | **MITRE ATLAS** | Phase 2 incorporates ATLAS threat model, extends from adversarial to operational resilience. |
 
 ## Evidence Base
@@ -131,9 +133,19 @@ OSRA is built on work that can be inspected:
 - **15 existing methodologies** surveyed to test whether OSRA needed writing: [Appendix C](evidence/WS4_Methodology_Landscape.md)
 - **8 incident case studies and 3 enforcement actions**, each laid out along the dependency, failure, detection and trust chain: [Appendix B](evidence/WS2_Incident_Evidence.md)
 - **Regulatory liability** mapped across the EU, the US at federal and state level, the UK, Japan, Singapore and the wider APAC region
-- **24 convergence points** scored across 5 sector scenarios for calibration, with a [weight sensitivity check](calibration/weight_sensitivity.py) you can rerun
+- **30 findings** classified and scored on six factors across 6 calibration scenarios, with a [weight sensitivity check](calibration/weight_sensitivity.py) you can rerun
 
 ## Changelog
+
+**Corrections within v1.2 (September 2026)**, from a consistency review before encoding OSRA in software:
+- Severity is decided by impact and fallback only; detection no longer counts twice in the convergence conditions.
+- The category rule gives every dependency exactly one category, with a Concentration flag for convergence findings that are also single points of dependency. The contradictory "or low severity" wording is withdrawn.
+- Which findings are scored, how Materialisation Horizon is taken from Phase 2, and how findings are ranked and ties broken are stated.
+- Dependency identifiers link the four artefacts. Trust gaps include verification whose scope does not cover the claim.
+- An Agent and Tool Layer (Phase 1) and an agent and tool delegation trust category (Phase 3) cover AI agents, MCP servers and model providers as operational dependencies.
+- The templates are brought to v1.2: anchors, identifiers, input validation, the full category rule, and ranking formulas. They previously carried v1.1 anchors and the incorrect 9.5 to 42.5 range.
+- Calibration extended to six scenarios and 30 findings, all classified and scored on six factors; the horizon scores added to the four original scenarios are drafts pending author review. The sensitivity check is rerun and its claim restated.
+- Regulatory citations corrected: DORA Articles 5, 8, 10 and 29, DORA and AI Act incident deadlines, ISO/IEC 42001 Annex A.10, AI Act Article 6(1) with Annex I for medical devices.
 
 **v1.2 (September 2026)**, in response to an external review of v1.1:
 - The novelty claim is stated precisely. OSRA does not claim that no framework covers the substrate; it claims that none of the twelve analysed provides one method for all five dimensions, and names the closest peer.

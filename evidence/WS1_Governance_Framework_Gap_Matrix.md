@@ -26,9 +26,9 @@ Ratings: **Y** means explicitly required, with a clause reference. **P** means p
 | Framework | Infrastructure mapping | Failure mode analysis | Dependency chain risk | Trust verification | Convergence risk |
 |---|---|---|---|---|---|
 | **NIST AI RMF 1.0** | P (Map function: logical dependencies only) | P (Measure: AI-level failure modes only) | P (third-party risk, not substrate) | P (third-party assessors optional) | N |
-| **ISO/IEC 42001:2023** | P (Annex A.9 supplier management) | P (8.2 to 8.4 risk assessment) | P (supply chain mentioned) | P (certification audit on a three-year cycle) | N |
+| **ISO/IEC 42001:2023** | P (Annex A.10 third-party and customer relationships) | P (8.2 to 8.4 risk assessment) | P (supply chain mentioned) | P (certification audit on a three-year cycle) | N |
 | **EU AI Act** | P (Annex IV hardware and software description) | N (Art. 9 is application-level risk) | P (Art. 25 written agreements) | P (Art. 43, limited scope) | N |
-| **DORA** | P (Art. 6 asset and dependency documentation) | P (Art. 25 to 26 scenario testing and TLPT) | P (Art. 28 to 30 ICT third-party risk) | P (Art. 30 SLAs and audit rights) | N |
+| **DORA** | P (Art. 8 identification of ICT assets and dependencies) | P (Art. 25 to 26 scenario testing and TLPT) | P (Art. 28 to 30 ICT third-party risk) | P (Art. 30 SLAs and audit rights) | N |
 | **EU CRA** | P (SBOM, software only) | N | P (vulnerability tracking) | P (notified bodies, limited scope) | N |
 | **NIS2** | P (Art. 21 supplier assessment) | P (Art. 23 incident root cause) | P (Art. 22 EU-level assessment) | N (self-assessment) | N |
 | **US EO 14110** | N (rescinded) | N | N | N | N |
@@ -69,7 +69,7 @@ The full workstream rates the size of each gap relative to what OSRA requires. T
 
 ## What the matrix does not support
 
-It does not support the claim that nothing covers any part of this ground. Partial coverage is the norm in the table, and DORA Articles 6 and 28 to 30, NIST CSF GV.SC and ISO 27001 A.5.21 to A.5.23 each reach part of the substrate at the process level. OSRA's claim is narrower and is the one the matrix actually bears out: none of the twelve provides one method that does all five things, and none of them audits the convergence. Adjacent bodies of work outside this set, cloud security architecture, software supply chain security, operational resilience, threat modelling, third-party risk management and model risk management, are assessed separately in Appendix C.
+It does not support the claim that nothing covers any part of this ground. Partial coverage is the norm in the table, and DORA Articles 8 and 28 to 30, NIST CSF GV.SC and ISO 27001 A.5.21 to A.5.23 each reach part of the substrate at the process level. OSRA's claim is narrower and is the one the matrix actually bears out: none of the twelve provides one method that does all five things, and none of them audits the convergence. Adjacent bodies of work outside this set, cloud security architecture, software supply chain security, operational resilience, threat modelling, third-party risk management and model risk management, are assessed separately in Appendix C.
 
 ## Methodology note
 
@@ -77,4 +77,4 @@ The analysis prioritised primary source text (regulations via EUR-Lex, NIST publ
 
 ---
 
-*OSRA v1.2 evidence appendix. Analysis completed 20 March 2026, published with v1.2.*
+*OSRA v1.2 evidence appendix. Analysis completed 20 March 2026, published with v1.2. Corrections within v1.2 (September 2026): ISO/IEC 42001 supplier relationships cited as Annex A.10 (previously A.9), DORA asset and dependency identification cited as Article 8 (previously Article 6). The ratings are unchanged.*
