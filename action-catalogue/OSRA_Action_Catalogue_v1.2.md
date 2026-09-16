@@ -15,7 +15,7 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: Any AI system where silent failure is possible.
 - Effort: Medium (2-4 weeks to implement; requires baseline period).
 - Owner: CTO / Engineering.
-- Regulatory alignment: DORA Art. 11 (incident detection); EU AI Act Art. 9 (continuous risk management).
+- Regulatory alignment: DORA Art. 10 (detection); EU AI Act Art. 9 (continuous risk management).
 
 **D2 — Independent Validation Pipeline**
 - What: Maintain a fixed benchmark dataset. Run the AI system against it on a defined schedule (weekly minimum). Compare results against established baseline. Flag deviations.
@@ -29,14 +29,14 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: Any system where monitoring is co-located with the system being monitored.
 - Effort: Medium-High (2-4 weeks; ongoing cost).
 - Owner: CTO / Infrastructure.
-- Regulatory alignment: DORA Art. 11 (detection capability); DORA Art. 15 (resilience).
+- Regulatory alignment: DORA Art. 10 (detection capability); DORA Art. 11 (response and recovery).
 
 **D4 — External Health Check Probe**
 - What: A lightweight, externally hosted service that sends known test inputs to the AI system at regular intervals and validates the output. The simplest form of independent monitoring.
 - When: As an immediate first step for any critical AI system.
 - Effort: Low (days to implement).
 - Owner: CTO / SRE.
-- Regulatory alignment: DORA Art. 11.
+- Regulatory alignment: DORA Art. 10 (detection).
 
 **D5 — Data Freshness Monitoring**
 - What: For any third-party data dependency, monitor the timestamp/version of the most recent data received. Alert when data age exceeds a defined threshold.
@@ -91,7 +91,7 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: During Phase 3. For DORA-critical providers.
 - Effort: Medium (requires vendor cooperation; information may be incomplete).
 - Owner: CISO / Vendor Management.
-- Regulatory alignment: DORA Art. 28-30 (concentration risk, sub-outsourcing).
+- Regulatory alignment: DORA Art. 28 (third-party risk), Art. 29 (concentration risk and subcontracting), Art. 30 (key contractual provisions).
 
 **V6 — Board Report Integrity Audit**
 - What: Review the metrics in the board's AI risk report against the failure modes identified in Phase 2. For each failure mode rated Critical or High, verify whether the board report contains a metric that would detect it. Flag gaps.
@@ -111,21 +111,21 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: Any system where a single region outage means total system failure.
 - Effort: High (weeks to months; significant cost and architecture change).
 - Owner: CTO / Infrastructure.
-- Regulatory alignment: DORA Art. 11, 15 (business continuity, operational resilience).
+- Regulatory alignment: DORA Art. 11 (response and recovery, business continuity), Art. 12 (backup, restoration and recovery).
 
 **R2 — Documented Fallback Procedure**
 - What: Define, document, and test what happens when the AI system is unavailable. If the legacy system was decommissioned, this is especially critical. Options include: manual review, rules-based fallback, queue-and-hold, graceful degradation.
 - When: Any system with no documented fallback.
 - Effort: Medium (2-4 weeks to define and test; requires business stakeholder involvement).
 - Owner: Business owner / Compliance / CTO.
-- Regulatory alignment: DORA Art. 11 (business continuity plans).
+- Regulatory alignment: DORA Art. 11 (response and recovery, business continuity plans).
 
 **R3 — Vendor Exit Strategy**
 - What: For each critical vendor dependency, document: what would you do if this vendor became unavailable in 30 days? 90 days? Identify alternatives. Estimate switching cost and time.
 - When: For every DORA-critical provider. During Phase 1.
 - Effort: Medium (2-4 weeks; requires market assessment).
 - Owner: Vendor Management / CTO / CISO.
-- Regulatory alignment: DORA Art. 28 (exit strategy requirement).
+- Regulatory alignment: DORA Art. 28(8) (exit strategy requirement).
 
 **R4 — Knowledge Internalisation**
 - What: For any critical system component where knowledge resides exclusively with an external vendor or consultant, initiate knowledge transfer. Document the fine-tuning pipeline, preprocessing logic, model management procedures, and configuration.
@@ -139,7 +139,7 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: Any system dependent on a single base model provider.
 - Effort: Medium (4-8 weeks for evaluation; does not require full redeployment).
 - Owner: CTO / Data Science.
-- Regulatory alignment: DORA (concentration risk); EU AI Act Art. 15 (robustness).
+- Regulatory alignment: DORA Art. 29 (concentration risk); EU AI Act Art. 15 (robustness).
 
 ---
 
@@ -152,36 +152,42 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 - When: Immediately after Phase 4.
 - Effort: Low.
 - Owner: CISO / Chief Risk Officer.
+- Regulatory alignment: DORA Art. 6 (ICT risk management framework); NIS2 Art. 21 (cybersecurity risk-management measures).
 
 **G2 — Board Reporting Enhancement**
 - What: Update the board AI risk report to include substrate-level risk indicators derived from OSRA. Replace or supplement application-level metrics (uptime, flagging volume) with substrate-level metrics (model stability, trust verification status, convergence point count and scores).
 - When: Before the next board reporting cycle.
 - Effort: Low-Medium (requires defining new metrics).
 - Owner: CISO / Chief Risk Officer.
+- Regulatory alignment: DORA Art. 5 (management body responsibility for ICT risk); NIS2 Art. 20 (governance).
 
 **G3 — DORA Compliance Evidence**
 - What: Package OSRA outputs (Substrate Map, Failure Surface Register, Trust Surface Register, Convergence Risk Summary) as DORA compliance evidence. Map each artefact to specific DORA articles.
 - When: Before the next DORA audit or regulatory review.
 - Effort: Low (the artefacts are the evidence; packaging is formatting).
 - Owner: Compliance / CISO.
+- Regulatory alignment: DORA Art. 8 (identification), Art. 24-26 (testing), Art. 28-30 (ICT third-party risk).
 
 **G4 — Incident Response Playbook Update**
 - What: For each Critical convergence point, create or update an incident response playbook that covers the specific failure scenario. Include: how to detect it (since many are silent failures, this may require new monitoring), who to notify, what decisions to make, and what fallback to activate.
 - When: After Phase 4. Before the next resilience test.
 - Effort: Medium (1-2 weeks per playbook).
 - Owner: CISO / CTO / Incident Response team.
+- Regulatory alignment: DORA Art. 11 (response and recovery), Art. 17 (ICT-related incident management process).
 
 **G5 — Regulatory Notification Preparation**
-- What: For convergence points with regulatory exposure, prepare notification templates and decision trees for when to notify regulators. DORA requires 15 calendar days for significant incidents. The EU AI Act requires 72 hours for serious incidents. Having templates ready reduces response time.
+- What: For convergence points with regulatory exposure, prepare notification templates and decision trees for when to notify regulators. Under DORA (Art. 19 and Delegated Regulation (EU) 2025/301), a major ICT-related incident needs an initial notification within 4 hours of classifying it as major and no later than 24 hours after becoming aware of it, an intermediate report within 72 hours of the initial notification, and a final report within one month of the latest intermediate report. Under the EU AI Act (Art. 73), a provider reports a serious incident no later than 15 days after becoming aware of it, 2 days for a widespread infringement or a serious incident involving critical infrastructure, and 10 days where a person has died. NIS2 (Art. 23) requires an early warning within 24 hours of becoming aware of a significant incident. Having templates ready reduces response time.
 - When: After Phase 4. Maintained as standing preparedness.
 - Effort: Low.
 - Owner: Compliance / Legal.
+- Regulatory alignment: DORA Art. 19; EU AI Act Art. 73; NIS2 Art. 23.
 
 **G6 — Framework Re-execution Scheduling**
 - What: Schedule the next full framework execution and Phase 1 refresh cadence. Assign responsibility for triggering ad-hoc re-execution when significant changes occur (new AI deployment, vendor change, regulatory update, incident).
 - When: At the end of every Phase 4.
 - Effort: Low (calendar and ownership).
 - Owner: CISO.
+- Regulatory alignment: DORA Art. 6 (ICT risk management framework, reviewed at least yearly).
 
 ---
 
@@ -194,9 +200,13 @@ When Phase 4 identifies a convergence point, what do you actually do about it? T
 | Data dependency + unverified quality | D5, V4, V5 | R3, G1, G3 |
 | Vendor knowledge concentration + partial verification | V1, R4, R3 | G1, G2 |
 | Hardware silent failure + invisible dependency | D6, V2 | G1 |
+| Single point of dependency (Concentration Risk or Concentration flag) | R3, R1, R2 | R5, G1, G2 |
+| Certification or compliance scope mismatch | V3, V2 | G1, G3 |
+| Agent tool use + unverified tool or model behaviour | D2, D1, V5 | R2, R5, G4 |
+| Human approval assumed effective | V1, V6 | G2, G4 |
 | Any Critical convergence point | G1, G2, G4, G5 | G3, G6 |
 
 ---
 
 *OSRA Action Catalogue v1.2 — September 2026. v1.1 published 21 March 2026.*
-*Scoring model: six factors including Materialisation Horizon; four convergence categories including Concentration Risk. Actions unchanged in v1.2.*
+*Scoring model: six factors including Materialisation Horizon; four convergence categories including Concentration Risk. Actions unchanged in v1.2. Corrections within v1.2: regulatory citations and incident deadlines corrected, regulatory alignment added to G1-G6, quick reference extended to Concentration Risk, scope mismatch, agentic and human approval findings. No action yet covers least-privilege agent credentials, MCP server pinning or approval quality sampling directly; see open work in the architecture document.*

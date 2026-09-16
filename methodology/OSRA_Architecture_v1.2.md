@@ -4,7 +4,7 @@
 
 ## Architecture Document
 
-**Status:** Published. v1.2 incorporates the response to an external review of v1.1 (see Part VI)
+**Status:** Published. v1.2 incorporates the response to an external review of v1.1 and the corrections within v1.2 (see Part VI)
 **Date:** September 2026 (v1.1: 21 March 2026)
 **Author:** Marco Brondani
 **Licence:** CC BY-SA 4.0
@@ -28,7 +28,7 @@ It is designed to be executed, not interpreted. Each phase produces specific art
 
 ### The Gap It Fills
 
-Twelve major governance, risk, and regulatory frameworks were analysed (NIST AI RMF, ISO 42001, EU AI Act, DORA, EU CRA, NIS2, US EO 14110, Singapore MAIGF, Japan AI Guidelines, UK AI Regulation White Paper, NIST CSF 2.0, ISO 27001) and rated on five dimensions: infrastructure mapping, failure mode analysis, dependency chain risk, trust verification, and convergence risk. Most of them cover a piece. DORA Article 6 asks for asset and dependency documentation, NIST CSF 2.0 has supplier management under GV.SC, ISO 27001 has cloud service and supply chain controls under A.5.21 to A.5.23. None of the twelve requires all five, none goes below the process level (which suppliers are used) to the substrate level (which regions, chips, data feeds, energy supplies and contracts the system runs on), and none addresses convergence. The clause-level matrix is published as Appendix A (`evidence/WS1_Governance_Framework_Gap_Matrix.md`).
+Twelve major governance, risk, and regulatory frameworks were analysed (NIST AI RMF, ISO 42001, EU AI Act, DORA, EU CRA, NIS2, US EO 14110 (since rescinded), Singapore MAIGF, Japan AI Guidelines, UK AI Regulation White Paper, NIST CSF 2.0, ISO 27001) and rated on five dimensions: infrastructure mapping, failure mode analysis, dependency chain risk, trust verification, and convergence risk. Most of them cover a piece. DORA Article 8 asks for ICT assets and their dependencies to be identified and documented, NIST CSF 2.0 has supplier management under GV.SC, ISO 27001 has cloud service and supply chain controls under A.5.21 to A.5.23. None of the twelve requires all five, none goes below the process level (which suppliers are used) to the substrate level (which regions, chips, data feeds, energy supplies and contracts the system runs on), and none addresses convergence. The clause-level matrix is published as Appendix A (`evidence/WS1_Governance_Framework_Gap_Matrix.md`).
 
 Fifteen existing methodologies were surveyed (MITRE ATLAS, CSA AICM, ENISA, OWASP AI, NIST SP 800-161, AIBOM/MLBOM, WWT ARMOR, vendor-specific frameworks from Microsoft/Google/AWS, CISA OT, semiconductor supply chain research, model provenance tools, energy impact frameworks, academic supply chain research). Each holds a slice, and OSRA incorporates or builds on most of them. What the survey did not find is one methodology that maps the substrate, analyses failure detectability per dependency, audits implicit trust, and identifies where those converge, as a single sequence. The survey is published as Appendix C (`evidence/WS4_Methodology_Landscape.md`).
 
@@ -40,9 +40,9 @@ OSRA is an operational risk methodology for systems that contain AI rather than 
 
 The global regulatory landscape is creating enforceable liability for AI operational failures:
 
-- **EU AI Act** (Regulation 2024/1689): Phased enforcement from February 2025. Penalties up to 7% of global annual turnover. Article 15 requires accuracy, robustness, and cybersecurity — but does not define what infrastructure resilience means in practice.
+- **EU AI Act** (Regulation 2024/1689): Phased enforcement from February 2025. Penalties up to 7% of global annual turnover for prohibited practices and up to 3% for most other infringements (Art. 99). Article 15 requires accuracy, robustness, and cybersecurity — but does not define what infrastructure resilience means in practice.
 - **DORA** (Regulation 2022/2554): Operative since January 2025. Mandatory ICT resilience testing, incident reporting, third-party risk management for financial institutions. AI systems increasingly classified as critical ICT services.
-- **Revised Product Liability Directive** (Directive 2024/2853): Operative December 2026. Strict liability for defective AI systems — including software, learned models, and failure to provide security updates.
+- **Revised Product Liability Directive** (Directive 2024/2853): Applies to products placed on the market from 9 December 2026. Strict liability for defective AI systems — including software, learned models, and failure to provide security updates.
 - **UK FCA SM&CR**: Personal accountability for senior managers overseeing AI in financial services. No safe harbour for algorithm delegation.
 - **US State-Level**: Colorado SB24-205 (operative June 2026), New York S7263 (proposed — strict liability for AI hallucinations with private right of action), Illinois AI Video Interview Act (enacted).
 - **APAC**: South Korea Framework Act on AI (operative January 2026), Singapore PDPC guidance, Japan AI Promotion Act (November 2025), Australia policy review pending 2026.
@@ -101,13 +101,14 @@ Each Phase is detailed below with: purpose, scope, method, artefact specificatio
 
 **Method:**
 
-Step 1.1 — **Identify the AI system boundary.** Define what is in scope: the specific model(s), the inference pipeline, the training pipeline (if in-house), the data pipeline, the serving infrastructure, and the user-facing application layer.
+Step 1.1 — **Identify the AI system boundary.** Define what is in scope: the specific model(s), the inference pipeline, the training pipeline (if in-house), the data pipeline, the serving infrastructure, and the user-facing application layer, and any AI agents in the system together with the tools and MCP servers they can call.
 
 Step 1.2 — **Trace the dependency chain downward.** For the system defined in 1.1, map each dependency layer:
 
 | Dependency Layer | Key Questions |
 |---|---|
 | **Model Layer** | Whose base model? Which version? Fine-tuned by whom? On what data? Weights hosted where? Model card available? When last updated? Update notification mechanism? |
+| **Agent and Tool Layer** | Which AI agents act inside the system or on its behalf? Which tools and MCP servers can each agent call, with which credentials and permissions? Who publishes and maintains each MCP server, and is its version pinned? Are tool descriptions fetched at runtime? Which model provider drives tool selection? Which actions require human approval, and what evidence shows the approval is exercised? |
 | **Compute Layer** | Which cloud provider(s)? Which region(s)? Which availability zone(s)? GPU/TPU type? Dedicated or shared? Burst capacity? Fallback compute? |
 | **Data Layer** | Where does training data originate? Where is it stored? What pipeline processes it? Who owns the pipeline? What third-party data sources? What latency? What happens if a source goes offline? |
 | **Network Layer** | What API chains connect system components? What are the dependencies between them? What happens if an intermediate API goes down? What CDN/edge infrastructure? What DNS provider? |
@@ -116,7 +117,7 @@ Step 1.2 — **Trace the dependency chain downward.** For the system defined in 
 | **Contractual Layer** | What SLAs govern each dependency? What are the actual uptime guarantees (not the marketed ones)? What are the termination/change notification clauses? What exit strategy exists per provider? |
 | **Geographic/Jurisdictional Layer** | Where physically are compute, data, and model components? Which jurisdictions apply? What cross-border data transfer mechanisms? What sovereign data requirements? |
 
-Step 1.3 — **Identify single points of dependency.** For each dependency, ask: "If this specific provider/component/resource were unavailable for 72 hours, could the AI system still function?" Any dependency where the answer is "no" is a single point of dependency and must be flagged.
+Step 1.3 — **Identify single points of dependency.** For each dependency, ask: "If this specific provider/component/resource were unavailable for 72 hours, could the AI system still function?" Any dependency where the answer is "no" is a single point of dependency and must be flagged. The flag is used again in Phase 4, where it decides Concentration Risk.
 
 Step 1.4 — **Classify dependencies by visibility.** For each dependency, classify:
 - **Visible**: The organisation knows the dependency exists and monitors it.
@@ -127,7 +128,8 @@ Step 1.4 — **Classify dependencies by visibility.** For each dependency, class
 
 A structured document (or machine-readable format — JSON/YAML recommended for integration with existing tooling) containing:
 - System boundary definition
-- Dependency chain per layer (8 layers above)
+- A stable identifier per dependency (for example DEP-01), which Phases 2, 3 and 4 use to refer to it
+- Dependency chain per layer (9 layers above)
 - Single points of dependency (flagged)
 - Visibility classification per dependency (Visible / Known-Unmonitored / Invisible)
 - Dependency owner per node (internal team, vendor, third party, unknown)
@@ -172,7 +174,7 @@ Step 2.1 — **Classify failure types per dependency.** For each node in the Sub
 |---|---|---|
 | **Hard failure** | The dependency stops functioning entirely. Observable and immediate. | Cloud region outage. API returns 5xx errors. |
 | **Degradation** | The dependency continues to function but with reduced performance, accuracy, or capacity. May or may not be observable. | GPU throttling under load. Model latency increase. Data pipeline backlog. |
-| **Silent failure** | The dependency appears to function normally but produces incorrect, biased, or corrupted outputs. Not observable through standard monitoring. | Silent data corruption in GPU fleet (NVIDIA whitepaper: ~1 in 1,000 machines in hyperscaler fleets). Model drift after vendor update. Training data poisoning. |
+| **Silent failure** | The dependency appears to function normally but produces incorrect, biased, or corrupted outputs. Not observable through standard monitoring. | Silent data corruption in GPU fleet (NVIDIA whitepaper: ~1 in 1,000 machines in hyperscaler fleets). Model drift after vendor update. Training data poisoning. An agent choosing the wrong tool or passing wrong arguments after a model update, with every call returning success. |
 | **Contractual failure** | The dependency functions technically but the contractual/legal basis changes — SLA modification, provider acquisition, jurisdiction change, terms of service alteration. | OpenAI deprecating a model version. Cloud provider changing data residency. Vendor acquired by competitor. |
 | **Cascade failure** | Failure in one dependency triggers failures in other dependencies that share substrate. | Cloud region outage affecting both AI inference and the monitoring system that would detect AI failure. |
 
@@ -193,23 +195,31 @@ Step 2.3 — **Map propagation paths.** For each failure with detection latency 
 - If the AI system produces degraded or incorrect output for [detection latency] duration, what is the downstream impact?
 - Who (if anyone) would notice at the downstream level?
 
-Step 2.4 — **Assign failure severity.** Using a standard severity matrix:
+Step 2.4 — **Assign failure severity.** Severity measures consequence. It is decided by what the failure affects and by the fallback, in two steps:
 
-| Severity | Criteria |
+1. Take the level from the impact the failure has:
+
+| Severity | Impact |
 |---|---|
-| **Critical** | Failure affects regulated decisions, customer-facing outputs, or financial transactions. Detection latency > 4 hours or detection confidence = None. No fallback. |
-| **High** | Failure affects important business processes. Detection latency 1-4 hours or detection confidence = Low. Limited fallback. |
-| **Medium** | Failure affects internal processes. Detection within 1 hour. Fallback exists but untested. |
-| **Low** | Failure affects non-critical functions. Detected immediately. Tested fallback in place. |
+| **Critical** | Failure affects regulated decisions, customer-facing outputs, or financial transactions. |
+| **High** | Failure affects important business processes. |
+| **Medium** | Failure affects internal processes. |
+| **Low** | Failure affects non-critical functions. |
+
+2. If a fallback is in place **and has been tested**, lower the level by one (Low stays Low). A fallback that is untested, limited or absent leaves the level unchanged, because an untested fallback is itself an unverified trust signal and belongs in Phase 3.
+
+Detection does not enter severity. Up to v1.2 as first published, the severity criteria also included detection latency and confidence, which meant detection was counted twice in Phase 4: once through severity (condition 1) and again through the silent failure condition (condition 2). It also left the level undefined when impact, detection and fallback pointed to different rows. Detection is recorded in Step 2.2, decides condition 2 in Phase 4, and is scored through Detection Deficit.
 
 **Artefact: The Failure Surface Register**
 
 A structured register containing, for each dependency in the Substrate Map:
+- The dependency identifier from the Substrate Map
 - Applicable failure types (Hard / Degradation / Silent / Contractual / Cascade)
 - Detection mechanism, latency, and confidence per failure type
 - Propagation path and downstream impact
-- Severity rating
-- Flag: "SILENT FAILURE RISK" for any dependency where silent failure is possible and detection confidence is Low or None
+- Severity rating per failure type (Step 2.4)
+- Materialisation horizon per failure type (Imminent or ongoing / Days / Weeks / Months / Years), used in Phase 4 scoring
+- Flag: "SILENT FAILURE RISK" for any failure type that is Silent and whose detection confidence is Low or None. This flag is condition 2 in Phase 4.
 
 **Audience Translation:**
 
@@ -241,6 +251,7 @@ Step 3.1 — **Inventory trust signals.** Catalogue every statement, certificati
 | **Third-party assessments** | Audit reports, conformity assessments, notified body opinions. |
 | **Implicit trust** | "We use Azure, so Microsoft handles security." "It's GPT-4, so it's the best model." "The vendor is a Fortune 500 company." |
 | **Human-in-the-loop effectiveness** | "A human reviews every AI decision." "Physicians/analysts can override the system." Claims that human oversight mitigates AI risk — without evidence that humans actually exercise meaningful oversight in practice. Calibration testing across healthcare, finance, and operational contexts shows that human override rates in time-pressured environments are often far lower than governance documents assume. This category treats the human control layer as a trust signal to be verified, not a solved problem. |
+| **Agent and tool delegation** | "The agent can only call the tools it is permitted to call." "The MCP server does what its tool description says." "Tool credentials are scoped to one client or tenant." "Destructive actions always need approval." Claims about an agent's action boundaries, a tool's behaviour and a credential's scope, which are usually inherited from an MCP server's documentation or an agent framework's defaults and rarely tested. |
 
 Step 3.2 — **Assess verification status.** For each trust signal, evaluate:
 
@@ -250,8 +261,10 @@ Step 3.2 — **Assess verification status.** For each trust signal, evaluate:
 - **Scope match**: Does the verification actually cover what the trust signal claims? (e.g., an ISO 27001 certificate covers information security management processes — it does not verify that the vendor's AI model produces accurate outputs)
 
 Step 3.3 — **Identify trust gaps.** A trust gap exists when:
-- A trust signal is Unverified or Unverifiable, AND
+- A trust signal is Unverified or Unverifiable, or it is Verified or Partially Verified but the verification's scope does not cover the claim the organisation relies on (Scope Match = N), AND
 - A decision, compliance claim, or risk assessment depends on that trust signal being true
+
+Link every trust signal to the identifier of the dependency or dependencies it concerns in the Substrate Map. Phase 4 reads trust gaps per dependency through that link.
 
 For each trust gap, document:
 - What decision or claim depends on this trust signal?
@@ -264,6 +277,7 @@ Step 3.4 — **Map trust chains.** Identify where trust signals are transitive �
 
 A structured register containing:
 - Complete inventory of trust signals by category
+- The dependency identifier(s) from the Substrate Map each signal concerns
 - Verification status, method, currency, and scope match per signal
 - Trust gaps with dependency mapping (what breaks if this trust is misplaced)
 - Trust chains with depth (how many layers of unverified trust)
@@ -289,23 +303,46 @@ A structured register containing:
 
 Step 4.1 — **Build the convergence matrix.** Cross-reference the three preceding artefacts:
 
-For each dependency in the Substrate Map, ask:
-- Does this dependency have a Critical or High failure severity rating in the Failure Surface Register? (Phase 2)
-- Does this dependency have a silent failure risk with Low or None detection confidence? (Phase 2)
-- Is the organisation's confidence in this dependency based on an unverified trust signal? (Phase 3)
+For each dependency in the Substrate Map, answer three yes-or-no questions from the registers. A dependency usually has several failure modes and trust signals. A condition is met if any one of them meets it.
 
-A **convergence point** exists when a dependency meets two or more of these conditions simultaneously. A **critical convergence point** exists when all three conditions are met. A **concentration risk** exists when a dependency has Critical or High severity and is a single point of dependency (from Phase 1), regardless of whether the other convergence conditions are met — calibration across finance, healthcare, logistics, and energy sectors confirmed that single-point-of-failure risks can produce significant scores even without meeting the 2/3 convergence threshold.
+1. **Condition 1, high severity.** At least one failure mode of this dependency is rated Critical or High in the Failure Surface Register (Phase 2, Step 2.4).
+2. **Condition 2, silent failure.** At least one failure mode of this dependency is of type Silent failure and has detection confidence Low or None, which is the SILENT FAILURE RISK flag (Phase 2).
+3. **Condition 3, unverified trust.** At least one trust signal linked to this dependency is a trust gap (Phase 3, Step 3.3).
 
-| Category | Criteria | Action Level |
-|---|---|---|
-| **Critical Convergence** | 3/3 conditions met (high severity + silent failure + unverified trust) | Immediate: remediation within 30 days |
-| **Convergence Point** | 2/3 conditions met | Short-term: remediation within 90 days |
-| **Concentration Risk** | Single point of dependency with Critical or High severity, regardless of other convergence conditions | Medium-term: exit strategy and redundancy planning within 6 months |
-| **Monitored Risk** | 1/3 conditions met or Low severity | Standard risk management cycle |
+Record also whether the dependency is a single point of dependency (Phase 1, Step 1.3).
+
+The category is decided by the first rule that matches, in this order, so every dependency lands in exactly one category:
+
+| Order | Category | Rule | Action Level |
+|---|---|---|---|
+| 1 | **Critical Convergence** | All three conditions met | Immediate: remediation within 30 days |
+| 2 | **Convergence Point** | Exactly two conditions met | Short-term: remediation within 90 days |
+| 3 | **Concentration Risk** | Fewer than two conditions met, and the dependency is a single point of dependency with at least one Critical or High failure mode | Medium-term: exit strategy and redundancy planning within 6 months |
+| 4 | **Monitored Risk** | Every other dependency: none or one condition met, and not a Concentration Risk | Standard risk management cycle |
+
+**Concentration flag.** A Critical Convergence or Convergence Point that is also a single point of dependency with a Critical or High failure mode keeps its category and its clock, and carries a Concentration flag as well. The flag adds the exit strategy and redundancy planning clock of six months, which runs alongside the shorter remediation clock rather than replacing it.
+
+Two consequences of the rule are worth stating. A dependency whose failure modes are all Medium or Low fails condition 1, so it can reach Convergence Point (silent failure and unverified trust) but not Critical Convergence. The v1.1 wording "1/3 conditions met or Low severity" for Monitored Risk contradicted that and is withdrawn. Concentration Risk exists because calibration across finance, healthcare, logistics and energy showed that single points of dependency can carry significant exposure without meeting two conditions; the logistics scenario's single-region deployment is the example.
+
+The rule as a sequence, for anyone implementing it in a spreadsheet or in code:
+
+```
+conditions = count of (condition 1, condition 2, condition 3)
+if conditions == 3:                              category = Critical Convergence
+elif conditions == 2:                            category = Convergence Point
+elif single point and severity in (Critical, High): category = Concentration Risk
+else:                                            category = Monitored Risk
+concentration flag = category in (Critical Convergence, Convergence Point)
+                     and single point and severity in (Critical, High)
+```
 
 **Category and score are decided separately.** The category comes from the three conditions above and it sets the remediation clock. The score in Step 4.2 orders findings within a category so that remediation has a sequence; it does not decide the category, and a change of weights cannot move a finding between categories. Two practitioners with the same evidence should reach the same category before they discuss the score, because the conditions are yes-or-no questions on the Phase 2 and Phase 3 registers.
 
-Step 4.2 — **Score convergence points.** For each convergence point, score each factor on its five-point scale. The anchors below define every point on the scale; where a finding sits between two anchors, take the lower score and record the reason. The anchors for 2 and 4, and the wording of 1, 3 and 5, were written in v1.2 to match how the 24 calibration points and the worked example had actually been scored. They describe that practice rather than re-score it, so a reader can check any published score against them.
+Step 4.2 — **Score convergence points.** Score every Critical Convergence, Convergence Point and Concentration Risk. Monitored Risks are not scored; they go to the standard risk management cycle.
+
+Materialisation Horizon is recorded per failure mode in Phase 2 and scored once per finding here. Use the most imminent horizon among the failure modes that met a condition for this dependency; for a Concentration Risk, use the most imminent horizon among its Critical or High failure modes. The Phase 2 values map to scores as Imminent or ongoing = 5, Days = 4, Weeks = 3, Months = 2, Years = 1.
+
+For each finding, score each factor on its five-point scale. The anchors below define every point on the scale; where a finding sits between two anchors, take the lower score and record the reason. The anchors for 2 and 4, and the wording of 1, 3 and 5, were written in v1.2 to match how the 24 calibration points and the worked example had actually been scored. They describe that practice rather than re-score it, so a reader can check any published score against them.
 
 | Factor | Weight | Score (1-5) |
 |---|---|---|
@@ -320,9 +357,9 @@ Convergence Risk Score = (Regulatory Exposure × 1.5) + Detection Deficit + Trus
 
 Score range: 7.0 (minimum, all factors at 1) to 35.0 (maximum, all factors at 5). The v1.1 text gave this range as 9.5 to 42.5, which was an arithmetic error.
 
-The 1.5 weighting on regulatory exposure and blast radius is a judgement that these two factors carry disproportionate consequence: one decides whether a failure becomes a liability, the other decides how much of the organisation it reaches. It is stated as a judgement rather than as a validated constant. What has been tested is whether the weights change the result: rescoring all 24 calibration points with the weights set anywhere from 1.0 to 2.0, on either factor, changes no ranking in any of the five sector scenarios (see `calibration/OSRA_Scoring_Calibration_v1.2.md`, Weight Sensitivity, and `calibration/weight_sensitivity.py`). Materialisation Horizon carries no weighting multiplier; it provides temporal sensitivity without distorting the primary risk drivers. Weightings can be adjusted per organisational context, and the script shows what a change does to the ranking before it is made.
+The 1.5 weighting on regulatory exposure and blast radius is a judgement that these two factors carry disproportionate consequence: one decides whether a failure becomes a liability, the other decides how much of the organisation it reaches. It is stated as a judgement rather than as a validated constant. What has been tested is whether the weights change the result: rescoring all 30 calibration findings on six factors with the weights set anywhere from 1.0 to 2.0, on either factor, changes no category and no scenario's first finding. It swaps two adjacent findings in two of the six scenarios, in each case findings in the same category no more than 0.5 points apart at baseline (see `calibration/OSRA_Scoring_Calibration_v1.2.md`, Weight Sensitivity, and `calibration/weight_sensitivity.py`). Materialisation Horizon carries no weighting multiplier; it provides temporal sensitivity without distorting the primary risk drivers. Weightings can be adjusted per organisational context, and the script shows what a change does to the ranking before it is made.
 
-Step 4.3 — **Produce the Convergence Risk Summary.** Rank all convergence points by score. The top 3-5 convergence points are OSRA's primary output — the points where the organisation is most exposed and least aware.
+Step 4.3 — **Produce the Convergence Risk Summary.** Rank the scored findings by category first, in the order Critical Convergence, Convergence Point, Concentration Risk, and by score within each category, highest first. The category sets the clock, so a Convergence Point is never ranked above a Critical Convergence because of its score. Where two findings in the same category have the same score, rank the one with the higher Regulatory Exposure first, then the higher Blast Radius, then the higher Materialisation Horizon, then the higher Detection Deficit. If they are still level, the practitioner decides and records the reason. The top 3-5 findings in this order are OSRA's primary output — the points where the organisation is most exposed and least aware.
 
 For each convergence point in the summary:
 - **What converges here**: Which substrate dependency, which failure mode, which trust gap
@@ -347,7 +384,7 @@ The primary output of the entire framework. A structured document containing:
 
 | Audience | What They Receive | What It Means For Them |
 |---|---|---|
-| Board/NED | A board-ready briefing: "These are the 3-5 points where your AI deployment is most exposed. Here is the regulatory liability at each point. Here is what we recommend." | Decision: resource allocation, risk acceptance, or mandate remediation. This is the document that answers the DORA Art. 15 question: "Who here guarantees operational resilience?" |
+| Board/NED | A board-ready briefing: "These are the 3-5 points where your AI deployment is most exposed. Here is the regulatory liability at each point. Here is what we recommend." | Decision: resource allocation, risk acceptance, or mandate remediation. This is the document that answers the question DORA Art. 5 puts to the management body, which bears ultimate responsibility for managing ICT risk: "Who here guarantees operational resilience?" |
 | CISO | The full Convergence Risk Summary with governance integration map. Priority roadmap for remediation. Evidence base for requesting budget and mandate. | Programme of work: what to fix first, how to integrate with existing risk management, how to report upward. |
 | CTO | Convergence points with technical remediation requirements. Architecture changes, monitoring deployments, vendor negotiation requirements. | Engineering priorities: what to build, what to monitor, what to renegotiate, in what order. |
 
@@ -401,9 +438,9 @@ OSRA is designed to sit beneath and complement — not replace — existing gove
 | Existing Framework | Integration Point |
 |---|---|
 | **NIST AI RMF** | Phase 1 output feeds the Map function. Phase 2 output extends the Measure function to infrastructure level. Phase 3 output strengthens the Govern function's third-party assessment. |
-| **ISO 42001** | Phase 1 output provides the infrastructure detail that Annex A.9 (supplier management) requires but doesn't specify. Phase 3 strengthens certification evidence. |
+| **ISO 42001** | Phase 1 output provides the infrastructure detail that Annex A.10 (third-party and customer relationships) requires but doesn't specify. Phase 3 strengthens certification evidence. |
 | **EU AI Act** | Phase 1 output fulfils Annex IV hardware/software documentation requirements at genuine depth. Phase 4 Convergence Risk Summary provides the risk management evidence Article 9 requires. |
-| **DORA** | Phase 1 extends Article 6 asset/dependency documentation. Phase 2 provides infrastructure failure scenarios for Article 25-26 resilience testing. Phase 3 strengthens Article 30 SLA and audit requirements. Phase 4 directly answers the Article 15 question. |
+| **DORA** | Phase 1 extends Article 8 identification of ICT assets and their dependencies. Phase 2 provides infrastructure failure scenarios for Article 25-26 resilience testing. Phase 3 strengthens Article 30 SLA and audit requirements. Phase 4 gives the management body the evidence Article 5 makes it responsible for. |
 | **ISO 27001** | Phase 1 extends A.5.23 cloud service controls. Phase 3 strengthens A.5.19/A.5.22 vendor verification. |
 | **MITRE ATLAS** | Phase 2 Failure Surface Analysis incorporates ATLAS threat model. OSRA extends it from adversarial threats to operational resilience. |
 | **AIBOM/MLBOM** | Phase 1 Substrate Map extends AIBOM/MLBOM from component inventory to infrastructure dependency mapping. |
@@ -425,13 +462,26 @@ v1.2 responds to an external review of v1.1 by a security architect. The review 
 7. **Arithmetic corrected.** The worked example's v1.1 convergence totals for four of the five EuroBank points did not follow from their own factor scores, and the stated score ranges were wrong. Corrected figures are in the calibration document and on the worked example page; the worked example's ranking is unchanged.
 8. **Pre-publication footers removed.** The documents have been public since v1.1.
 
+### Corrections within v1.2 (September 2026)
+
+A consistency review before encoding OSRA in software found places where the specification, the templates and the calibration disagreed, or where a rule left the outcome undefined. They are corrected within v1.2 rather than in a new version, because they make the published method say one thing rather than change what it is for.
+
+1. **Severity decided by impact and fallback only** (Phase 2, Step 2.4). Detection latency and confidence are removed from severity, which counted detection twice in Phase 4 and left the level undefined when criteria disagreed. A tested fallback lowers severity by one level.
+2. **One category per dependency** (Phase 4, Step 4.1). The three conditions are defined against the registers, the categories are decided in a fixed order, and a Concentration flag carries the exit-strategy clock for convergence findings that are also single points of dependency. The "or Low severity" wording for Monitored Risk, which contradicted the condition count, is withdrawn, as is the calibration document's duplicate category table.
+3. **Scoring scope, horizon and ranking stated** (Phase 4, Steps 4.2 and 4.3). Critical Convergences, Convergence Points and Concentration Risks are scored; Monitored Risks are not. Materialisation Horizon takes the most imminent horizon of the failure modes that met a condition. Findings are ranked by category, then score, then a stated tie-break.
+4. **Identifiers across phases.** Every dependency has an identifier in the Substrate Map, and the Failure Surface and Trust Surface Registers refer to it, so the Phase 4 conditions can be read per dependency. Trust gaps include verification whose scope does not cover the claim relied on.
+5. **Agent and Tool Layer** added to Phase 1, and **agent and tool delegation** added to the Phase 3 trust signal categories, so AI agents, the tools and MCP servers they call, and the model providers that drive tool selection are mapped as operational dependencies.
+6. **Templates brought to v1.2.** The workbooks carried v1.1 anchors and the incorrect 9.5 to 42.5 range, and the Convergence Matrix formula had no Concentration Risk branch. They now carry the v1.2 anchors, identifiers, input validation, the full category rule, and weights and ranking as formulas.
+7. **Calibration extended.** Every calibration finding is classified with the category rule and scored on six factors, with draft horizon scores for the four scenarios that predate the sixth factor, pending author review. A sixth scenario, an agentic system at an IT managed service provider, calibrates the new layer. The weight sensitivity check is rerun and its claim restated.
+8. **Regulatory citations corrected.** DORA asset and dependency identification is Article 8 (not 6), detection is Article 10 (not 11), management body responsibility is Article 5 (the "Article 15 question" is withdrawn; Article 15 is a mandate for technical standards), and concentration risk is Article 29. Incident deadlines in the Action Catalogue are corrected. ISO/IEC 42001 supplier relationships are Annex A.10 (not A.9). A medical device AI system is high-risk under AI Act Article 6(1) and Annex I (not Annex III). The DORA "2% of turnover" penalty figure, which is not in the Regulation, is removed.
+
 ### Completed (v1.1)
 
 1. **Architecture document** (this document) — four-phase methodology with purpose, scope, method, artefact specification, audience translation, and integration mapping for each phase.
 2. **Working templates** — Excel workbooks for all four phase artefacts (Substrate Map, Failure Surface Register, Trust Surface Register, Convergence Map) with pre-populated guidance, severity guides, and scoring formulas.
 3. **Full worked example** — "EuroBank Sentinel" (DORA-regulated bank, AI fraud detection) running all four phases with five convergence points ranked, scored, and mapped to recommended actions.
 4. **Action Catalogue** — 22 specific actions across four categories (Detection Gap, Trust Verification, Substrate Resilience, Governance Integration) with effort, ownership, and regulatory alignment per action. Quick-reference action selection table by convergence type.
-5. **Scoring calibration** — Phase 4 scoring model tested across five sectors (finance, healthcare, digital services, logistics, energy/automotive) with 24 convergence points scored. Three refinements integrated: Materialisation Horizon as sixth scoring factor, Concentration Risk as fourth matrix category, Human-in-the-loop effectiveness as trust signal category.
+5. **Scoring calibration** — Phase 4 scoring model tested across five sectors (finance, healthcare, digital services, logistics, energy/automotive) with 24 findings scored. Extended within v1.2 to six scenarios and 30 findings on six factors. Three refinements integrated: Materialisation Horizon as sixth scoring factor, Concentration Risk as fourth matrix category, Human-in-the-loop effectiveness as trust signal category.
 
 ### Open work
 
@@ -442,6 +492,12 @@ v1.2 responds to an external review of v1.1 by a security architect. The review 
 3. **Visual identity.** Diagrams for the four-phase flow, convergence matrix, and integration map, consistent with marcobrondani.com.
 
 4. **Relationship to Compound Vulnerability.** OSRA extends the Compound Vulnerability thesis into a specific applied domain (AI operational resilience). The relationship should be acknowledged, and OSRA should stand independently.
+
+5. **Author review of the v1.2 calibration drafts.** The Materialisation Horizon scores for calibration scenarios 1 to 4 and five restated severities are drafts that apply the published anchors to the scenario text. They need the author's review before they are treated as calibration.
+
+6. **Anchor questions raised by the v1.2 calibration.** Trust Depth has no anchor for an internal signal that is relied on but not verified, such as a human approval step. Materialisation Horizon scores 5 for almost every silent failure, which makes it re-count condition 2. Trust Depth 4 or 5 for a frontier model reached through an API needs a stated position.
+
+7. **Remediation actions for the Agent and Tool Layer.** The Action Catalogue maps agentic findings to existing actions, but none directly covers least-privilege and per-tenant agent credentials, pinning MCP servers and checking their tool descriptions, or sampling the quality of human approvals.
 
 ---
 
@@ -460,4 +516,4 @@ Appendices A, B and C publish the gap matrix, the incident chain table and the m
 ---
 
 *OSRA Methodology and Framework v1.2 — September 2026. v1.1 published 21 March 2026.*
-*Incorporates scoring calibration across five sectors (finance, healthcare, digital services, logistics, energy) and the v1.2 response to external review.*
+*Incorporates scoring calibration across six scenarios (finance, healthcare, digital services, logistics, energy, IT managed services), the v1.2 response to external review, and the corrections within v1.2.*
