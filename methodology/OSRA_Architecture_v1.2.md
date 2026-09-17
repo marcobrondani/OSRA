@@ -493,7 +493,7 @@ A consistency review before encoding OSRA in software found places where the spe
 
 4. **Relationship to Compound Vulnerability.** OSRA extends the Compound Vulnerability thesis into a specific applied domain (AI operational resilience). The relationship should be acknowledged, and OSRA should stand independently.
 
-5. **Author review of the v1.2 calibration drafts.** The Materialisation Horizon scores for calibration scenarios 1 to 4 and five restated severities are drafts that apply the published anchors to the scenario text. They need the author's review before they are treated as calibration.
+5. **Author review of the v1.2 calibration drafts.** The Materialisation Horizon scores for calibration scenarios 1 to 4 and six restated severities are drafts that apply the published anchors to the scenario text. They need the author's review before they are treated as calibration.
 
 6. **Anchor questions raised by the v1.2 calibration.** Trust Depth has no anchor for an internal signal that is relied on but not verified, such as a human approval step. Materialisation Horizon scores 5 for almost every silent failure, which makes it re-count condition 2. Trust Depth 4 or 5 for a frontier model reached through an API needs a stated position.
 
