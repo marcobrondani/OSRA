@@ -120,7 +120,7 @@ assessments/eurobank-sentinel/
   trust.yaml           TS-01.. with links to dependency ids
   scoring.yaml         factor scores entered by a person, with reasons
   results/             generated: conditions, categories, ranking, reports
-  history.jsonl        append-only: who, what, when, which surface
+  history.jsonl        append-only, hash-chained: who, what, when, surface
   snapshots/           immutable copies of previous runs
 ```
 
@@ -157,7 +157,7 @@ The product audits agentic systems, so it should be able to survive its own asse
 | An agent exceeding its remit | No confirmation tool; read-only and disabled modes; every write attributed and reversible through history |
 | Assessment content leaking | No telemetry, no outbound connections, no crash reporting; logs carry identifiers, never content |
 | Supply chain compromise of the software itself | Small pinned dependency set with hashes, reproducible and verifiable releases, published bill of materials, disclosure route |
-| Tampering with results | Results are regenerable from entered data; fixtures verify the engine; history is append-only |
+| Tampering with results or history | Results are regenerable from entered data; fixtures verify the engine; the history is hash-chained and snapshots record their input hashes, so an edited or removed entry is detectable (TR-08a) |
 | Local web UI exposed beyond the machine, or driven by a page in the practitioner's browser | Loopback binding by default with an explicit flag and warning to change it; per-session token on every state-changing request; `Origin` and `Host` checks, which also defeat DNS rebinding (TR-86a) |
 | Malicious or substituted method pack | Packs that did not ship with the release are verified against a signature or pinned checksum before loading, and their origin is recorded in every result (TR-86) |
 | Unsafe deserialisation of assessment files or packs | YAML and JSON parsed without object construction (TR-86) |

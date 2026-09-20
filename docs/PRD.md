@@ -113,6 +113,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-20** The method is exposed to the agent as structured resources: layer definitions and their questions, the failure taxonomy, the severity rule, detection definitions, trust signal categories, verification statuses, the convergence conditions, the category rule and the factor anchors.
 - **FR-21** Phase interviews are available as prompts, so different agents ask comparable questions.
 - **FR-22** The agent can ask what is missing: which layers have no entries, which dependencies have no failure modes, which failure modes lack detection, which dependencies have no linked trust signal.
+- **FR-22a** The agent can ask what a proposed answer would produce — the category, flag, clock and score that would follow — without writing anything, so a practitioner hears the consequence before committing to it.
 - **FR-23** Guidance is versioned with the method, so a change in the methodology changes what agents are told.
 
 ### 7.4 Authority and provenance
@@ -121,7 +122,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-31** Only a human can confirm a register. Confirmation records who confirmed it and when.
 - **FR-32** Computed fields (severity, silent-failure flag, trust gap, conditions, category, Concentration flag, clocks, materialisation horizon score, score, rank) are rejected as inputs from any caller.
 - **FR-33** Scoring runs only on confirmed registers. Reports refuse to generate while a register required for the chosen assessment type (FR-05) is in draft, and name it.
-- **FR-34** Every assessment keeps an append-only history: what changed, who or what changed it, and when.
+- **FR-34** Every assessment keeps an append-only history: what changed, who or what changed it, and when. The history is tamper-evident: an entry that was edited or removed can be detected, and snapshots record what they were built from.
 - **FR-35** What an agent may read and change is under the user's control. The default is read-only.
 
 ### 7.5 Convergence and scoring (Phase 4)
@@ -168,7 +169,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-81** Assessment data is stored where the user chooses, and they can inspect, move, export or delete it without the software.
 - **FR-82** The product states, in its documentation, on first agent use and in every report, that content shared with an agent goes wherever that agent's model runs, which may be outside the organisation. Modes B and C keep it inside.
 - **FR-82a** The documentation explains how to run mode B, and that explanation is verified against at least one local model runtime so the instructions are known to work. No model runtime or model configuration is shipped. **[ASSUMPTION: practitioners will accept this trade-off for the guidance an agent gives; to test with early users.]**
-- **FR-83** An assessment records which mode produced each register and each result, and reports state the mode. A reader can see whether an agent was involved and, where one was, that the model was the practitioner's own choice.
+- **FR-83** An assessment records the deployment mode the practitioner declared, and reports state it as declared. Separately, and as fact rather than declaration, it records which surface wrote each field and whether an agent was involved, so a reader can see what the software itself observed.
 - **FR-84** Every capability is reachable without an agent. No rule, report, comparison or verification depends on agent access, and the results are identical across modes from the same evidence.
 - **FR-85** The product can be configured to refuse agent access entirely, so an organisation can enforce mode C as policy, and the configuration is visible in the assessment record.
 
