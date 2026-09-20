@@ -71,7 +71,7 @@ osra/
 │   ├── Phase3_Trust_Surface_Register.xlsx
 │   └── Phase4_Convergence_Map.xlsx        ← Includes scoring formulas
 ├── action-catalogue/
-│   └── OSRA_Action_Catalogue_v1.2.md      ← 22 remediation actions
+│   └── OSRA_Action_Catalogue_v1.2.md      ← 23 remediation actions
 ├── calibration/
 │   ├── OSRA_Scoring_Calibration_v1.2.md   ← Tested across 6 scenarios
 │   └── weight_sensitivity.py              ← Rerun the scoring with your own weights
@@ -107,7 +107,7 @@ Regulatory Exposure (×1.5) + Detection Deficit + Trust Depth + Blast Radius (×
 
 Every factor has published anchors for each point on its five-point scale. The 1.5 weights are a stated judgement. The calibration shows that setting them anywhere between 1.0 and 2.0 changes no category and no scenario's first finding, and swaps two adjacent findings in two of the six scenarios, each pair no more than 0.5 points apart. Scoring calibrated across finance, healthcare, digital services, logistics, energy and an agentic system at an IT managed service provider.
 
-**22 structured remediation actions** across four categories:
+**23 structured remediation actions** across four categories:
 - Detection Gap Actions (D1-D6)
 - Trust Verification Actions (V1-V6)
 - Substrate Resilience Actions (R1-R5)
@@ -145,6 +145,7 @@ OSRA is built on work that can be inspected:
 - An Agent and Tool Layer (Phase 1) and an agent and tool delegation trust category (Phase 3) cover AI agents, MCP servers and model providers as operational dependencies.
 - The templates are brought to v1.2: anchors, identifiers, input validation, the full category rule, and ranking formulas. They previously carried v1.1 anchors and the incorrect 9.5 to 42.5 range.
 - Calibration extended to six scenarios and 30 findings, all classified and scored on six factors; the horizon scores added to the four original scenarios are drafts pending author review. The sensitivity check is rerun and its claim restated.
+- The action catalogue is stated as 23 actions (D1-D6, V1-V6, R1-R5, G1-G6); the count of 22 published since v1.1 was wrong, and no action changed.
 - Regulatory citations corrected: DORA Articles 5, 8, 10 and 29, DORA and AI Act incident deadlines, ISO/IEC 42001 Annex A.10, AI Act Article 6(1) with Annex I for medical devices.
 
 **v1.2 (September 2026)**, in response to an external review of v1.1:
