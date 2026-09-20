@@ -1,6 +1,6 @@
 # ADR-0009: Identifier scheme
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** Identifiers join the four phases (TR-02, TR-03). They appear in workbooks, reports and comparisons between independent runs, and they must never shift under a practitioner. They must also be safe to use in file names and URLs, and stable when rows are added, removed or reordered.
 
 ## Decision

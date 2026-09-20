@@ -1,6 +1,6 @@
 # ADR-0011: One error catalogue for every surface
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The product promises that errors teach (PRD principles) and that validation names the rule, the entity and the field (FR-16, TR-18). Three surfaces and continuous integration all need the same errors, and logs must be shareable without disclosing assessment content (TR-89).
 
 ## Decision

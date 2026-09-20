@@ -143,6 +143,7 @@ This document states what the software must do technically, and to what standard
 ## 9. Acceptance and test requirements
 
 - **TR-100 Reference fixtures.** The six published calibration scenarios must ship as fixtures, and a single command must verify that the engine reproduces every category, Concentration flag, score, rank and tie exactly. This is the release gate. (FR-73, FR-103)
+- **TR-100a Draft reference values.** A fixture value that the calibration marks as awaiting author review must carry that mark, and verification must report how many draft values a result depended on. A release described as v1 must depend on none. Early slices may build on draft values; they may not present them as settled. (FR-104)
 - **TR-101 Rule coverage.** Every rule in the method pack must have at least one test. The category rule must be tested exhaustively across all 16 combinations of the three conditions and the single-point flag.
 - **TR-102 Sensitivity replication.** The published weight sensitivity results must be reproduced from the fixtures, including the two documented adjacent swaps.
 - **TR-103 Round-trip properties.** Export then import must be the identity function on an assessment, tested with generated data as well as the fixtures.

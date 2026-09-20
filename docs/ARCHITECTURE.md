@@ -3,7 +3,7 @@
 **Status:** Draft. Open for comment.
 **Scope:** how the software is built. The *methodology's* architecture is a different document: `methodology/OSRA_Architecture_v1.2.md`.
 **Reads with:** [`docs/PRD.md`](PRD.md) (what it does), [`docs/TRD.md`](TRD.md) (what it must satisfy), `docs/adr/` (why each choice was made).
-**Status of the choices below:** every significant decision is recorded as an ADR with status **Proposed**. Nothing here is settled until the ADR is accepted.
+**Status of the choices below:** every significant decision is recorded as an ADR. All twelve were accepted in September 2026; each remains open to being superseded by a later ADR rather than edited away.
 
 ---
 
@@ -49,15 +49,15 @@ The dependency direction is one-way: surfaces depend on the engine, never the re
 
 Each links to its ADR.
 
-| # | Decision | Proposed choice |
+| # | Decision | Accepted choice |
 |---|---|---|
 | [0001](adr/0001-language-and-runtime.md) | Language and runtime | Python, one language for engine, CLI, MCP server and web UI |
-| [0002](adr/0002-assessment-storage.md) | Assessment storage | Plain text files (YAML) plus an append-only JSON Lines history — **Accepted** |
+| [0002](adr/0002-assessment-storage.md) | Assessment storage | Plain text files (YAML) plus an append-only JSON Lines history |
 | [0003](adr/0003-rules-as-data.md) | Where the method lives | Rules as data in a versioned method pack, interpreted by the engine |
 | [0004](adr/0004-content-code-separation.md) | Licence boundary | Method content and software code in separate packages and directories |
 | [0005](adr/0005-mcp-authority-model.md) | Agent authority | Agents draft; the MCP server has no confirmation tool |
 | [0006](adr/0006-web-ui-stack.md) | Web UI | Server-rendered HTML from the same process, no build step, no external assets |
-| [0007](adr/0007-report-formats.md) | Report formats | Markdown, single-file HTML and DOCX in v1; PDF out of scope — **Accepted** |
+| [0007](adr/0007-report-formats.md) | Report formats | Markdown, single-file HTML and DOCX in v1; PDF out of scope |
 | [0008](adr/0008-template-generation.md) | Excel templates | Generated from the method pack, data-entry only, with the engine writing every computed value |
 | [0009](adr/0009-identifiers.md) | Identifiers | Per-assessment, per-type sequences, retired on delete, never reused |
 | [0010](adr/0010-concurrency.md) | Concurrency | Single-writer lock per assessment, with a conflict report |

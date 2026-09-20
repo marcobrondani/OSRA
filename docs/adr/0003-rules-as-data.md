@@ -1,6 +1,6 @@
 # ADR-0003: The method lives in data, not in code
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The methodology is the source of truth, results must cite the Step they come from, and a methodology version must be re-runnable years later. The September 2026 consistency review showed how easily prose, spreadsheets and figures drift apart.
 
 ## Decision
