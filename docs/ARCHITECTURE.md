@@ -52,12 +52,12 @@ Each links to its ADR.
 | # | Decision | Proposed choice |
 |---|---|---|
 | [0001](adr/0001-language-and-runtime.md) | Language and runtime | Python, one language for engine, CLI, MCP server and web UI |
-| [0002](adr/0002-assessment-storage.md) | Assessment storage | Plain text files (YAML) plus an append-only JSON Lines history |
+| [0002](adr/0002-assessment-storage.md) | Assessment storage | Plain text files (YAML) plus an append-only JSON Lines history — **Accepted** |
 | [0003](adr/0003-rules-as-data.md) | Where the method lives | Rules as data in a versioned method pack, interpreted by the engine |
 | [0004](adr/0004-content-code-separation.md) | Licence boundary | Method content and software code in separate packages and directories |
 | [0005](adr/0005-mcp-authority-model.md) | Agent authority | Agents draft; the MCP server has no confirmation tool |
 | [0006](adr/0006-web-ui-stack.md) | Web UI | Server-rendered HTML from the same process, no build step, no external assets |
-| [0007](adr/0007-report-formats.md) | Report formats | Markdown and single-file HTML in v1; PDF out of scope |
+| [0007](adr/0007-report-formats.md) | Report formats | Markdown, single-file HTML and DOCX in v1; PDF out of scope — **Accepted** |
 | [0008](adr/0008-template-generation.md) | Excel templates | Generated from the method pack, data-entry only, with the engine writing every computed value |
 | [0009](adr/0009-identifiers.md) | Identifiers | Per-assessment, per-type sequences, retired on delete, never reused |
 | [0010](adr/0010-concurrency.md) | Concurrency | Single-writer lock per assessment, with a conflict report |
@@ -138,7 +138,7 @@ Text files were chosen so an assessment can be reviewed, diffed and version-cont
 
 ## 8. Reporting
 
-Reports are projections of a run, never a second calculation. The pipeline is: run results plus pack plus mappings, into a document model, out to Markdown or a single self-contained HTML file. Every regulatory reference carries its mapping version and date. Re-rendering an unchanged run produces identical output; where a new pack or mapping version would change something, the difference is listed rather than applied silently (TR-16).
+Reports are projections of a run, never a second calculation. The pipeline is: run results plus pack plus mappings, into one document model, out to Markdown, a single self-contained HTML file, or DOCX. DOCX is a zip, so its entry timestamps and ordering are fixed rather than taken from the clock, or two runs over the same data would differ (TR-68b). Every regulatory reference carries its mapping version and date. Re-rendering an unchanged run produces identical output; where a new pack or mapping version would change something, the difference is listed rather than applied silently (TR-16).
 
 All assessment content is escaped on the way into HTML. A report is generated from data the user has typed, and it may be opened anywhere, so it is treated as untrusted content.
 

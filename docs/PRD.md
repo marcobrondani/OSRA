@@ -133,7 +133,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-44** Findings are ranked by category, then score, then the published tie-break; remaining ties are reported as ties for the practitioner to resolve and record.
 - **FR-45** Five factors (regulatory exposure, detection deficit, trust depth, blast radius, remediation complexity) are scored by a person against the anchors, which are shown at the point of scoring. Where a finding sits between two anchors the lower score is taken, and the reason is recorded. Materialisation horizon is not entered; it is computed under FR-43.
 - **FR-46** Every result shows its inputs, the rule it came from and the method version.
-- **FR-47** Where weights can be adjusted, the effect of a change on the ranking is shown before it is adopted, and reports state which weights were used.
+- **FR-47** v1 uses the published weights. Adjusting them is deferred, so every v1 result is directly comparable; practitioners who want to explore other weights use the published sensitivity script. Every report states the weights used.
 
 ### 7.6 Remediation
 
@@ -152,7 +152,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-65** Re-running a report over unchanged inputs produces the same output. Where a new mapping or method version changes something, the change is listed rather than applied silently.
 - **FR-66** A refresh report states what changed since the previous run: new, removed and re-categorised dependencies, and score movements.
 - **FR-66a** Reports carry no credentials, secrets or verbatim third-party material that a practitioner pasted into a register, and warn when a field looks like a secret. Draft calibration figures are never presented as published reference values.
-- **FR-67** Reports do not use colour as the only signal, and are produced in formats that can be archived and re-rendered unchanged, and carried into a board pack (see P-2).
+- **FR-67** Reports are produced as Markdown, self-contained HTML and DOCX, do not use colour as the only signal, and can be re-rendered unchanged from the same run.
 
 ### 7.8 Import, export and comparison
 
@@ -166,7 +166,8 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-79** An interrupted write leaves the assessment readable: either the change was recorded in full or it was not recorded at all, and the practitioner is told which.
 - **FR-80** A full assessment can be completed without any service run by the project, and the project collects no assessment content. No telemetry is on by default.
 - **FR-81** Assessment data is stored where the user chooses, and they can inspect, move, export or delete it without the software.
-- **FR-82** The product states, in its documentation, on first agent use and in every report, that content shared with an agent goes wherever that agent's model runs, which may be outside the organisation. Modes B and C keep it inside. **[ASSUMPTION: practitioners will accept this trade-off for the guidance an agent gives; to test with early users.]**
+- **FR-82** The product states, in its documentation, on first agent use and in every report, that content shared with an agent goes wherever that agent's model runs, which may be outside the organisation. Modes B and C keep it inside.
+- **FR-82a** The documentation explains how to run mode B, and that explanation is verified against at least one local model runtime so the instructions are known to work. No model runtime or model configuration is shipped. **[ASSUMPTION: practitioners will accept this trade-off for the guidance an agent gives; to test with early users.]**
 - **FR-83** An assessment records which mode produced each register and each result, and reports state the mode. A reader can see whether an agent was involved and, where one was, that the model was the practitioner's own choice.
 - **FR-84** Every capability is reachable without an agent. No rule, report, comparison or verification depends on agent access, and the results are identical across modes from the same evidence.
 - **FR-85** The product can be configured to refuse agent access entirely, so an organisation can enforce mode C as policy, and the configuration is visible in the assessment record.
@@ -176,7 +177,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-90** The web UI serves one practitioner on their own machine and is not reachable from anywhere else by default.
 - **FR-91** It works with no network access at all, including the first time it is opened.
 - **FR-92** It supports the full mode C journey: create an assessment, fill the three registers, confirm them, score against the anchors, read and export the reports.
-- **FR-93** Anchors, rule text and the reason a value was rejected are shown where the practitioner makes the decision, so the interface carries the guidance an agent would otherwise give.
+- **FR-93** The UI carries the same guidance an agent gives, drawn from the same method pack: the layer questions while capturing, all five anchors and the lower-anchor rule while scoring, the reason for every rejection, and a "what is missing" view of layers with no entries, dependencies with no failure modes and unlinked trust signals.
 - **FR-94** It is usable by keyboard alone, does not rely on colour as the only signal, and works at a viewport of 1280 by 800 or larger.
 - **FR-95** It reads and writes the same assessment data as the CLI and the MCP server, and the three surfaces can be used interchangeably on the same assessment.
 
@@ -212,27 +213,29 @@ A likely sequence. The order may change, and no dates are committed.
 | **Prerequisite** | Author review of the draft scores added within v1.2, and reconciliation of the EuroBank Sentinel figures into the repository, so that the reference results are defined and reviewed | The calibration drafts are confirmed or corrected, and the six-factor classification and totals for all six scenarios are in the repository |
 | **0.1 Specification and fixtures** | Schemas for the four artefacts; the reference results (the v1.2 six-factor classification and totals for all six scenarios, as reviewed in the prerequisite) as machine-readable fixtures; validation | Fixtures load and validate; the calibration's own figures round-trip |
 | **0.2 Engine and CLI** | Conditions, category, flags, clocks, scoring, ranking, comparison; CLI for create, capture, validate, confirm, score, compare and verify | Every published reference result is reproduced exactly (FR-73) |
-| **0.3 Interoperability and reporting** | Excel import and export; board, CISO and CTO reports; regulatory mappings. Mode C is now complete end to end | Round-trip loses nothing; reports contain everything the methodology specifies; an assessment can be run from capture to board output without an agent |
-| **0.4 Agent access** | MCP server: capture, confirm, compute, report; method resources and phase prompts | An assessor completes a full assessment through an agent, on two different agent clients |
+| **0.3 Interoperability and reporting** | Excel import and export; board, CISO and CTO reports in Markdown, HTML and DOCX; regulatory mappings for DORA, NIS2 and the EU AI Act. Mode C is now complete end to end | Round-trip loses nothing; reports contain everything the methodology specifies; an assessment can be run from capture to board output without an agent |
+| **0.4 Agent access** | MCP server: capture, compute, report; the method reachable through tools, with prompts as a convenience; no confirmation path | An assessor completes a full assessment through an agent, on two clients from different vendors |
 | **0.5 Local web UI** | Register capture, confirmation, scoring against the anchors, report viewing and export, all offline | A practitioner completes an assessment in mode C without using the command line |
 | **1.0 Ready for unaided use** | Documentation, installation, contribution process, licence and terms | An external practitioner completes an assessment unaided, and their run can be compared with another. Independent runs of the *method* continue throughout, by hand where the software is not ready |
 
 **v1 is done when** all of the above hold, the reference results are reproduced, and an unaided external run has been completed in mode A or B and another in mode C. Keeping client and assessment data out of the repository is a release-process check, not a product criterion.
 
-## 10. Open product questions
+## 10. Product decisions
 
-Comments welcome on any of these.
+Taken in September 2026. Each is recorded here because it shapes v1 scope.
 
-| # | Question | Options |
+| # | Question | Decision |
 |---|---|---|
-| P-1 | Which agent clients are supported and tested for v1? | The two most used by the first testers; more later |
-| P-2 | Report formats: Markdown and HTML only, or also PDF and DOCX? | Portability for board packs against maintenance cost |
-| P-3 | How much of the interview should be prompts versus tool-driven questioning? | Prompts are simpler; tool-driven guidance is more consistent across clients |
-| P-4 | Should the product ship a tested local-model configuration for mode B, or document the pattern and leave the setup to the organisation? | Privacy reach against testing burden |
-| P-5 | May weights be adjusted in v1, or are the published weights fixed? | The methodology permits adjustment; fixed weights are easier to compare and defend |
-| P-6 | Are assessments stored as files or in a local database? | Reviewable and diffable against queryable and concurrent |
-| P-7 | Which regulatory mappings ship in v1? | Breadth against the effort of verifying each clause against primary sources |
-| P-8 | How much of the interview guidance should the web UI carry, given that mode C has no agent to explain the anchors? | Guidance in the interface against keeping the interface thin |
+| P-1 | Which agent clients are supported and tested? | Two clients from different vendors are tested at each release; any MCP-compliant client is documented as expected to work but untested |
+| P-2 | Report formats | Markdown, self-contained HTML and DOCX |
+| P-3 | Interview through prompts or tools | Tools are authoritative (the questions, rules and anchors are reachable as tools); prompts are offered as a convenience for clients that surface them |
+| P-4 | Local model support for mode B | The pattern is documented and verified against one local runtime; no runtime or configuration is shipped |
+| P-5 | Adjustable weights | Not in v1. The published weights are used, so every result is comparable; the sensitivity script remains for exploration |
+| P-6 | Storage | Text files per assessment, no database (ADR-0002) |
+| P-7 | Regulatory mappings in v1 | DORA, NIS2 and the EU AI Act, all verifiable against public primary text. ISO/IEC 27001, NIST CSF 2.0, ISO/IEC 42001 and NIST AI RMF follow later |
+| P-8 | Web UI guidance | The same guidance an agent gives, from the same method pack: layer questions, anchors, the lower-anchor rule, rejection reasons and a "what is missing" view |
+
+Open technical questions are in [`docs/TRD.md`](TRD.md), section 11.
 
 Decisions on the software licence, contribution terms and project naming are pending and are noted in [`docs/VISION.md`](VISION.md).
 

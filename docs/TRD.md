@@ -41,6 +41,7 @@ This document states what the software must do technically, and to what standard
 - **TR-14** Ranking must implement the published order: category, then score, then regulatory exposure, blast radius, materialisation horizon, detection deficit. Remaining ties must be reported as ties and must never be broken silently, including by name or insertion order. `calibration/weight_sensitivity.py`, as the published reference for the sensitivity figures, must follow the same rule. (FR-44)
 - **TR-15** A method pack must be loadable side by side with another version, and an assessment must be re-runnable under the pack version it was created with. Migrating an in-progress assessment to a newer pack must be deliberate, and must report the differences in category or score before the migration is accepted. (FR-07, FR-101)
 - **TR-16** Changing a mapping version must not change a category or a score. Where a mapping change alters a regulatory reference, it must be reported as a change. (FR-65)
+- **TR-16a** v1 must ship mappings for DORA, NIS2 and the EU AI Act only. Every clause in them must be checked against the primary text on EUR-Lex, and each mapping must record that check with its date. Mappings whose source text is not public must not ship until their clauses can be verified. (FR-64)
 - **TR-17** The engine must refuse to score an assessment with any required register in draft, and must name the registers and what is missing. (FR-33)
 - **TR-18** Validation must be explainable: every rejection must name the rule identifier, the entity and field, what was wrong, and an example of a valid value. (FR-16)
 
@@ -69,13 +70,14 @@ This document states what the software must do technically, and to what standard
 - **TR-40** The CLI must cover the whole assessment lifecycle without an agent: create, capture, validate, confirm, score, map actions, report, compare, verify, import and export. (FR-84)
 - **TR-41** Every command must exit with a documented, stable exit code, write diagnostics to standard error and machine-readable output to standard output when asked, so it can run in continuous integration. (FR-84)
 - **TR-42** The CLI must run with no network access. (FR-80)
+- **TR-43** The documentation must describe how to run mode B, with a local or gateway-hosted model, and that description must be verified against at least one local model runtime before each release. No model runtime or model configuration may be shipped. (FR-82a)
 
 ### 5.4 Local web UI
 
 - **TR-50** The UI must be served by the same local process, bound to the loopback interface by default, with no accounts and no remote access. (FR-90)
 - **TR-51** It must load no external resources: no fonts, scripts, styles, analytics or images fetched at runtime. Everything it needs must ship with the software. (FR-91)
 - **TR-52** It must support the full mode C journey, including register confirmation and factor scoring against the anchors. (FR-92)
-- **TR-53** Anchors, rule text and rejection reasons must be shown where the decision is made, not only in documentation. (FR-93)
+- **TR-53** The UI must present the same guidance the agent surface provides, from the same method pack: the layer questions while capturing, all five anchors and the lower-anchor rule while scoring, the reason for every rejection, and a view of what is missing (layers with no entries, dependencies with no failure modes, unlinked trust signals). (FR-93, FR-22)
 - **TR-54** It must be operable by keyboard alone, must not use colour as the only signal, and should meet WCAG 2.2 AA for contrast, focus visibility and form labelling. (FR-95)
 - **TR-55** It must work in the current and previous stable versions of Chrome, Edge, Firefox and Safari, without a build step on the user's machine. **[ASSUMPTION: practitioners run one of these; to confirm in validation.]** (FR-90)
 
@@ -93,9 +95,11 @@ This document states what the software must do technically, and to what standard
 
 - **TR-64** Changing a confirmed register must invalidate the results derived from it, mark the register draft and leave earlier runs untouched in their snapshots. (FR-03, FR-04)
 - **TR-65** Each assessment type (full, Convergence Scan, Trust Surface First) must declare which registers it requires and which outputs it produces, and the engine must enforce that declaration. (FR-05)
-- **TR-66** A weight change must be previewable: the software must show the ranking under the current and the proposed weights before the change is adopted, and record the weights used in every run. (FR-47)
+- **TR-66** v1 must use the weights published in the method pack and must provide no way to change them; every run and every report must record the weights used. Configurable weights and a ranking preview are deferred, and the method pack's structure must not prevent them. (FR-47)
 - **TR-67** Remediation output must map every scored finding to catalogue actions, record an explicit gap where no action applies, and present findings in ranked order with the clocks their category and flag carry. (FR-50 to FR-52)
 - **TR-68** Report content is defined by the methodology's artefact specifications and by FR-59 to FR-63. Each report must be generated from a single run, must carry the method pack, mapping and software versions, and must be reproducible from that run alone. (FR-59 to FR-64)
+- **TR-68a** Reports must be produced as Markdown, self-contained HTML and DOCX from one document model, with the same content in each. (FR-67)
+- **TR-68b** DOCX output must be deterministic: entry timestamps in the package must be fixed rather than taken from the clock, entries must be written in a fixed order, and no identifier derived from the environment may appear, so that two runs over the same data produce identical files. (TR-12, TR-80)
 - **TR-69** A refresh report must state what changed since the previous run: dependencies added, removed and re-categorised, and score movements. Comparison of two assessments must report differences per matched dependency, with the matching rule stated. (FR-66, FR-72)
 
 ## 6. File formats and versioning
@@ -146,7 +150,7 @@ This document states what the software must do technically, and to what standard
 - **TR-105 Determinism under re-run.** Deleting all computed data and re-running must reproduce results byte for byte, on each supported platform (TR-12, TR-70a).
 - **TR-106 Traceability check.** An automated check must confirm that every rule in the method pack cites a methodology location, and that no rule exists in code without a pack entry.
 - **TR-107 Accessibility check.** Before a release, the UI must pass an automated accessibility check for contrast, labelling and focus order, and a keyboard-only walkthrough of the mode C journey. This is a release checklist item, not a continuous integration gate.
-- **TR-108 Agent client tests.** Before release, a full assessment must be completed through at least two different agent clients and recorded. (FR-93)
+- **TR-108 Agent client tests.** Before release, a full assessment must be completed through two agent clients from different vendors and recorded, including whether resources and prompts reached the model, how tool errors were surfaced, and whether tool descriptions were truncated. Other MCP-compliant clients are documented as untested. (FR-93)
 - **TR-109 Published reference set.** The fixtures, the schemas and the expected results must be published in a documented format, so that another implementation can check itself against them. A conformance suite and a conformance report format are deferred beyond v1.
 
 ## 10. Traceability
@@ -171,10 +175,10 @@ This document states what the software must do technically, and to what standard
 |---|---|---|
 | T-1 | Do assessments need a query surface beyond files (for example a rebuildable index), or is per-assessment reading enough? | Depends on whether portfolio views ever arrive; excluded from v1 |
 | T-2 | Should the method pack be embedded in the distribution, installed separately, or both? | Affects how a methodology update reaches users, and the licence split |
-| T-3 | What is the minimum report format set: Markdown and single-file HTML, or is PDF required for board packs? | PDF adds a rendering dependency that conflicts with a small dependency set |
+| T-3 | Does PDF need to join Markdown, HTML and DOCX, or is printing from the browser enough? | Decided for v1: Markdown, HTML and DOCX (P-2). PDF remains open and would add a rendering dependency |
 | T-4 | How are concurrent writes handled when an agent and a UI session touch one assessment? | Decided in ADR-0010; the open part is whether a lock is enough or the store needs a write-ahead journal |
 | T-5 | Should the MCP server offer a "dry run" that shows what a change would do to categories before it is written? | Useful for agents; adds surface area |
-| T-6 | Is a tested local-model configuration shipped for mode B, or documented only? | Mirrors PRD question P-4 |
+| T-6 | Which local runtime is used to verify the mode B instructions? | Decided for v1: documented and verified against one runtime, none shipped (P-4). Which runtime is open |
 | T-7 | How is the deployment mode determined reliably, given that the server cannot tell a hosted model from a local one? | Recorded from configuration and from the practitioner's declaration, and reported as such |
 | T-8 | Does the history need a hash chain so that a tampered snapshot is detectable? | Cheap to add; decides whether snapshots can be called immutable |
 
