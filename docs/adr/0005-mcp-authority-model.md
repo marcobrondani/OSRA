@@ -26,3 +26,4 @@ Agents may create and amend content through the MCP server; everything they writ
 - A purely agent-driven flow cannot complete an assessment; the practitioner touches the CLI or the UI at least once per register.
 - That confirmation step must be quick, or it becomes the point where practitioners rubber-stamp: the UI should show what changed since the last confirmation.
 - Agent clients must be told, in tool descriptions, why confirmation is elsewhere (TR-37).
+- Two clients from different vendors are tested each release, because tool descriptions and errors surface differently (product decision P-1, TR-108).

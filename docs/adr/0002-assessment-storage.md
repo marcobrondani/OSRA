@@ -1,6 +1,6 @@
 # ADR-0002: Assessment storage format
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026 (confirmed as product decision P-6)
 **Context:** Assessments must be reviewable, comparable between independent runs, portable, and hold provenance and an append-only history. Scale is small (TR-82). Data is sensitive and stays with the organisation.
 
 ## Decision
