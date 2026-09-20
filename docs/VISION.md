@@ -23,10 +23,25 @@ The method itself is hard to run at the pace the substrate changes. The v1.2 tem
 - **Reference results as tests.** The six calibration scenarios, including the [EuroBank Sentinel worked example](https://marcobrondani.com/osra/eurobank-sentinel) in machine-readable form, are results the engine must reproduce exactly.
 - **Reports.** Outputs for the three audiences OSRA defines (board, CISO, CTO), with import from and export to the existing Excel templates.
 - **An MCP server,** so AI agents can use OSRA directly: run, query and update assessments.
+- **A command-line interface and a local web UI,** so the whole method can be run without an agent at all.
+
+The product requirements are in [`docs/PRD.md`](PRD.md).
+
+## How it can be run
+
+OSRA as code is AI-native first, because the systems it assesses increasingly are agents calling tools through model providers, and because an agent is what makes an unfamiliar method approachable: it asks the questions and explains the anchors.
+
+That creates a tension worth stating plainly. A completed assessment is a map of an organisation's weakest dependencies, and an agent driven by a hosted model sends what it is given to that provider. Many of the organisations with most to gain from OSRA cannot do that. So there are three ways to run it, with the same engine, the same rules and the same results:
+
+- **With an agent and a hosted model.** Full guidance. Whatever the practitioner shares with their agent goes to that model provider, under the practitioner's own agreement with it. The OSRA software itself sends nothing anywhere.
+- **With an agent and a self-hosted or gateway-governed model.** Full guidance, and nothing leaves the organisation's boundary.
+- **Without an agent,** through the local web UI, the command line or the Excel templates. No model is involved at any point. This mode is completed first, before agent access exists, and every capability has to work in it.
+
+Which mode produced an assessment is recorded in it and stated in its reports.
 
 Design aims:
 - **Inspectable.** Every score can be traced to its inputs, its anchors and the version of the rules.
-- **Assessment data can stay with the organisation.** A completed substrate map lists an organisation's weakest dependencies.
+- **No capability is agent-only.** Anything that can be done through an agent can be done without one.
 - **Outputs support professional judgement; they don't replace it.**
 
 ## Where the method stands
@@ -39,9 +54,10 @@ A likely sequence, without dates. The order may change.
 
 1. **Settle the calibration.** Author review of the draft scores added within v1.2.
 2. **Specification and fixtures.** Schemas for the four artefacts, and the calibration scenarios, EuroBank Sentinel included, as machine-readable fixtures.
-3. **Engine.** Conditions, categories, scoring and ranking, reproducing every reference result.
-4. **Reports and spreadsheets.** Audience reports; import from and export to the Excel templates.
+3. **Engine and command line.** Conditions, categories, scoring and ranking, reproducing every reference result.
+4. **Reports and spreadsheets.** Audience reports; import from and export to the Excel templates. At this point OSRA can be run end to end without an agent.
 5. **MCP server.** Agent access to assessments.
+6. **Local web UI.** The same assessment, captured, scored and reported without a terminal and without a model.
 
 **Independent runs run in parallel from stage 1.** Practitioners who did not design OSRA run the same systems, and the comparison is published, whether the results converge or not.
 
