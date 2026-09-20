@@ -1,6 +1,6 @@
 # ADR-0004: Separate method content from software code
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The methodology, templates, catalogue and calibration are published under CC BY-SA 4.0. Material derived from them may carry ShareAlike obligations; facts and methods as such may not be protected. The software licence and the content licence are both undecided, and a legal review is pending.
 
 ## Decision

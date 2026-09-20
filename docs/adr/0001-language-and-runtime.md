@@ -1,6 +1,6 @@
 # ADR-0001: Language and runtime
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** One maintainer, four surfaces (engine, CLI, MCP server, web UI), Excel interoperability, and a repository whose existing tooling is Python.
 
 ## Decision

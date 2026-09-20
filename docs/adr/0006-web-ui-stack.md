@@ -1,6 +1,6 @@
 # ADR-0006: Server-rendered web UI, no build step, no external assets
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The web UI is in v1 and is the main surface for organisations that cannot use an agent. It must work offline and in air-gapped environments, load no external resources, be keyboard accessible, and be maintainable by one person who is not a front-end specialist.
 
 ## Decision

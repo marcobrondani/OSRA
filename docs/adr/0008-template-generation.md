@@ -1,6 +1,6 @@
 # ADR-0008: Excel templates are generated from the method pack
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The four v1.2 workbooks were rebuilt in September 2026 by a script that lived outside the repository, so they cannot be rebuilt from a clean checkout. Before that rebuild, the workbooks carried v1.1 anchors and an incorrect score range for months after the methodology had been corrected.
 
 ## Decision

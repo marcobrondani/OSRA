@@ -1,6 +1,6 @@
 # ADR-0010: Concurrency model
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** An agent, a CLI command and a web UI session can all touch one assessment on the same machine. Storage is plain files (ADR-0002), so there are no transactions. Losing a practitioner's work, or interleaving two writers into an inconsistent register, would be worse than refusing a write.
 
 ## Decision

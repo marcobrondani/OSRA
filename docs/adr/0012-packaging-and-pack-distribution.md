@@ -1,6 +1,6 @@
 # ADR-0012: Packaging and method pack distribution
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The target user includes practitioners in regulated environments where installing from a public package index is blocked, and where air-gapped machines are common. The method pack is a separate artefact (ADR-0004) and can be loaded side by side in several versions (TR-15). A pack that did not ship with the release must be verifiable (TR-86).
 
 ## Decision

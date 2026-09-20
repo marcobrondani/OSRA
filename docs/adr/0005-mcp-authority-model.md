@@ -1,6 +1,6 @@
 # ADR-0005: Agents draft; the server cannot confirm
 
-**Status:** Proposed · September 2026
+**Status:** Accepted · September 2026
 **Context:** The product is AI-native first, and its credibility depends on a human being accountable for an assessment. "The agent should ask before confirming" is a prompt-level wish, not a property of the system, and prompt-level wishes fail under prompt injection or an over-eager client.
 
 ## Decision

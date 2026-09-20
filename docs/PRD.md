@@ -187,6 +187,7 @@ Mode C is not a degraded path bolted on afterwards. It is complete end to end wi
 - **FR-101** An assessment records the method version it was made under, and can be re-reported under it.
 - **FR-102** A user can check that a release is the one the project published, can see what it depends on, and has a route to report a vulnerability.
 - **FR-103** The published reference results ship with the product, so anyone can verify (FR-73) without network access.
+- **FR-104** A reference value that is still under author review is marked as draft wherever it appears, and verification reports how many draft values a result depended on. No release described as v1 may carry a draft reference value.
 
 ## 8. Non-goals
 
@@ -210,13 +211,12 @@ A likely sequence. The order may change, and no dates are committed.
 
 | Slice | Contains | Done when |
 |---|---|---|
-| **Prerequisite** | Author review of the draft scores added within v1.2, and reconciliation of the EuroBank Sentinel figures into the repository, so that the reference results are defined and reviewed | The calibration drafts are confirmed or corrected, and the six-factor classification and totals for all six scenarios are in the repository |
-| **0.1 Specification and fixtures** | Schemas for the four artefacts; the reference results (the v1.2 six-factor classification and totals for all six scenarios, as reviewed in the prerequisite) as machine-readable fixtures; validation | Fixtures load and validate; the calibration's own figures round-trip |
+| **0.1 Specification and fixtures** | Schemas for the four artefacts; the reference results (the v1.2 six-factor classification and totals for all six scenarios) as machine-readable fixtures; validation. Values still marked draft in the calibration are carried as draft, not silently promoted | Fixtures load and validate; the calibration's own figures round-trip; every draft value is marked as such |
 | **0.2 Engine and CLI** | Conditions, category, flags, clocks, scoring, ranking, comparison; CLI for create, capture, validate, confirm, score, compare and verify | Every published reference result is reproduced exactly (FR-73) |
 | **0.3 Interoperability and reporting** | Excel import and export; board, CISO and CTO reports in Markdown, HTML and DOCX; regulatory mappings for DORA, NIS2 and the EU AI Act. Mode C is now complete end to end | Round-trip loses nothing; reports contain everything the methodology specifies; an assessment can be run from capture to board output without an agent |
 | **0.4 Agent access** | MCP server: capture, compute, report; the method reachable through tools, with prompts as a convenience; no confirmation path | An assessor completes a full assessment through an agent, on two clients from different vendors |
 | **0.5 Local web UI** | Register capture, confirmation, scoring against the anchors, report viewing and export, all offline | A practitioner completes an assessment in mode C without using the command line |
-| **1.0 Ready for unaided use** | Documentation, installation, contribution process, licence and terms | An external practitioner completes an assessment unaided, and their run can be compared with another. Independent runs of the *method* continue throughout, by hand where the software is not ready |
+| **1.0 Ready for unaided use** | Documentation, installation, contribution process, licence and terms. Author review of the v1.2 calibration drafts, and the EuroBank per-condition breakdown, absorbed into the fixtures | An external practitioner completes an assessment unaided, and their run can be compared with another. No fixture value is still marked draft. Independent runs of the *method* continue throughout, by hand where the software is not ready |
 
 **v1 is done when** all of the above hold, the reference results are reproduced, and an unaided external run has been completed in mode A or B and another in mode C. Keeping client and assessment data out of the repository is a release-process check, not a product criterion.
 
