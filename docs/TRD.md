@@ -29,8 +29,9 @@ This document states what the software must do technically, and to what standard
 - **TR-04** Every field written by a person or an agent must carry provenance: author type (human or agent), agent and session identifier where applicable, timestamp, and the surface used. (FR-30, FR-34, FR-83)
 - **TR-05** Computed fields must be stored separately from entered fields, and must be regenerable from entered fields alone. Deleting all computed data and re-running must reproduce it exactly. (FR-32, FR-46)
 - **TR-06** Each register must carry a state (draft, confirmed, superseded), the identity of whoever confirmed it, and the time of confirmation. (FR-02, FR-31)
-- **TR-07** An assessment must record the method pack version, mapping versions, software version and deployment mode for every run. (FR-83, FR-101)
+- **TR-07** An assessment must record the method pack version, mapping versions, software version and deployment mode for every run. The mode is declared by the practitioner and must be recorded and reported as declared; what the software observes (the surface that wrote each field, and whether an agent was involved) is recorded separately as fact. (FR-83, FR-101, T-7)
 - **TR-08** History must be append-only: existing entries are never rewritten, and every change records what it replaced. (FR-34)
+- **TR-08a** Each history entry must carry the hash of the previous entry, and each snapshot must record the hashes of the inputs it was built from, so that an edited or removed entry is detectable. Verification must check the chain and report the first break. (FR-34, T-8)
 
 ## 4. Method pack and rules
 
@@ -58,6 +59,7 @@ This document states what the software must do technically, and to what standard
 - **TR-30** The server must run locally and communicate over stdio by default. It must make no outbound network connection of its own. (FR-80)
 - **TR-31** It must expose the method pack as resources: layer definitions and questions, taxonomies, the severity and trust-gap rules, conditions, the category rule, the anchors, the catalogue and the mappings. The same content must also be reachable through tools, because resources and prompts are application-controlled in MCP and some clients never surface them to the model. (FR-20)
 - **TR-32** It must expose phase interviews as prompts, and the equivalent "what should I ask next" as a tool, so different clients ask comparable questions. **[ASSUMPTION: prompts alone do not give cross-client comparability; to be tested on at least two clients.]** (FR-21, FR-22)
+- **TR-33a** A preview tool must return the categories, flags, clocks and scores that a set of proposed changes would produce, without writing anything, so an agent can explain a consequence during the interview. (T-5)
 - **TR-33** Tools must cover: create and open an assessment; add and amend dependencies, failure modes, trust signals and trust chains; link signals to dependencies; report gaps and next questions; read a rule or anchor; compute a run; read results and findings; map actions; generate reports; compare assessments; verify against fixtures. (FR-20 to FR-22, FR-33, FR-40 to FR-44, FR-50, FR-60 to FR-63, FR-72, FR-73)
 - **TR-34** The server must not expose a confirmation tool. Register confirmation is available only through the CLI or the web UI. (FR-31, ADR-0005)
 - **TR-34a** Confirmation must require an interactive attestation at the point of confirming: a terminal prompt in the CLI, or a form submission carrying a per-session token in the web UI. The attestation, the surface and whether the input device was interactive must be recorded in the history, so that a scripted confirmation is distinguishable in the record. An agent with shell access to the same machine is outside the trust boundary; the requirement is that its action is visible, not that it is impossible. (FR-31, FR-34)
@@ -170,18 +172,20 @@ This document states what the software must do technically, and to what standard
 | Web UI (FR-90 to FR-95) | TR-50 to TR-55, TR-20, TR-21, TR-86a |
 | Versioning and trust (FR-100 to FR-103) | TR-70 to TR-75, TR-87, TR-100 |
 
-## 11. Open technical questions
+## 11. Technical decisions
 
-| # | Question | Notes |
+Taken in September 2026, alongside the product decisions in the PRD.
+
+| # | Question | Decision |
 |---|---|---|
-| T-1 | Do assessments need a query surface beyond files (for example a rebuildable index), or is per-assessment reading enough? | Depends on whether portfolio views ever arrive; excluded from v1 |
-| T-2 | Should the method pack be embedded in the distribution, installed separately, or both? | Affects how a methodology update reaches users, and the licence split |
-| T-3 | Does PDF need to join Markdown, HTML and DOCX, or is printing from the browser enough? | Decided for v1: Markdown, HTML and DOCX (P-2). PDF remains open and would add a rendering dependency |
-| T-4 | How are concurrent writes handled when an agent and a UI session touch one assessment? | Decided in ADR-0010; the open part is whether a lock is enough or the store needs a write-ahead journal |
-| T-5 | Should the MCP server offer a "dry run" that shows what a change would do to categories before it is written? | Useful for agents; adds surface area |
-| T-6 | Which local runtime is used to verify the mode B instructions? | Decided for v1: documented and verified against one runtime, none shipped (P-4). Which runtime is open |
-| T-7 | How is the deployment mode determined reliably, given that the server cannot tell a hosted model from a local one? | Recorded from configuration and from the practitioner's declaration, and reported as such |
-| T-8 | Does the history need a hash chain so that a tampered snapshot is detectable? | Cheap to add; decides whether snapshots can be called immutable |
+| T-1 | Does the store need a query surface beyond the files? | No index in v1. Assessments are read one at a time. Revisit if portfolio views arrive or the MCP server needs cross-assessment search |
+| T-2 | How is the method pack distributed? | It ships inside the release, so an offline install works (ADR-0012). An external pack may be loaded by path once verified |
+| T-3 | Report formats | Markdown, self-contained HTML and DOCX. No PDF generation in v1: DOCX covers the board pack, and a PDF comes from the word processor or the browser |
+| T-4 | Concurrent writes | The single-writer lock with atomic rename (ADR-0010) is sufficient. No write-ahead journal, no database |
+| T-5 | A dry run for agents | Yes: one preview call that returns the categories, flags, clocks and scores a proposed change would produce, writing nothing |
+| T-6 | Local model support for mode B | Documented and verified against one local runtime; which runtime is chosen when the documentation is written |
+| T-7 | How the deployment mode is determined | Declared by the practitioner in configuration, recorded as declared, and reported as such. What the software can observe (which surface wrote, whether an agent was involved) is recorded separately as fact |
+| T-8 | Integrity of history and snapshots | History is hash-chained, each entry carrying the hash of the previous one, and each snapshot records the hashes of its inputs. Verification detects an edited or removed entry |
 
 ---
 
