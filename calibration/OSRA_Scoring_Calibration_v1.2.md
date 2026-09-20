@@ -400,12 +400,12 @@ Materialisation Horizon for scenarios 1 to 4 was not scored in the calibration r
 
 | Finding | Severity | Silent | Unverified | Single point | Conditions | Category | Horizon and reason | Six-factor score |
 |---|---|---|---|---|---|---|---|---|
-| **EuroBank Sentinel (finance)** | | | | | | | | |
-| CP1 base model behaviour change | see worked example | | | Y | 3 | Critical Convergence, Concentration flag | 5 (published) | 33.0 |
-| CP2 sanctions data integrity | see worked example | | | Y | 3 | Critical Convergence, Concentration flag | 5 (published) | 31.0 |
-| CP3 co-located monitoring | see worked example | | | Y | 3 | Critical Convergence, Concentration flag | 3 (published) | 29.5 |
-| CP5 GPU silent data corruption | see worked example | | | N | 2 | Convergence Point | 5 (published) | 23.5 |
-| CP4 vendor knowledge concentration | see worked example | | | N | 2 | Convergence Point | 2 (published) | 19.0 |
+| **EuroBank Sentinel (finance)** — see also the factor table below | | | | | | | | |
+| CP1 base model behaviour change | Critical or High | Y | Y | Y | 3 | Critical Convergence, Concentration flag | 5 (published) | 33.0 |
+| CP2 sanctions data integrity | Critical or High | Y | Y | Y | 3 | Critical Convergence, Concentration flag | 5 (published) | 31.0 |
+| CP3 co-located monitoring | Critical or High | Y | Y | Y | 3 | Critical Convergence, Concentration flag | 3 (published) | 29.5 |
+| CP5 GPU silent data corruption | to record | to record | to record | N | 2 | Convergence Point | 5 (published) | 23.5 |
+| CP4 vendor knowledge concentration | to record | to record | to record | N | 2 | Convergence Point | 2 (published) | 19.0 |
 | **StreamPay (digital services)** | | | | | | | | |
 | SP-CP1 LLM API dependency | Critical | Y | Y | Y | 3 | Critical Convergence, Concentration flag | 5: silent behaviour changes may already be active | 33.0 |
 | SP-CP2 device fingerprinting | High | Y | Y | N | 3 | Critical Convergence | 5: stale device data may already be in use | 24.0 |
@@ -436,6 +436,22 @@ Materialisation Horizon for scenarios 1 to 4 was not scored in the calibration r
 | AO-CP4 human approval effectiveness | High | Y | Y | N | 3 | Critical Convergence | 5 | 26.0 |
 | AO-CP5 runbook knowledge base integrity | High | Y | N | N | 2 | Convergence Point | 5 | 22.5 |
 | AO-CP6 secrets vault | High | N | N | Y | 1 | Concentration Risk | 3 | 19.5 |
+
+### EuroBank Sentinel: six-factor scoring (reconciled into this document)
+
+The worked example at [marcobrondani.com/osra/eurobank-sentinel](https://marcobrondani.com/osra/eurobank-sentinel) is the finance scenario. Its factor scores are recorded here so that every reference figure lives in the repository and can be recomputed with `weight_sensitivity.py`.
+
+| Finding | Reg Exposure (×1.5) | Detection Deficit | Trust Depth | Blast Radius (×1.5) | Remed Complexity | Materialisation Horizon | **Score** | Category |
+|---|---|---|---|---|---|---|---|---|
+| CP1: Base model behaviour change | 5 (7.5) | 5 | 4 | 5 (7.5) | 4 | 5 | **33.0** | Critical Convergence |
+| CP2: Sanctions data integrity | 5 (7.5) | 5 | 3 | 5 (7.5) | 3 | 5 | **31.0** | Critical Convergence |
+| CP3: Co-located monitoring | 4 (6.0) | 5 | 4 | 5 (7.5) | 4 | 3 | **29.5** | Critical Convergence |
+| CP5: GPU silent data corruption | 3 (4.5) | 5 | 2 | 2 (3.0) | 4 | 5 | **23.5** | Convergence Point |
+| CP4: Vendor knowledge concentration | 3 (4.5) | 2 | 3 | 3 (4.5) | 3 | 2 | **19.0** | Convergence Point |
+
+The single point of dependency flags come from the Phase 1 illustration in the architecture document, which identifies the base model, the sanctions and market data API and the cloud region hosting Sentinel and its monitoring as single points of dependency. The three critical convergences therefore carry the Concentration flag.
+
+**Still to record.** The per-condition breakdown for CP4 and CP5 (which two of the three conditions each meets, and their severity) is on the worked example page but not yet restated here. Both are Convergence Points, so each meets exactly two conditions. **[AUTHOR ACTION: record the two conditions and the severity for CP4 and CP5, so that the fixtures can be built from this document alone.]**
 
 Two orderings change against the five-factor calibration tables. In StreamPay, SP-CP3 (21.5) now ranks above SP-CP4 (19.5), because a silent integrity failure that may be active now outranks a slow regulatory divergence. That is the temporal urgency the sixth factor was added to capture, and the calibration run flagged exactly this pair. In GridSense, NW-CP3 (25.0) now ranks above NW-CP2 (24.5) for the same reason. In RouteOptima, TL-CP3 (19.5) ranks above TL-CP2 (20.0) despite the lower score, because TL-CP3 is a Critical Convergence and TL-CP2 a Convergence Point.
 

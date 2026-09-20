@@ -98,18 +98,30 @@ def score(factors, w_reg, w_blast, five_factor=False):
     return total
 
 
-def ranking(points, w_reg, w_blast):
+def rank_key(points, name, w_reg, w_blast):
     """Category order first, then score, then the tie-break in Step 4.3:
     regulatory exposure, blast radius, materialisation horizon, detection
-    deficit. Findings still level after that are listed by name and need a
-    practitioner's recorded decision."""
+    deficit. Nothing further is applied: findings still level after that are
+    unresolved ties, which Step 4.3 leaves to the practitioner to decide and
+    record."""
+    category, f = points[name]
+    reg, det, _, blast, _, horizon = f
+    return (CATEGORY_ORDER[category], -score(f, w_reg, w_blast), -reg, -blast, -horizon, -det)
 
-    def key(name):
-        category, f = points[name]
-        reg, det, _, blast, _, horizon = f
-        return (CATEGORY_ORDER[category], -score(f, w_reg, w_blast), -reg, -blast, -horizon, -det, name)
 
-    return sorted(points, key=key)
+def ranking(points, w_reg, w_blast):
+    """Findings in remediation order. Where two findings share a key they are
+    an unresolved tie; they are listed by name only so that the output is
+    stable, and unresolved_ties() reports them."""
+    return sorted(points, key=lambda n: (rank_key(points, n, w_reg, w_blast), n))
+
+
+def unresolved_ties(points, w_reg, w_blast):
+    """Groups of findings the published tie-break cannot separate."""
+    seen = {}
+    for name in points:
+        seen.setdefault(rank_key(points, name, w_reg, w_blast), []).append(name)
+    return [group for group in seen.values() if len(group) > 1]
 
 
 def kendall_tau(a, b):
@@ -160,7 +172,8 @@ def main():
         )
         print(f"| {w[0]}, {w[1]} | " + ", ".join(f"{n.split(' (')[0]} {m:.1f}" for m, n in maxima) + " |")
     print()
-    # Score ties within a category at the baseline, which the tie-break decides.
+    # Score ties within a category at the baseline, which the tie-break decides,
+    # and ties the tie-break cannot decide, which the practitioner must.
     print("Score ties within a category at baseline weights:")
     for name, points in SCENARIOS.items():
         seen = {}
@@ -168,6 +181,13 @@ def main():
             seen.setdefault((category, score(f, *BASELINE)), []).append(k.split()[0])
         ties = [v for v in seen.values() if len(v) > 1]
         print(f"  {name}: {ties if ties else 'none'}")
+    print()
+    print("Unresolved ties after the Step 4.3 tie-break (practitioner decides):")
+    for name, points in SCENARIOS.items():
+        for w in WEIGHT_SETS:
+            for group in unresolved_ties(points, *w):
+                print(f"  {name} at weights {w[0]}, {w[1]}: {[g.split()[0] for g in group]}")
+    print("  (none listed above means the tie-break separated every pair)")
 
 
 if __name__ == "__main__":
