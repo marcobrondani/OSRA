@@ -305,3 +305,10 @@ def test_catalogue_has_23_actions_verbatim(pack):
     for ident, fields in published.items():
         for key, value in fields.items():
             assert actions[ident][key] == value, (ident, key)
+
+
+def test_the_pack_carries_its_own_licence(pack):
+    assert pack.manifest["licence"] == "Apache-2.0"
+    assert (pack.root / "LICENSE").read_bytes() == (pack.root.parents[1] / "LICENSES" / "Apache-2.0.txt").read_bytes()
+    assert "Apache License, Version 2.0" in " ".join((pack.root / "NOTICE").read_text().split())
+    assert {"LICENSE", "NOTICE"} <= set(pack.checksums)

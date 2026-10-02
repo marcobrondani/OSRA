@@ -1,0 +1,12 @@
+OSRA method pack 1.2
+Copyright 2026 Marco Brondani
+
+This method pack is the OSRA methodology, version 1.2, in machine-readable
+form: taxonomies, rules, anchors, the action catalogue, regulatory mappings,
+schemas and reference fixtures. It is licensed under the Apache License,
+Version 2.0 (LICENSE in this directory).
+
+The methodology documents it is derived from (methodology/,
+calibration/, action-catalogue/ in https://github.com/marcobrondani/OSRA)
+are published under CC BY-SA 4.0 by the same author, who licenses this
+machine-readable form separately under Apache 2.0.

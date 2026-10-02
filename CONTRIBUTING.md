@@ -8,7 +8,7 @@ What you contribute is licensed under the licence of the part of the repository 
 
 - **The software** (`src/`, `tests/`, `scripts/`, `pyproject.toml`, `.github/`): under the Apache License 2.0. Under its section 5, a contribution you intentionally submit for inclusion is licensed under the same terms, without additional terms or conditions.
 - **The methodology and its content** (`methodology/`, `calibration/`, `action-catalogue/`, `evidence/`, `templates/`, `docs/`, `README.md`): under CC BY-SA 4.0.
-- **The method pack** (`method/`): its licence is still to be decided, so changes to it are discussed in an issue before a pull request.
+- **The method pack** (`method/`): under the Apache License 2.0, like the software. A change to the pack is a change to the method's machine-readable form, so it follows the methodology (see below).
 
 Submit only work you have the right to contribute under those terms.
 
