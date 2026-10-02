@@ -1,0 +1,29 @@
+# Assessment types: full execution and the two Minimum Viable Execution
+# options, with the registers each requires and the outputs it produces
+# (FR-05, TR-65).
+# Source: methodology/OSRA_Architecture_v1.2.md, Part IV, How to Run OSRA and
+# Minimum Viable Execution.
+schema_version: 1
+id: taxonomy.execution
+assessment_types:
+  id: execution.assessment-types
+  cites: "Part IV, Minimum Viable Execution"
+  values:
+    - id: full
+      name: Full four-phase execution
+      requires: [substrate, failures, trust, scoring]
+      produces: [substrate-map, failure-surface-register, trust-surface-register, convergence-risk-summary]
+    - id: convergence-scan
+      name: "Option A — Convergence Scan"
+      note: >-
+        Execute a lightweight version of all four Phases focused only on
+        single points of dependency (Phase 1), silent failure risks (Phase 2),
+        and unverified vendor performance claims (Phase 3). Produce a reduced
+        Convergence Risk Summary covering the top 3 convergence points.
+      requires: [substrate, failures, trust, scoring]
+      produces: [convergence-risk-summary-reduced]
+    - id: trust-surface-first
+      name: "Option B — Trust Surface First"
+      note: Execute Phase 3 only. Produce a Trust Surface Register.
+      requires: [trust]
+      produces: [trust-surface-register]

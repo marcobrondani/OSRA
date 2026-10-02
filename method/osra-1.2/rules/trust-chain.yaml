@@ -1,0 +1,18 @@
+# Trust chain depth: how many layers of trust stand behind a signal.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 3, Step 3.4 and the
+# Trust Surface Register artefact specification ("Trust chains with depth").
+# Chain depth is available to the practitioner when scoring Trust Depth
+# (FR-13a); it does not decide the score.
+schema_version: 1
+id: trust-chain
+cites: "Phase 3, Step 3.4"
+rules:
+  - id: trust-chain.depth
+    cites: "Phase 3, Step 3.4"
+    note: >-
+      Identify where trust signals are transitive: where the organisation
+      trusts Vendor A, who trusts Vendor B, who trusts Vendor C.
+    form: length
+    scope: trust_signal
+    input: chain
+    output: chain_depth

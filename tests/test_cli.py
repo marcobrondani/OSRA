@@ -34,7 +34,7 @@ def test_check_json(capsys):
 def test_check_on_a_tampered_pack_exits_4(pack_copy, capsys):
     pack_copy.edit("rules/category.yaml", "clock: P30D", "clock: P31D")
     assert main(["check", "--pack", str(pack_copy.path)]) == 4
-    assert "OSRA-E401" in capsys.readouterr().out
+    assert "OSRA-E401" in capsys.readouterr().err
 
 
 def test_validate_example(capsys):
@@ -46,7 +46,7 @@ def test_validate_invalid_exits_1_with_rule_and_example(example, capsys):
     path = example / "failures.yaml"
     path.write_text(path.read_text(encoding="utf-8").replace("impact: high", "impact: severe"), encoding="utf-8")
     assert main(["validate", str(example)]) == 1
-    out = capsys.readouterr().out
+    out = capsys.readouterr().err
     assert "OSRA-E102 Value not allowed (failures.yaml)" in out
     assert "FM-02: 'impact' is 'severe'" in out
     assert "rule: failures.schema.json#/" in out
@@ -88,4 +88,28 @@ def test_every_code_used_is_in_the_catalogue():
     assert used <= set(errors.catalogue())
     for code, entry in errors.catalogue().items():
         assert set(entry) == {"title", "message", "remedy", "exit_code"}, code
-        assert entry["exit_code"] in (1, 3, 4), code
+        assert entry["exit_code"] in (0, 1, 3, 4, 5), code
+        assert (entry["exit_code"] == 0) == code.startswith("OSRA-W"), code
+
+
+def test_verify_reproduces_the_reference_results(capsys):
+    assert main(["verify"]) == 0
+    out = capsys.readouterr().out
+    assert "category rule, 16 cases: reproduced" in out
+    assert "weight sensitivity: reproduced" in out
+    assert "depend on 34 draft reference values" in out
+
+
+def test_verify_json(capsys):
+    assert main(["verify", "--format", "json"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["draft_inputs"] == 34
+    assert all(s["reproduced"] for s in payload["scenarios"])
+
+
+def test_verify_fails_on_a_changed_rule(pack_copy, capsys):
+    pack_copy.edit("rules/silent-failure.yaml", "{field: detection_confidence, in: [low, none]}",
+                   "{field: detection_confidence, in: [none]}")
+    pack_copy.rehash()
+    assert main(["verify", "--pack", str(pack_copy.path)]) == 1
+    assert "OSRA-E606" in capsys.readouterr().err

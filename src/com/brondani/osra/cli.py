@@ -1,13 +1,15 @@
 """The osra-code command-line interface.
 
-Slice 0.1 commands:
+Commands:
 
   osra-code check              check the method pack and its reference fixtures
+  osra-code verify             reproduce the published reference results
   osra-code validate DIR       validate an assessment directory
   osra-code pack rehash [DIR]  record new checksums for a method pack
 
-Exit codes: 0 no problems, 1 invalid assessment or fixture data, 2 usage
-error, 3 a file that cannot be read, 4 an invalid method pack.
+Exit codes: 0 no problems (warnings allowed), 1 invalid data or a failed
+verification, 2 usage error, 3 a file that cannot be read, 4 an invalid method
+pack, 5 the assessment is locked by another writer.
 """
 
 from __future__ import annotations
@@ -22,15 +24,18 @@ from .errors import Diagnostic, exit_code
 from .fixtures import check_fixtures, draft_summary, load_fixtures
 from .pack import PackError, check_pack, default_pack_path, load_pack, write_checksums
 from .validate import validate_assessment_dir
+from .verify import verify
 
 
 def _report(diagnostics: list[Diagnostic], fmt: str, extra: dict | None = None) -> None:
+    """Machine-readable output goes to standard output; text diagnostics go
+    to standard error (TR-41)."""
     if fmt == "json":
         payload = {"diagnostics": [d.to_json() for d in diagnostics], **(extra or {})}
         print(json.dumps(payload, indent=2, ensure_ascii=False))
         return
     for d in diagnostics:
-        print(d.render())
+        print(d.render(), file=sys.stderr)
 
 
 def _load(args: argparse.Namespace):
@@ -83,6 +88,41 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return exit_code(problems)
 
 
+def cmd_verify(args: argparse.Namespace) -> int:
+    pack, problems = _load(args)
+    report = None
+    if pack is not None:
+        fixtures, fixture_problems = load_fixtures(pack)
+        problems += fixture_problems + check_fixtures(pack, fixtures)
+        if not problems:
+            report = verify(pack, fixtures)
+            problems += report.problems
+    summary = {}
+    if report is not None:
+        summary = {
+            "pack": {"id": pack.id, "version": pack.version, "checksum": pack.checksum},
+            "scenarios": [
+                {"id": s.scenario, "findings": s.findings, "draft_inputs": s.drafts, "reproduced": not s.problems}
+                for s in report.scenarios
+            ],
+            "category_table": {"reproduced": not report.category_table},
+            "sensitivity": {"reproduced": not report.sensitivity},
+            "draft_inputs": report.drafts,
+        }
+    _report(problems, args.format, summary)
+    if args.format == "text" and report is not None:
+        for s in report.scenarios:
+            status = "reproduced" if not s.problems else f"{len(s.problems)} difference(s)"
+            print(f"{s.scenario}: {s.findings} findings, {status}, {s.drafts} draft input(s)")
+        print(f"category rule, 16 cases: {'reproduced' if not report.category_table else 'differences'}")
+        print(f"weight sensitivity: {'reproduced' if not report.sensitivity else 'differences'}")
+        if report.drafts:
+            print(f"these results depend on {report.drafts} draft reference values; no release called v1 may (FR-104).")
+    if args.format == "text":
+        print("ok" if not problems else f"{len(problems)} problem(s)")
+    return exit_code(problems)
+
+
 def cmd_pack_rehash(args: argparse.Namespace) -> int:
     root = (args.directory or default_pack_path()).resolve()
     if not (root / "pack.yaml").is_file():
@@ -110,6 +150,10 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("directory", type=Path)
     with_pack(validate)
     validate.set_defaults(func=cmd_validate)
+
+    verify_parser = commands.add_parser("verify", help="reproduce the published reference results (the release gate)")
+    with_pack(verify_parser)
+    verify_parser.set_defaults(func=cmd_verify)
 
     pack = commands.add_parser("pack", help="method pack maintenance")
     pack_commands = pack.add_subparsers(dest="pack_command", required=True)

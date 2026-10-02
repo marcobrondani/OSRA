@@ -4,8 +4,10 @@
 # never assessment content (TR-89).
 #
 # exit_code is what the command-line interface returns when the diagnostic is
-# the most serious one reported: 1 for invalid assessment or fixture data,
-# 3 for a file that cannot be read, 4 for an invalid method pack.
+# the most serious one reported: 0 for a warning, 1 for invalid assessment or
+# fixture data or a failed verification, 3 for a file that cannot be read,
+# 4 for an invalid method pack, 5 for an assessment another writer holds.
+# Codes starting OSRA-W are warnings.
 schema_version: 1
 errors:
   OSRA-E101:
@@ -126,4 +128,64 @@ errors:
     title: Fixture inconsistent
     message: "{entity}: {detail}."
     remedy: Correct the fixture against the calibration document.
+    exit_code: 1
+  OSRA-E601:
+    title: Finding not scored
+    message: "{entity}: the dependency is a {value} finding and must be scored, but scoring.yaml has no entry for it."
+    remedy: Score the five factors for this dependency against the anchors (Phase 4, Step 4.2).
+    exit_code: 1
+  OSRA-E602:
+    title: Horizon undetermined
+    message: "{entity}: the dependency is a {value} finding but none of its failure modes qualifies for the materialisation horizon."
+    remedy: Check the dependency's failure modes; a scored finding always has one that met a condition.
+    exit_code: 1
+  OSRA-W603:
+    title: Tie resolution unused
+    message: "{entity}: '{field}' orders {value}, which are not tied in this run."
+    remedy: Remove the resolution, or update it to the findings that are tied now.
+    exit_code: 0
+  OSRA-E604:
+    title: Register not confirmed
+    message: "{entity}: the register is {value}; it must be confirmed before scoring or reporting (FR-33)."
+    remedy: Review the register and confirm it with 'osra-code confirm'.
+    exit_code: 1
+  OSRA-E605:
+    title: Register missing
+    message: "{entity}: a {value} assessment requires this register, and it does not exist."
+    remedy: Capture the register, or change the assessment type.
+    exit_code: 1
+  OSRA-E606:
+    title: Reference result not reproduced
+    message: "{entity}: {field} is {value!r}; the published reference value is {expected!r}."
+    remedy: The engine or the method pack disagrees with the published calibration. Do not release.
+    exit_code: 1
+  OSRA-E607:
+    title: History broken
+    message: "{entity}: {detail}."
+    remedy: >-
+      The history was edited or truncated outside OSRA-CODE. Restore it from
+      the organisation's own copy; the entries from this point on cannot be
+      trusted.
+    exit_code: 1
+  OSRA-W608:
+    title: File changed outside OSRA-CODE
+    message: "{entity}: the file differs from the last version OSRA-CODE recorded."
+    remedy: Review the change, then record it with 'osra-code record' so the history covers it.
+    exit_code: 0
+  OSRA-E609:
+    title: Assessment locked
+    message: "{entity}: another writer holds the assessment ({detail})."
+    remedy: >-
+      Wait for the other writer to finish. If no other writer is running, the
+      lock is stale: rerun with --break-lock, which is recorded in the history.
+    exit_code: 5
+  OSRA-E610:
+    title: Unknown entity
+    message: "{entity}: there is no such entity in the assessment."
+    remedy: Use an identifier from the registers, such as DEP-01, FM-01 or TS-01.
+    exit_code: 1
+  OSRA-E611:
+    title: Assessment exists
+    message: "{entity}: an assessment already exists in this directory."
+    remedy: Choose an empty directory for a new assessment.
     exit_code: 1
