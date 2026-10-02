@@ -15,7 +15,7 @@ its evidence, its calibration, and the documents for turning it into software
 
 ## Layout
 - `docs/` — public product and technical documents: VISION, PRD, TRD,
-  ARCHITECTURE, `adr/` (all ADRs currently Proposed).
+  ARCHITECTURE, `adr/` (all twelve ADRs Accepted, September 2026).
 - `private/` — gitignored. Business documents live here. Never commit them,
   never quote them in commit messages, PR descriptions or public files.
 - `calibration/weight_sensitivity.py` — recomputes every published figure.
