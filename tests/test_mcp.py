@@ -117,3 +117,12 @@ def test_an_end_to_end_session_over_stdio(workspace, tmp_path):
     assert refused.is_error and "OSRA-E604" in refused.content[0].text
     entry = Store(workspace / "example", None).read("substrate")["dependencies"][-1]
     assert entry["provenance"]["created"]["agent"] == "osra-test-client 1.0"
+
+
+def test_an_unexpected_failure_becomes_a_refusal(server, monkeypatch):
+    from com.brondani.osra import agent as agent_module
+
+    monkeypatch.setattr(agent_module.AgentService, "list_assessments", lambda self: 1 / 0)
+    with pytest.raises(ToolError) as exc:
+        run(server.call_tool("list_assessments", {}))
+    assert "ZeroDivisionError" in str(exc.value) and "Traceback" not in str(exc.value)

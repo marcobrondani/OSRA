@@ -70,6 +70,9 @@ def build_server(service: AgentService) -> MCPServer:
             return fn(*args, **kwargs)
         except AgentError as exc:
             raise ToolError(exc.render()) from None
+        except Exception as exc:  # noqa: BLE001 - an agent gets a refusal, never a traceback
+            raise ToolError(f"OSRA-CODE could not complete the call ({type(exc).__name__}). Writes are atomic, so "
+                            "an assessment is never left half-written; 'osra-code history' shows what was recorded.") from None
 
     # -- the method -----------------------------------------------------------------
 
