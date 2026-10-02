@@ -154,7 +154,10 @@ def _table(columns: list, rows: list, caption: str | None = None) -> str:
     out = []
     if caption:
         out.append(_para(caption, "Subtitle"))
-    out.append('<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="5000" w:type="pct"/></w:tblPr><w:tblGrid/>')
+    width = 9638 // max(len(columns), 1)  # A4 text width in twentieths of a point, shared equally
+    grid = "".join(f'<w:gridCol w:w="{width}"/>' for _ in columns)
+    out.append('<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="5000" w:type="pct"/></w:tblPr>'
+               f"<w:tblGrid>{grid}</w:tblGrid>")
     out.append('<w:tr><w:trPr><w:tblHeader/></w:trPr>'
                + "".join(f"<w:tc>{_para(c, bold=True)}</w:tc>" for c in columns) + "</w:tr>")
     for row in rows or [["—"] * len(columns)]:

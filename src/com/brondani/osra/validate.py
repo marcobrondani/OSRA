@@ -120,8 +120,13 @@ def load_assessment_dir(path: Path) -> tuple[dict[str, Any], list[Diagnostic]]:
 
 
 def validate_assessment_dir(path: Path, pack: MethodPack) -> list[Diagnostic]:
+    """Everything check_assessment reports, plus a warning for any entered
+    text that looks like a credential (TR-86b)."""
+    from .reports import secret_warnings
+
     documents, problems = load_assessment_dir(path)
-    return problems + check_assessment(pack, documents)
+    valid = {k: v for k, v in documents.items() if isinstance(v, dict)}
+    return problems + check_assessment(pack, documents) + secret_warnings(valid, FILES)
 
 
 def _entries(document: Any, key: str) -> list:

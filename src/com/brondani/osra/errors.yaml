@@ -224,3 +224,18 @@ errors:
     message: "{entity}: the dependency has more than one entry in summary.yaml."
     remedy: Keep one summary entry per finding.
     exit_code: 1
+  OSRA-W619:
+    title: Looks like a credential
+    message: "{entity}: '{field}' looks like a credential or secret; it is withheld from every report."
+    remedy: Remove the secret from the assessment. Registers describe dependencies; they never need to hold credentials.
+    exit_code: 0
+  OSRA-E620:
+    title: No previous run
+    message: "{entity}: a refresh report compares two runs, and this assessment has {value}."
+    remedy: Score the assessment again after the substrate changes, then produce the refresh report.
+    exit_code: 1
+  OSRA-E621:
+    title: Report not available
+    message: "{entity}: the {value} report is not produced by a {expected} assessment."
+    remedy: Choose a report the assessment type produces (FR-05).
+    exit_code: 1
