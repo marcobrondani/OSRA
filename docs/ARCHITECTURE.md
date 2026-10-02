@@ -193,7 +193,7 @@ The technical questions T-1 to T-8 were decided in September 2026 and are record
 - the single-writer lock with atomic rename is sufficient for concurrent writes from an agent and a UI session (T-4, ADR-0010);
 - history is hash-chained and snapshots record the hashes of their inputs (T-8).
 
-Still open: how the method pack is laid out inside the installable package, given that ADR-0004 keeps content and code in separate directories and ADR-0012 ships them together. This is settled when packaging is built, before 1.0.
+The method pack ships inside the installable package in its own directory, `com/brondani/osra_method/osra-1.2`, beside the code in `com/brondani/osra`, never inside it: one installation that works offline (ADR-0012) with content and code still apart (ADR-0004). A source checkout reads it from `method/osra-1.2`.
 
 ---
 

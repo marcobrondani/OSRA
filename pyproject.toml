@@ -39,6 +39,12 @@ path = "src/com/brondani/osra/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/com"]
 
+# The method pack ships inside the package so that an offline installation
+# works and verifies (ADR-0012), in its own directory beside the code, never
+# inside it (ADR-0004).
+[tool.hatch.build.targets.wheel.force-include]
+"method/osra-1.2" = "com/brondani/osra_method/osra-1.2"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
