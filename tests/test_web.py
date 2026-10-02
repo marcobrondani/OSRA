@@ -234,3 +234,12 @@ def test_files_changed_outside_are_flagged_and_recorded(client, tmp_path, pack):
     assert "Files changed outside OSRA-CODE" in overview and "Record the changes" in overview
     assert client.post("/a/screening/record")[0] == 303
     assert Store(tmp_path / "ws" / "screening", pack).integrity() == []
+
+
+def test_a_tampered_score_is_rejected_not_stored(client, tmp_path, pack):
+    create(client)
+    client.post("/a/screening/new/dependency", DEPENDENCY)
+    client.post("/a/screening/new/failure-mode", FAILURE)
+    status, _, body = client.post("/a/screening/rate/DEP-01", {**SCORES, "blast_radius.score": "abc"})
+    assert status == 422 and "OSRA-E103" in body
+    assert Store(tmp_path / "ws" / "screening", pack).read("scoring")["scores"] == []
