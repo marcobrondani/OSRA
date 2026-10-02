@@ -244,3 +244,16 @@ errors:
     message: "{entity}: {detail}."
     remedy: Review the imported assessment and supply what the workbook could not carry before confirming it.
     exit_code: 0
+  OSRA-E623:
+    title: A person's decision
+    message: "{entity}: '{field}' can be changed only by a person, through the command line or the web UI."
+    remedy: Ask the practitioner to make this change with 'osra-code assessment'.
+    exit_code: 1
+  OSRA-E624:
+    title: Agent access refused
+    message: "{entity}: {detail}."
+    remedy: >-
+      The practitioner controls what agents may do (FR-35). They can allow
+      drafting with 'osra-code assessment DIR agent_access=draft' and by
+      starting the server with --writes, or keep the assessment read-only.
+    exit_code: 1

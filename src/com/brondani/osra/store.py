@@ -298,6 +298,36 @@ class Store:
                 files[FILES[kind]] = history.file_hash(self._path(FILES[kind]))
             history.append(self.root, self._entry(actor, "import", detail={"source": source}, files=files))
 
+    # Fields of assessment.yaml a writer may change, and those only a person
+    # may change: an agent cannot widen its own access or declare the mode.
+    ASSESSMENT_FIELDS = ("system.", "status", "agent_access", "deployment_mode.declared")
+    HUMAN_ONLY = ("status", "agent_access", "deployment_mode.declared")
+
+    def update_assessment(self, actor: Actor, values: dict[str, Any]) -> None:
+        """Change the system description, the status (an abandoned assessment
+        is kept, not deleted: FR-06), the agent access (FR-35, FR-85) or the
+        declared deployment mode (T-7)."""
+        for path in values:
+            if not path.startswith(self.ASSESSMENT_FIELDS[0]) and path not in self.ASSESSMENT_FIELDS:
+                raise StoreError([diagnostic("OSRA-E105", entity=FILES["assessment"], field=path)])
+            if path in self.HUMAN_ONLY and actor.author_type != "human":
+                raise StoreError([diagnostic("OSRA-E623", entity=FILES["assessment"], field=path)])
+        with self._locked(actor):
+            self._preflight()
+            doc = self.read("assessment")
+            if doc is None:
+                raise StoreError([diagnostic("OSRA-E303", entity=FILES["assessment"], file=FILES["assessment"])])
+            record = actor.record(self.clock())
+            changes = []
+            for path, value in sorted(values.items()):
+                changes.append({"field": path, "before": copy.deepcopy(_get_path(doc, path)), "after": value})
+                _set_path(doc, path, copy.deepcopy(value))
+                if path == "deployment_mode.declared":
+                    doc["deployment_mode"]["provenance"] = record
+                else:
+                    doc.setdefault("provenance", {"created": record}).setdefault("fields", {})[path] = record
+            self._commit(actor, "update-assessment", {"assessment": doc}, entity=FILES["assessment"], changes=changes)
+
     def _register(self, kind: str) -> dict[str, Any]:
         return self.read(kind) or _empty_register(kind)
 

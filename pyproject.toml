@@ -22,8 +22,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# The MCP server for agent access. Mode C needs none of it (FR-84).
+mcp = [
+  "mcp>=2.2,<3",
+]
 dev = [
   "pytest>=8",
+  "mcp>=2.2,<3",
 ]
 
 [project.scripts]
