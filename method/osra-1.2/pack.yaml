@@ -14,10 +14,10 @@ calibration:
   document: calibration/OSRA_Scoring_Calibration_v1.2.md
 catalogue:
   document: action-catalogue/OSRA_Action_Catalogue_v1.2.md
-# The pack is derived from material published under CC BY-SA 4.0. The licence
-# of the pack itself is pending the author's decision (ADR-0004); until then
-# no licence file is included here.
-licence: null
+# The pack is licensed under the Apache License 2.0 (LICENSE and NOTICE in this
+# directory). The methodology documents it is derived from are published under
+# CC BY-SA 4.0 by the same author.
+licence: Apache-2.0
 # The order in which the engine applies the rules. Each rule may read the
 # outputs of the rules before it. Rules listed under reporting are applied
 # when reports are produced, not by the engine.

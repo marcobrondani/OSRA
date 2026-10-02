@@ -71,6 +71,6 @@ For now, participation is through issues and discussion:
 - **Suggest scenarios to calibrate,** such as sectors or agentic patterns not yet covered, as a description in an issue.
 - **Contribute code or content** through public pull requests on this repository ([CONTRIBUTING.md](../CONTRIBUTING.md)).
 
-The software, OSRA-CODE, is licensed under the Apache License 2.0; the published methodology versions are licensed under CC BY-SA 4.0 ([LICENSE](../LICENSE)). The licence of the method pack, the methodology in machine-readable form, is still to be decided. Contributions are made through public pull requests.
+The software, OSRA-CODE, and the method pack, the methodology in machine-readable form, are licensed under the Apache License 2.0; the published methodology versions are licensed under CC BY-SA 4.0 ([LICENSE](../LICENSE)). Contributions are made through public pull requests.
 
 To get in touch, open an issue or contact the author through [marcobrondani.com](https://marcobrondani.com).

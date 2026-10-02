@@ -177,7 +177,7 @@ OSRA is built on work that can be inspected:
 
 The methodology and its published content (the architecture document, calibration, action catalogue, evidence, templates and documentation) are licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSES/CC-BY-SA-4.0.txt). You are free to use, adapt, and redistribute OSRA for any purpose, including commercial use, provided you give appropriate credit and distribute any derivative works under the same licence.
 
-The software, OSRA-CODE (`src/`, `tests/`), is licensed under the [Apache License 2.0](LICENSES/Apache-2.0.txt). The licence of the method pack (`method/`), the methodology in machine-readable form, is still to be decided. [LICENSE](LICENSE) and `REUSE.toml` say which licence applies where.
+The software, OSRA-CODE (`src/`, `tests/`), and the method pack (`method/`), the methodology in machine-readable form, are licensed under the [Apache License 2.0](LICENSES/Apache-2.0.txt). [LICENSE](LICENSE) and `REUSE.toml` say which licence applies where.
 
 ## Contributing
 

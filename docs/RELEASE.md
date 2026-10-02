@@ -47,7 +47,7 @@ Not a continuous integration gate; done by a person before each release.
 
 - [ ] An external practitioner has completed an assessment unaided, and their run has been compared with another.
 - [ ] An unaided external run has been completed in mode A or B, and another in mode C.
-- [ ] The licence of the method pack is decided and its licence file is in the pack.
+- [x] The licence of the method pack is decided (Apache-2.0, October 2026) and its LICENSE and NOTICE are in the pack.
 
 ---
 

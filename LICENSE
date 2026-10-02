@@ -13,11 +13,13 @@ The methodology and its published content: CC BY-SA 4.0
   commercial use, provided you give appropriate credit, indicate if changes
   were made, and distribute what you build on it under the same licence.
 
-The software, OSRA-CODE: Apache License 2.0
-  src/, tests/, scripts/, pyproject.toml and .github/ are licensed under the Apache
-  License, Version 2.0 (LICENSES/Apache-2.0.txt). See also NOTICE.
+The software, OSRA-CODE, and the method pack: Apache License 2.0
+  src/, tests/, scripts/, requirements/, pyproject.toml, .github/ and the
+  method pack in method/ are licensed under the Apache License, Version 2.0
+  (LICENSES/Apache-2.0.txt). See also NOTICE.
 
-The method pack (method/): licence to be decided
-  The method pack is the methodology in machine-readable form, derived from
-  the CC BY-SA 4.0 material above. Its own licence has not yet been decided
-  (docs/adr/0004-content-code-separation.md).
+  The method pack is the methodology in machine-readable form. It carries its
+  own LICENSE and NOTICE (method/osra-1.2/), so that it travels with its
+  terms wherever it is installed or embedded. The methodology documents it is
+  derived from remain under CC BY-SA 4.0, as above; the author licenses the
+  machine-readable form separately.
