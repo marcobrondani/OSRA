@@ -1,0 +1,36 @@
+# Ranking of scored findings in the Convergence Risk Summary.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 4, Step 4.3.
+schema_version: 1
+id: ranking
+cites: "Phase 4, Step 4.3"
+rules:
+  - id: ranking.order
+    cites: "Phase 4, Step 4.3"
+    note: >-
+      Rank the scored findings by category first, in the order Critical
+      Convergence, Convergence Point, Concentration Risk, and by score within
+      each category, highest first. Where two findings in the same category
+      have the same score, rank the one with the higher Regulatory Exposure
+      first, then the higher Blast Radius, then the higher Materialisation
+      Horizon, then the higher Detection Deficit. If they are still level, the
+      practitioner decides and records the reason.
+    form: sort
+    scope: finding
+    category_order: [critical-convergence, convergence-point, concentration-risk]
+    keys:
+      - {field: score, direction: desc}
+      - {field: regulatory_exposure, direction: desc}
+      - {field: blast_radius, direction: desc}
+      - {field: materialisation_horizon, direction: desc}
+      - {field: detection_deficit, direction: desc}
+    # Findings still level after every key share a rank and are reported as
+    # a tie. They are never separated by name or by insertion order (TR-14).
+    remaining_ties: report
+  - id: ranking.primary-output
+    cites: "Phase 4, Step 4.3"
+    note: >-
+      The top 3-5 findings in this order are OSRA's primary output.
+    form: top
+    scope: finding
+    min: 3
+    max: 5

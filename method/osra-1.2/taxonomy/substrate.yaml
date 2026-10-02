@@ -1,0 +1,57 @@
+# Phase 1 classifications recorded per dependency, other than the layer.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 1, Steps 1.3 and 1.4,
+# and the Substrate Map artefact specification. workbook_label is the value
+# used in the Phase 1 workbook validation lists.
+schema_version: 1
+id: taxonomy.substrate
+single_point:
+  id: substrate.single-point
+  cites: "Phase 1, Step 1.3"
+  question: >-
+    If this specific provider/component/resource were unavailable for 72 hours,
+    could the AI system still function? Any dependency where the answer is "no"
+    is a single point of dependency and must be flagged.
+visibility:
+  id: substrate.visibility
+  cites: "Phase 1, Step 1.4"
+  values:
+    - id: visible
+      name: Visible
+      workbook_label: Visible
+      definition: The organisation knows the dependency exists and monitors it.
+    - id: known-unmonitored
+      name: Known but unmonitored
+      workbook_label: Known-Unmonitored
+      definition: The organisation is aware of the dependency but has no active monitoring or alerting.
+    - id: invisible
+      name: Invisible
+      workbook_label: Invisible
+      definition: >-
+        The organisation does not know the dependency exists (common in
+        multi-tier supply chains — e.g., a third-party model provider's own
+        cloud dependency).
+owner_types:
+  id: substrate.owner-types
+  cites: "Phase 1, Artefact: The Substrate Map"
+  values:
+    - id: internal
+      name: Internal team
+    - id: vendor
+      name: Vendor
+    - id: third-party
+      name: Third party
+    - id: unknown
+      name: Unknown
+fallback:
+  id: substrate.fallback
+  cites: "Phase 1 workbook, Dependency Chain"
+  values:
+    - id: "yes"
+      name: Fallback available
+      workbook_label: "Y"
+    - id: "no"
+      name: No fallback
+      workbook_label: "N"
+    - id: partial
+      name: Partial fallback
+      workbook_label: Partial

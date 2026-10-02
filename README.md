@@ -79,8 +79,15 @@ osra/
 │   ├── WS1_Governance_Framework_Gap_Matrix.md   ← Appendix A: 12 frameworks, clause by clause
 │   ├── WS2_Incident_Evidence.md                 ← Appendix B: 8 incidents, 3 enforcement actions
 │   └── WS4_Methodology_Landscape.md             ← Appendix C: 15 methodologies surveyed
-└── one-pager/
-    └── OSRA_Executive_Assessment.pdf      ← Board-level summary
+├── one-pager/
+│   └── OSRA_Executive_Assessment.pdf      ← Board-level summary
+│
+│   OSRA as code (in development; see docs/VISION.md)
+├── docs/                                  ← Vision, requirements, architecture, ADRs, method pack format
+├── method/
+│   └── osra-1.2/                          ← The methodology as data: rules, anchors, catalogue, schemas, reference fixtures
+├── src/com/brondani/osra/                 ← OSRA-CODE: the software (command: osra-code)
+└── tests/
 ```
 
 ## Quick Start

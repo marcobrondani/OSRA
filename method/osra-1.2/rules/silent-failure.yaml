@@ -1,0 +1,19 @@
+# The SILENT FAILURE RISK flag, which is condition 2 in Phase 4.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 2, Artefact: The
+# Failure Surface Register.
+schema_version: 1
+id: silent-failure
+cites: "Phase 2, Artefact: The Failure Surface Register"
+rules:
+  - id: silent-failure.flag
+    cites: "Phase 2, Artefact: The Failure Surface Register"
+    note: >-
+      Flag "SILENT FAILURE RISK" for any failure type that is Silent and whose
+      detection confidence is Low or None.
+    form: predicate
+    scope: failure_mode
+    output: silent_failure_risk
+    when:
+      all:
+        - {field: type, eq: silent}
+        - {field: detection_confidence, in: [low, none]}

@@ -1,0 +1,52 @@
+# The three convergence conditions, answered per dependency. A dependency
+# usually has several failure modes and trust signals; a condition is met if
+# any one of them meets it. Trust signals are read only through their links
+# to the dependency.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 4, Step 4.1.
+schema_version: 1
+id: conditions
+cites: "Phase 4, Step 4.1"
+rules:
+  - id: condition.high-severity
+    cites: "Phase 4, Step 4.1, condition 1"
+    name: High severity
+    note: >-
+      At least one failure mode of this dependency is rated Critical or High
+      in the Failure Surface Register (Phase 2, Step 2.4).
+    form: predicate
+    scope: dependency
+    output: condition_1
+    when:
+      some: failure_modes
+      where: {field: severity, in: [critical, high]}
+  - id: condition.silent-failure
+    cites: "Phase 4, Step 4.1, condition 2"
+    name: Silent failure
+    note: >-
+      At least one failure mode of this dependency is of type Silent failure
+      and has detection confidence Low or None, which is the SILENT FAILURE
+      RISK flag (Phase 2).
+    form: predicate
+    scope: dependency
+    output: condition_2
+    when:
+      some: failure_modes
+      where: {field: silent_failure_risk, eq: true}
+  - id: condition.unverified-trust
+    cites: "Phase 4, Step 4.1, condition 3"
+    name: Unverified trust
+    note: >-
+      At least one trust signal linked to this dependency is a trust gap
+      (Phase 3, Step 3.3).
+    form: predicate
+    scope: dependency
+    output: condition_3
+    when:
+      some: trust_signals
+      where: {field: trust_gap, eq: true}
+  - id: condition.count
+    cites: "Phase 4, Step 4.1"
+    form: count
+    scope: dependency
+    inputs: [condition_1, condition_2, condition_3]
+    output: conditions_met

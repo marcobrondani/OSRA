@@ -1,0 +1,19 @@
+# A synthetic assessment used by the tests. It describes no real organisation.
+schema_version: 1
+kind: assessment
+system:
+  name: Example payment screening
+  owner: Payments risk team
+  regulatory_classification: DORA critical ICT service; EU AI Act high-risk [ASSUMPTION]
+  boundary: >-
+    The screening model, its inference API, the transaction feed and the
+    analyst review queue.
+  human_in_the_loop_design: Analysts review flagged transactions.
+method_pack: {id: osra, version: "1.2"}
+assessment_type: full
+deployment_mode:
+  declared: C
+agent_access: refused
+status: active
+provenance:
+  created: {author_type: human, author: Assessor, at: "2026-09-30T09:00:00Z", surface: cli}

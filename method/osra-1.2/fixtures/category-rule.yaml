@@ -1,0 +1,31 @@
+# The category rule across all 16 combinations of the three conditions and the
+# single point flag (TR-101). Written out by hand from Phase 4, Step 4.1 of the
+# methodology, not computed, so that it can test an implementation.
+# Condition 1 (a Critical or High failure mode) is also the severity test in
+# the Concentration Risk rule and the Concentration flag, so these four inputs
+# decide every case.
+schema_version: 1
+kind: category-table
+cites: "Phase 4, Step 4.1"
+cases:
+  # Three conditions met.
+  - {condition_1: true,  condition_2: true,  condition_3: true,  single_point: false, category: critical-convergence, concentration_flag: false, clocks: [P30D]}
+  - {condition_1: true,  condition_2: true,  condition_3: true,  single_point: true,  category: critical-convergence, concentration_flag: true,  clocks: [P30D, P6M]}
+  # Two conditions met.
+  - {condition_1: true,  condition_2: true,  condition_3: false, single_point: false, category: convergence-point,    concentration_flag: false, clocks: [P90D]}
+  - {condition_1: true,  condition_2: true,  condition_3: false, single_point: true,  category: convergence-point,    concentration_flag: true,  clocks: [P90D, P6M]}
+  - {condition_1: true,  condition_2: false, condition_3: true,  single_point: false, category: convergence-point,    concentration_flag: false, clocks: [P90D]}
+  - {condition_1: true,  condition_2: false, condition_3: true,  single_point: true,  category: convergence-point,    concentration_flag: true,  clocks: [P90D, P6M]}
+  - {condition_1: false, condition_2: true,  condition_3: true,  single_point: false, category: convergence-point,    concentration_flag: false, clocks: [P90D]}
+  # Silent failure and unverified trust on a single point whose failure modes are all Medium or Low: no flag.
+  - {condition_1: false, condition_2: true,  condition_3: true,  single_point: true,  category: convergence-point,    concentration_flag: false, clocks: [P90D]}
+  # One condition met.
+  - {condition_1: true,  condition_2: false, condition_3: false, single_point: false, category: monitored-risk,       concentration_flag: false, clocks: []}
+  - {condition_1: true,  condition_2: false, condition_3: false, single_point: true,  category: concentration-risk,   concentration_flag: false, clocks: [P6M]}
+  - {condition_1: false, condition_2: true,  condition_3: false, single_point: false, category: monitored-risk,       concentration_flag: false, clocks: []}
+  - {condition_1: false, condition_2: true,  condition_3: false, single_point: true,  category: monitored-risk,       concentration_flag: false, clocks: []}
+  - {condition_1: false, condition_2: false, condition_3: true,  single_point: false, category: monitored-risk,       concentration_flag: false, clocks: []}
+  - {condition_1: false, condition_2: false, condition_3: true,  single_point: true,  category: monitored-risk,       concentration_flag: false, clocks: []}
+  # No condition met.
+  - {condition_1: false, condition_2: false, condition_3: false, single_point: false, category: monitored-risk,       concentration_flag: false, clocks: []}
+  - {condition_1: false, condition_2: false, condition_3: false, single_point: true,  category: monitored-risk,       concentration_flag: false, clocks: []}

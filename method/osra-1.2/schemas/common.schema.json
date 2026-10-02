@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "common.schema.json",
+  "title": "OSRA common definitions",
+  "description": "Identifiers, provenance and register state shared by every OSRA artefact (TR-02, TR-04, TR-06).",
+  "$defs": {
+    "dependency_id": {"type": "string", "pattern": "^DEP-[0-9]{2,}$"},
+    "failure_mode_id": {"type": "string", "pattern": "^FM-[0-9]{2,}$"},
+    "trust_signal_id": {"type": "string", "pattern": "^TS-[0-9]{2,}$"},
+    "finding_id": {"type": "string", "pattern": "^FND-[0-9]{2,}$"},
+    "entity_id": {"type": "string", "pattern": "^(DEP|FM|TS|FND)-[0-9]{2,}$"},
+    "text": {"type": "string", "minLength": 1},
+    "optional_text": {"type": ["string", "null"]},
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "decimal": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$"},
+    "duration": {"type": "string", "pattern": "^P([0-9]+Y)?([0-9]+M)?([0-9]+D)?$"},
+    "surface": {"enum": ["cli", "mcp", "web", "import"]},
+    "provenance_record": {
+      "description": "Who or what wrote a value, when, and through which surface (TR-04).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["author_type", "author", "at", "surface"],
+      "properties": {
+        "author_type": {"enum": ["human", "agent"]},
+        "author": {"$ref": "#/$defs/text"},
+        "agent": {"$ref": "#/$defs/text"},
+        "session": {"$ref": "#/$defs/text"},
+        "at": {"$ref": "#/$defs/timestamp"},
+        "surface": {"$ref": "#/$defs/surface"}
+      },
+      "if": {"properties": {"author_type": {"const": "agent"}}},
+      "then": {"required": ["agent", "session"]}
+    },
+    "provenance": {
+      "description": "Provenance of an entity: the record of its creation, and per field the record of the last change to that field.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created"],
+      "properties": {
+        "created": {"$ref": "#/$defs/provenance_record"},
+        "fields": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/provenance_record"}
+        }
+      }
+    },
+    "confirmation": {
+      "description": "Only a human can confirm a register (FR-31).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["by", "at", "surface"],
+      "properties": {
+        "by": {"$ref": "#/$defs/text"},
+        "at": {"$ref": "#/$defs/timestamp"},
+        "surface": {"enum": ["cli", "web"]}
+      }
+    },
+    "register_state": {"enum": ["draft", "confirmed", "superseded"]},
+    "method_pack_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"$ref": "#/$defs/text"},
+        "version": {"$ref": "#/$defs/text"}
+      }
+    }
+  }
+}

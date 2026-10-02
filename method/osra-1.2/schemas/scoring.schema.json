@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scoring.schema.json",
+  "title": "OSRA entered scoring",
+  "description": "The five factors a person scores against the anchors for each finding, with reasons, and the practitioner's resolution of ties the published tie-break leaves (FR-44, FR-45). Materialisation horizon is computed and cannot be entered. Stored as scoring.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "state", "scores"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "scoring"},
+    "state": {"$ref": "common.schema.json#/$defs/register_state"},
+    "confirmation": {"$ref": "common.schema.json#/$defs/confirmation"},
+    "scores": {"type": "array", "items": {"$ref": "#/$defs/score_entry"}},
+    "tie_resolutions": {
+      "description": "Findings still level after the Step 4.3 tie-break, put in order by the practitioner with the reason recorded.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["order", "reason"],
+        "properties": {
+          "order": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/dependency_id"}
+          },
+          "reason": {"$ref": "common.schema.json#/$defs/text"},
+          "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+        }
+      }
+    }
+  },
+  "if": {"properties": {"state": {"const": "confirmed"}}},
+  "then": {"required": ["confirmation"]},
+  "$defs": {
+    "factor_score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 1, "maximum": 5},
+        "between_anchors": {
+          "description": "The finding sat between two anchors and the lower score was taken (Phase 4, Step 4.2).",
+          "type": "boolean"
+        },
+        "reason": {"$ref": "common.schema.json#/$defs/optional_text"}
+      },
+      "if": {"properties": {"between_anchors": {"const": true}}, "required": ["between_anchors"]},
+      "then": {"required": ["reason"], "properties": {"reason": {"$ref": "common.schema.json#/$defs/text"}}}
+    },
+    "score_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency", "factors"],
+      "properties": {
+        "dependency": {"$ref": "common.schema.json#/$defs/dependency_id"},
+        "factors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["regulatory_exposure", "detection_deficit", "trust_depth", "blast_radius", "remediation_complexity"],
+          "properties": {
+            "regulatory_exposure": {"$ref": "#/$defs/factor_score"},
+            "detection_deficit": {"$ref": "#/$defs/factor_score"},
+            "trust_depth": {"$ref": "#/$defs/factor_score"},
+            "blast_radius": {"$ref": "#/$defs/factor_score"},
+            "remediation_complexity": {"$ref": "#/$defs/factor_score"}
+          }
+        },
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+      }
+    }
+  }
+}

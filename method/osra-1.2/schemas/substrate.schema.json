@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "substrate.schema.json",
+  "title": "OSRA Substrate Map",
+  "description": "The Phase 1 artefact: every dependency of the AI system with its layer, owner, location, single point flag, visibility and fallback (FR-10). Stored as substrate.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "state", "dependencies"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "substrate"},
+    "state": {"$ref": "common.schema.json#/$defs/register_state"},
+    "confirmation": {"$ref": "common.schema.json#/$defs/confirmation"},
+    "retired": {
+      "description": "Identifiers of deleted dependencies. They are never reused (ADR-0009).",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/dependency_id"}
+    },
+    "dependencies": {"type": "array", "items": {"$ref": "#/$defs/dependency"}}
+  },
+  "if": {"properties": {"state": {"const": "confirmed"}}},
+  "then": {"required": ["confirmation"]},
+  "$defs": {
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "layer", "owner_type", "single_point", "visibility", "fallback"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/dependency_id"},
+        "name": {"$ref": "common.schema.json#/$defs/text"},
+        "layer": {"enum": ["model", "agent-and-tool", "compute", "data", "network", "software", "energy", "contractual", "geographic-jurisdictional"]},
+        "provider": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "owner_type": {"enum": ["internal", "vendor", "third-party", "unknown"]},
+        "location": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "single_point": {"type": "boolean"},
+        "visibility": {"enum": ["visible", "known-unmonitored", "invisible"]},
+        "fallback": {"enum": ["yes", "no", "partial"]},
+        "fallback_tested": {"type": "boolean"},
+        "notes": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+      },
+      "if": {"properties": {"fallback": {"enum": ["yes", "partial"]}}},
+      "then": {"required": ["fallback_tested"]}
+    }
+  }
+}

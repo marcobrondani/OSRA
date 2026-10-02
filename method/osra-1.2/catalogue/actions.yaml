@@ -1,0 +1,342 @@
+# The OSRA Action Catalogue v1.2 as data: 23 actions in four groups, and the
+# quick reference for selecting actions by convergence type.
+# Source: action-catalogue/OSRA_Action_Catalogue_v1.2.md. Text is verbatim.
+schema_version: 1
+id: catalogue.actions
+source: action-catalogue/OSRA_Action_Catalogue_v1.2.md
+groups:
+- id: detection-gap
+  name: Detection Gap Actions
+  use_when: Phase 2 identifies failure modes with Detection Confidence = Low or None
+- id: trust-verification
+  name: Trust Verification Actions
+  use_when: Phase 3 identifies unverified or scope-mismatched trust signals
+- id: substrate-resilience
+  name: Substrate Resilience Actions
+  use_when: Phase 1 identifies single points of dependency with no fallback
+- id: governance-integration
+  name: Governance Integration Actions
+  use_when: Phase 4 reveals that existing governance does not cover identified convergence
+    risks
+actions:
+- id: D1
+  group: detection-gap
+  name: Output Distribution Monitoring
+  what: Deploy statistical monitoring on AI system outputs — track distribution of decisions,
+    confidence scores, latency, and flagging rates over time. Alert on statistically significant
+    drift.
+  when: Any AI system where silent failure is possible.
+  effort: Medium (2-4 weeks to implement; requires baseline period).
+  owner: CTO / Engineering.
+  regulatory_alignment: DORA Art. 10 (detection); EU AI Act Art. 9 (continuous risk management).
+- id: D2
+  group: detection-gap
+  name: Independent Validation Pipeline
+  what: Maintain a fixed benchmark dataset. Run the AI system against it on a defined schedule
+    (weekly minimum). Compare results against established baseline. Flag deviations.
+  when: Any system where the underlying model can change without notification (all third-party
+    model deployments).
+  effort: Medium (1-2 weeks initial setup; ongoing maintenance).
+  owner: CISO / Data Science.
+  regulatory_alignment: EU AI Act Art. 15 (accuracy monitoring).
+- id: D3
+  group: detection-gap
+  name: Independent Monitoring Infrastructure
+  what: Deploy monitoring and alerting systems that are architecturally independent from the
+    AI system's primary infrastructure. Different cloud region, different provider, or on-premises.
+  when: Any system where monitoring is co-located with the system being monitored.
+  effort: Medium-High (2-4 weeks; ongoing cost).
+  owner: CTO / Infrastructure.
+  regulatory_alignment: DORA Art. 10 (detection capability); DORA Art. 11 (response and recovery).
+- id: D4
+  group: detection-gap
+  name: External Health Check Probe
+  what: A lightweight, externally hosted service that sends known test inputs to the AI system
+    at regular intervals and validates the output. The simplest form of independent monitoring.
+  when: As an immediate first step for any critical AI system.
+  effort: Low (days to implement).
+  owner: CTO / SRE.
+  regulatory_alignment: DORA Art. 10 (detection).
+- id: D5
+  group: detection-gap
+  name: Data Freshness Monitoring
+  what: For any third-party data dependency, monitor the timestamp/version of the most recent
+    data received. Alert when data age exceeds a defined threshold.
+  when: Any system that depends on real-time or frequently-updated external data.
+  effort: Low (days).
+  owner: CTO / Data Engineering.
+  regulatory_alignment: EU AI Act Art. 10 (data governance).
+- id: D6
+  group: detection-gap
+  name: Dual Inference Verification
+  what: For high-value or high-risk decisions, run inference twice (or on two different hardware
+    instances) and compare results. Flag discrepancies for human review.
+  when: When silent data corruption risk exists and the consequence of a single incorrect
+    decision is severe.
+  effort: High (doubles compute cost for affected transactions; requires comparison logic).
+  owner: CTO / Engineering.
+  regulatory_alignment: EU AI Act Art. 14 (human oversight for high-risk systems).
+- id: V1
+  group: trust-verification
+  name: Independent Performance Validation
+  what: Conduct your own benchmark of the AI system's performance on data the vendor did not
+    select. Compare against vendor claims.
+  when: Any system where a vendor performance claim drives deployment or compliance decisions.
+  effort: Medium (2-4 weeks; requires internal data science capability).
+  owner: CISO / Data Science.
+  regulatory_alignment: EU AI Act Art. 9 (risk management); DORA Art. 25 (testing).
+- id: V2
+  group: trust-verification
+  name: SLA Scope Audit
+  what: Review every SLA your organisation relies on. Document exactly what it covers and
+    — critically — what it does not cover. Map the gap between what the SLA guarantees and
+    what your organisation assumes it guarantees.
+  when: During Phase 3. Refresh at every contract renewal.
+  effort: Low-Medium (1-2 weeks; legal + technical review).
+  owner: CISO / Vendor Management / Legal.
+  regulatory_alignment: DORA Art. 30 (key contractual provisions).
+- id: V3
+  group: trust-verification
+  name: Certification Scope Mapping
+  what: For every third-party certification relied upon (ISO 27001, SOC 2, etc.), document
+    what the certification scope actually covers. Map against your specific use case. Identify
+    gaps where the certification does not cover your assumptions.
+  when: During Phase 3. Before any regulatory submission that references vendor certifications.
+  effort: Low (1 week; requires reading the certification scope statement, not just noting
+    the certification exists).
+  owner: CISO / Compliance.
+  regulatory_alignment: DORA Art. 28 (third-party risk assessment).
+- id: V4
+  group: trust-verification
+  name: Right-to-Audit Negotiation
+  what: Negotiate right-to-audit clauses into vendor contracts. For critical vendors, exercise
+    the right annually.
+  when: At every contract renewal for critical dependencies.
+  effort: Medium (legal negotiation; vendor resistance likely).
+  owner: Vendor Management / Legal / CISO.
+  regulatory_alignment: DORA Art. 30 (key contractual provisions including audit rights).
+- id: V5
+  group: trust-verification
+  name: Trust Chain Documentation
+  what: For each critical vendor, document the vendor's own dependencies (who do they depend
+    on?). Identify where transitive trust exists and whether any layer in the chain has been
+    independently verified.
+  when: During Phase 3. For DORA-critical providers.
+  effort: Medium (requires vendor cooperation; information may be incomplete).
+  owner: CISO / Vendor Management.
+  regulatory_alignment: DORA Art. 28 (third-party risk), Art. 29 (concentration risk and subcontracting),
+    Art. 30 (key contractual provisions).
+- id: V6
+  group: trust-verification
+  name: Board Report Integrity Audit
+  what: Review the metrics in the board's AI risk report against the failure modes identified
+    in Phase 2. For each failure mode rated Critical or High, verify whether the board report
+    contains a metric that would detect it. Flag gaps.
+  when: After Phase 2 is complete. Before the next board reporting cycle.
+  effort: Low (1-2 days; analytical exercise).
+  owner: CISO / Chief Risk Officer.
+  regulatory_alignment: DORA governance requirements; EU AI Act Art. 9; board duty of care.
+- id: R1
+  group: substrate-resilience
+  name: Cross-Region / Cross-Provider Deployment
+  what: Deploy the AI system (or its critical components) across multiple cloud regions or
+    providers. Active-active or active-passive depending on cost tolerance.
+  when: Any system where a single region outage means total system failure.
+  effort: High (weeks to months; significant cost and architecture change).
+  owner: CTO / Infrastructure.
+  regulatory_alignment: DORA Art. 11 (response and recovery, business continuity), Art. 12
+    (backup, restoration and recovery).
+- id: R2
+  group: substrate-resilience
+  name: Documented Fallback Procedure
+  what: 'Define, document, and test what happens when the AI system is unavailable. If the
+    legacy system was decommissioned, this is especially critical. Options include: manual
+    review, rules-based fallback, queue-and-hold, graceful degradation.'
+  when: Any system with no documented fallback.
+  effort: Medium (2-4 weeks to define and test; requires business stakeholder involvement).
+  owner: Business owner / Compliance / CTO.
+  regulatory_alignment: DORA Art. 11 (response and recovery, business continuity plans).
+- id: R3
+  group: substrate-resilience
+  name: Vendor Exit Strategy
+  what: 'For each critical vendor dependency, document: what would you do if this vendor became
+    unavailable in 30 days? 90 days? Identify alternatives. Estimate switching cost and time.'
+  when: For every DORA-critical provider. During Phase 1.
+  effort: Medium (2-4 weeks; requires market assessment).
+  owner: Vendor Management / CTO / CISO.
+  regulatory_alignment: DORA Art. 28(8) (exit strategy requirement).
+- id: R4
+  group: substrate-resilience
+  name: Knowledge Internalisation
+  what: For any critical system component where knowledge resides exclusively with an external
+    vendor or consultant, initiate knowledge transfer. Document the fine-tuning pipeline,
+    preprocessing logic, model management procedures, and configuration.
+  when: When Phase 4 identifies vendor knowledge concentration as a convergence point.
+  effort: High (months; may require dedicated engagement).
+  owner: CTO / CISO.
+  regulatory_alignment: EU AI Act Art. 9 (continuous management capability).
+- id: R5
+  group: substrate-resilience
+  name: Alternative Model Evaluation
+  what: Identify and evaluate at least one alternative base model that could replace the current
+    model if needed. Maintain the evaluation as a documented option, not necessarily a live
+    deployment.
+  when: Any system dependent on a single base model provider.
+  effort: Medium (4-8 weeks for evaluation; does not require full redeployment).
+  owner: CTO / Data Science.
+  regulatory_alignment: DORA Art. 29 (concentration risk); EU AI Act Art. 15 (robustness).
+- id: G1
+  group: governance-integration
+  name: Risk Register Update
+  what: Add each convergence point to the appropriate risk register (IT risk, operational
+    risk, third-party risk) with the scoring from Phase 4.
+  when: Immediately after Phase 4.
+  effort: Low.
+  owner: CISO / Chief Risk Officer.
+  regulatory_alignment: DORA Art. 6 (ICT risk management framework); NIS2 Art. 21 (cybersecurity
+    risk-management measures).
+- id: G2
+  group: governance-integration
+  name: Board Reporting Enhancement
+  what: Update the board AI risk report to include substrate-level risk indicators derived
+    from OSRA. Replace or supplement application-level metrics (uptime, flagging volume) with
+    substrate-level metrics (model stability, trust verification status, convergence point
+    count and scores).
+  when: Before the next board reporting cycle.
+  effort: Low-Medium (requires defining new metrics).
+  owner: CISO / Chief Risk Officer.
+  regulatory_alignment: DORA Art. 5 (management body responsibility for ICT risk); NIS2 Art.
+    20 (governance).
+- id: G3
+  group: governance-integration
+  name: DORA Compliance Evidence
+  what: Package OSRA outputs (Substrate Map, Failure Surface Register, Trust Surface Register,
+    Convergence Risk Summary) as DORA compliance evidence. Map each artefact to specific DORA
+    articles.
+  when: Before the next DORA audit or regulatory review.
+  effort: Low (the artefacts are the evidence; packaging is formatting).
+  owner: Compliance / CISO.
+  regulatory_alignment: DORA Art. 8 (identification), Art. 24-26 (testing), Art. 28-30 (ICT
+    third-party risk).
+- id: G4
+  group: governance-integration
+  name: Incident Response Playbook Update
+  what: 'For each Critical convergence point, create or update an incident response playbook
+    that covers the specific failure scenario. Include: how to detect it (since many are silent
+    failures, this may require new monitoring), who to notify, what decisions to make, and
+    what fallback to activate.'
+  when: After Phase 4. Before the next resilience test.
+  effort: Medium (1-2 weeks per playbook).
+  owner: CISO / CTO / Incident Response team.
+  regulatory_alignment: DORA Art. 11 (response and recovery), Art. 17 (ICT-related incident
+    management process).
+- id: G5
+  group: governance-integration
+  name: Regulatory Notification Preparation
+  what: For convergence points with regulatory exposure, prepare notification templates and
+    decision trees for when to notify regulators. Under DORA (Art. 19 and Delegated Regulation
+    (EU) 2025/301), a major ICT-related incident needs an initial notification within 4 hours
+    of classifying it as major and no later than 24 hours after becoming aware of it, an intermediate
+    report within 72 hours of the initial notification, and a final report within one month
+    of the latest intermediate report. Under the EU AI Act (Art. 73), a provider reports a
+    serious incident no later than 15 days after becoming aware of it, 2 days for a widespread
+    infringement or a serious incident involving critical infrastructure, and 10 days where
+    a person has died. NIS2 (Art. 23) requires an early warning within 24 hours of becoming
+    aware of a significant incident. Having templates ready reduces response time.
+  when: After Phase 4. Maintained as standing preparedness.
+  effort: Low.
+  owner: Compliance / Legal.
+  regulatory_alignment: DORA Art. 19; EU AI Act Art. 73; NIS2 Art. 23.
+- id: G6
+  group: governance-integration
+  name: Framework Re-execution Scheduling
+  what: Schedule the next full framework execution and Phase 1 refresh cadence. Assign responsibility
+    for triggering ad-hoc re-execution when significant changes occur (new AI deployment,
+    vendor change, regulatory update, incident).
+  when: At the end of every Phase 4.
+  effort: Low (calendar and ownership).
+  owner: CISO.
+  regulatory_alignment: DORA Art. 6 (ICT risk management framework, reviewed at least yearly).
+quick_reference:
+- convergence_type: Silent model change + unverified performance
+  primary:
+  - D1
+  - D2
+  - V1
+  supporting:
+  - R5
+  - G2
+  - G4
+- convergence_type: Co-located monitoring + SLA scope mismatch
+  primary:
+  - D3
+  - D4
+  - V2
+  supporting:
+  - R1
+  - G4
+  - G5
+- convergence_type: Data dependency + unverified quality
+  primary:
+  - D5
+  - V4
+  - V5
+  supporting:
+  - R3
+  - G1
+  - G3
+- convergence_type: Vendor knowledge concentration + partial verification
+  primary:
+  - V1
+  - R4
+  - R3
+  supporting:
+  - G1
+  - G2
+- convergence_type: Hardware silent failure + invisible dependency
+  primary:
+  - D6
+  - V2
+  supporting:
+  - G1
+- convergence_type: Single point of dependency (Concentration Risk or Concentration flag)
+  primary:
+  - R3
+  - R1
+  - R2
+  supporting:
+  - R5
+  - G1
+  - G2
+- convergence_type: Certification or compliance scope mismatch
+  primary:
+  - V3
+  - V2
+  supporting:
+  - G1
+  - G3
+- convergence_type: Agent tool use + unverified tool or model behaviour
+  primary:
+  - D2
+  - D1
+  - V5
+  supporting:
+  - R2
+  - R5
+  - G4
+- convergence_type: Human approval assumed effective
+  primary:
+  - V1
+  - V6
+  supporting:
+  - G2
+  - G4
+- convergence_type: Any Critical convergence point
+  primary:
+  - G1
+  - G2
+  - G4
+  - G5
+  supporting:
+  - G3
+  - G6

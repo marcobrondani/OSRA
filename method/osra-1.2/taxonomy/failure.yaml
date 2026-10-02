@@ -1,0 +1,135 @@
+# Phase 2 vocabularies: the failure taxonomy, detection latency and
+# confidence, impact levels and materialisation horizons.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 2, Steps 2.1, 2.2 and
+# 2.4 and the Failure Surface Register artefact specification. The meanings
+# of each latency, confidence and horizon value are those published in the
+# Phase 2 workbook, Detection-Horizon Guide.
+schema_version: 1
+id: taxonomy.failure
+failure_types:
+  id: failure.types
+  cites: "Phase 2, Step 2.1"
+  values:
+    - id: hard
+      name: Hard failure
+      workbook_label: Hard failure
+      definition: The dependency stops functioning entirely. Observable and immediate.
+      example: Cloud region outage. API returns 5xx errors.
+    - id: degradation
+      name: Degradation
+      workbook_label: Degradation
+      definition: >-
+        The dependency continues to function but with reduced performance,
+        accuracy, or capacity. May or may not be observable.
+      example: GPU throttling under load. Model latency increase. Data pipeline backlog.
+    - id: silent
+      name: Silent failure
+      workbook_label: Silent failure
+      definition: >-
+        The dependency appears to function normally but produces incorrect,
+        biased, or corrupted outputs. Not observable through standard
+        monitoring.
+      example: >-
+        Silent data corruption in GPU fleet (NVIDIA whitepaper: ~1 in 1,000
+        machines in hyperscaler fleets). Model drift after vendor update.
+        Training data poisoning. An agent choosing the wrong tool or passing
+        wrong arguments after a model update, with every call returning
+        success.
+    - id: contractual
+      name: Contractual failure
+      workbook_label: Contractual failure
+      definition: >-
+        The dependency functions technically but the contractual/legal basis
+        changes — SLA modification, provider acquisition, jurisdiction change,
+        terms of service alteration.
+      example: >-
+        OpenAI deprecating a model version. Cloud provider changing data
+        residency. Vendor acquired by competitor.
+    - id: cascade
+      name: Cascade failure
+      workbook_label: Cascade failure
+      definition: Failure in one dependency triggers failures in other dependencies that share substrate.
+      example: >-
+        Cloud region outage affecting both AI inference and the monitoring
+        system that would detect AI failure.
+detection_latency:
+  id: failure.detection-latency
+  cites: "Phase 2, Step 2.2"
+  question: How long between failure onset and organisational awareness?
+  values:
+    - id: seconds
+      name: Seconds
+      meaning: Automated alerting fires immediately on failure signal
+    - id: minutes
+      name: Minutes
+      meaning: Monitoring catches it within a monitoring cycle
+    - id: hours
+      name: Hours
+      meaning: Detected during shift handover, daily check, or user complaint
+    - id: days
+      name: Days
+      meaning: Discovered during periodic review, audit, or incident investigation
+    - id: never
+      name: Never
+      meaning: No mechanism exists to detect this failure type. Silent and persistent.
+detection_confidence:
+  id: failure.detection-confidence
+  cites: "Phase 2, Step 2.2"
+  question: Would the detection mechanism reliably catch this failure type?
+  values:
+    - id: high
+      name: High
+      meaning: The named mechanism responds to this failure mode itself and has been seen to catch it
+    - id: medium
+      name: Medium
+      meaning: The mechanism would probably catch it, but has not been tested against this failure mode
+    - id: low
+      name: Low
+      meaning: The mechanism measures something adjacent and might catch it by chance
+    - id: none
+      name: None
+      meaning: No mechanism responds to this failure mode
+# Impact is entered; severity is derived from it by rules/severity.yaml.
+# The impact levels carry the severity names, as in the methodology's table.
+impact:
+  id: failure.impact
+  cites: "Phase 2, Step 2.4"
+  values:
+    - id: critical
+      name: Critical
+      meaning: Failure affects regulated decisions, customer-facing outputs, or financial transactions.
+    - id: high
+      name: High
+      meaning: Failure affects important business processes.
+    - id: medium
+      name: Medium
+      meaning: Failure affects internal processes.
+    - id: low
+      name: Low
+      meaning: Failure affects non-critical functions.
+materialisation_horizon:
+  id: failure.materialisation-horizon
+  cites: "Phase 2, Artefact: The Failure Surface Register"
+  values:
+    - id: imminent
+      name: Imminent or ongoing
+      workbook_label: Imminent/ongoing
+      meaning: >-
+        This failure may already be occurring. Silent failures in production
+        systems (model drift, data staleness, GPU corruption) fall here.
+    - id: days
+      name: Days
+      workbook_label: Days
+      meaning: A known change or event is expected within days.
+    - id: weeks
+      name: Weeks
+      workbook_label: Weeks
+      meaning: Unpredictable but could happen at any time (outages, degradation events).
+    - id: months
+      name: Months
+      workbook_label: Months
+      meaning: Known timeline (contract expiry, regulatory deadline, planned migration).
+    - id: years
+      name: Years
+      workbook_label: Years
+      meaning: Slow-moving regulatory or structural shift.

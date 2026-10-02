@@ -1,0 +1,147 @@
+# Convergence scoring: the six factors, their anchors and weights, the
+# materialisation horizon, and the weighted score.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 4, Step 4.2.
+# Weights are decimal strings so that arithmetic is exact (TR-13).
+schema_version: 1
+id: scoring
+cites: "Phase 4, Step 4.2"
+scored_categories: [critical-convergence, convergence-point, concentration-risk]
+scale: {min: 1, max: 5}
+between_anchors:
+  id: scoring.lower-anchor
+  cites: "Phase 4, Step 4.2"
+  rule: lower
+  note: >-
+    Where a finding sits between two anchors, take the lower score and record
+    the reason.
+factors:
+  # Listed in the order of the methodology's table and of the score formula.
+  - id: regulatory_exposure
+    name: Regulatory exposure
+    weight: "1.5"
+    entry: person
+    anchors:
+      1: no regulatory regime applies to this dependency's failure.
+      2: >-
+        a voluntary or non-statutory regime applies, or a mandatory regime
+        whose application to this system is debated.
+      3: >-
+        a mandatory regime with enforcement reaches this failure through
+        general provisions (risk management, third-party management,
+        documentation).
+      4: >-
+        a mandatory regime's operative article addresses this failure directly
+        (resilience testing, robustness, incident detection, screening), or
+        the regime carries personal accountability for named individuals.
+      5: >-
+        more than one regime addresses the failure directly with active
+        enforcement, or the failure carries criminal, sanctions or
+        safety-of-life liability
+  - id: detection_deficit
+    name: Detection deficit
+    weight: "1.0"
+    entry: person
+    anchors:
+      1: automated alerting on the failure mode itself, routed to an owner, within minutes.
+      2: >-
+        the failure is known or scheduled in advance, or existing monitoring
+        or a continuous counterparty check would surface it within a day.
+      3: periodic manual review would catch it within one review cycle.
+      4: >-
+        it would be found only after consequences accumulate: a customer
+        complaint, an audit finding, a reconciliation months later.
+      5: >-
+        no mechanism responds to this failure mode; the monitoring that exists
+        measures something else (availability rather than correctness, volume
+        rather than distribution) and stays green while the failure runs
+  - id: trust_depth
+    name: Trust depth
+    weight: "1.0"
+    entry: person
+    anchors:
+      1: >-
+        the signal was verified by the organisation itself, or the dependency
+        is internal and monitored.
+      2: >-
+        one external party whose attestation the organisation relies on
+        directly and could verify but has not.
+      3: >-
+        two layers: the vendor relies on a provider the organisation has no
+        relationship with, and neither layer is verified.
+      4: three or more layers, none verified.
+      5: >-
+        the chain is opaque: the organisation cannot enumerate the layers, or
+        the vendor withholds the model, the data or the method
+  - id: blast_radius
+    name: Blast radius
+    weight: "1.5"
+    entry: person
+    anchors:
+      1: isolated, non-critical function.
+      2: a subset of transactions or decisions, or a process off the real-time path.
+      3: >-
+        one business unit or customer segment, or the system's lifecycle
+        (retraining, maintenance) rather than its operation.
+      4: several business units, or one critical customer-facing function.
+      5: "organisation-wide: every transaction, every decision or every customer"
+  - id: remediation_complexity
+    name: Remediation complexity
+    weight: "1.0"
+    entry: person
+    anchors:
+      1: configuration change or quick fix within the organisation's control, days.
+      2: tooling or monitoring the organisation can build itself within a quarter.
+      3: >-
+        a vendor negotiation, a contract change, a knowledge transfer or a new
+        data source, with moderate engineering.
+      4: >-
+        a second provider, a second region, dual running or re-internalising a
+        capability, with significant engineering.
+      5: >-
+        architectural redesign of the system or its monitoring, or replacement
+        of the core model or vendor
+  - id: materialisation_horizon
+    name: Materialisation horizon
+    weight: "1.0"
+    entry: computed
+    anchors:
+      1: years (slow regulatory or contractual evolution).
+      2: months (known contract expiry, scheduled deprecation).
+      3: weeks (recurring but unpredictable events such as regional degradation).
+      4: days (announced upcoming change).
+      5: imminent or already occurring (silent failures that may be active now)
+rules:
+  - id: scoring.horizon
+    cites: "Phase 4, Step 4.2"
+    note: >-
+      Use the most imminent horizon among the failure modes that met a
+      condition for this dependency; for a Concentration Risk, use the most
+      imminent horizon among its Critical or High failure modes.
+    form: most_imminent
+    scope: dependency
+    output: materialisation_horizon
+    map:
+      imminent: 5
+      days: 4
+      weeks: 3
+      months: 2
+      years: 1
+    select:
+      - categories: [critical-convergence, convergence-point]
+        failure_modes_where:
+          any:
+            - {field: severity, in: [critical, high]}
+            - {field: silent_failure_risk, eq: true}
+      - categories: [concentration-risk]
+        failure_modes_where: {field: severity, in: [critical, high]}
+  - id: scoring.score
+    cites: "Phase 4, Step 4.2"
+    note: >-
+      Convergence Risk Score = (Regulatory Exposure x 1.5) + Detection
+      Deficit + Trust Depth + (Blast Radius x 1.5) + Remediation Complexity +
+      Materialisation Horizon. Score range: 7.0 (all factors at 1) to 35.0
+      (all factors at 5).
+    form: weighted_sum
+    scope: finding
+    output: score
+    range: {min: "7.0", max: "35.0"}

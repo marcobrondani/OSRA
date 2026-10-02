@@ -1,0 +1,25 @@
+schema_version: 1
+kind: trust
+state: draft
+trust_signals:
+  - id: TS-01
+    dependencies: [DEP-01]
+    category: vendor-performance
+    claim: Model accuracy benchmark published by the provider.
+    reliance: Decision to deploy the model in production.
+    consequence_if_false: Screening quality below what the risk assessment assumes.
+    verification: {status: unverified, method: null, last_verified: null, scope_match: null}
+    chain:
+      - {party: Model provider, trusts: Its own evaluation data, verified: false}
+  - id: TS-02
+    dependencies: [DEP-02, DEP-04]
+    category: certification
+    claim: ISO 27001 certificate.
+    reliance: Third-party risk assessment conclusion.
+    verification: {status: verified, method: one-time-assessment, last_verified: "2026-03-01", scope_match: "no"}
+  - id: TS-03
+    dependencies: [DEP-04]
+    category: sla
+    claim: Feed availability SLA.
+    reliance: null
+    verification: {status: unverified}

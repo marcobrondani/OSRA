@@ -1,0 +1,11 @@
+schema_version: 1
+kind: scoring
+state: draft
+scores:
+  - dependency: DEP-01
+    factors:
+      regulatory_exposure: {score: 5}
+      detection_deficit: {score: 5}
+      trust_depth: {score: 4, between_anchors: true, reason: "Between anchors 4 and 5: three unverified layers, one of which withholds its method. The lower anchor applies."}
+      blast_radius: {score: 5}
+      remediation_complexity: {score: 4}

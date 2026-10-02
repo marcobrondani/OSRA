@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sensitivity.schema.json",
+  "title": "OSRA weight sensitivity reference",
+  "description": "The published weight sensitivity results: the weight pairs tested and every ranking change they produce against the baseline (TR-102).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "cites", "source", "baseline", "weight_sets", "changes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "sensitivity"},
+    "cites": {"type": "string"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "section"],
+      "properties": {
+        "document": {"type": "string"},
+        "section": {"type": "string"}
+      }
+    },
+    "baseline": {"$ref": "#/$defs/weights"},
+    "weight_sets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/weights"}},
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario", "weights", "swapped", "kendall_tau"],
+        "properties": {
+          "scenario": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "weights": {"$ref": "#/$defs/weights"},
+          "swapped": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "string"}},
+          "kendall_tau": {"type": "string", "pattern": "^-?[01]\\.[0-9]{2}$"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regulatory_exposure", "blast_radius"],
+      "properties": {
+        "regulatory_exposure": {"$ref": "common.schema.json#/$defs/decimal"},
+        "blast_radius": {"$ref": "common.schema.json#/$defs/decimal"}
+      }
+    }
+  }
+}

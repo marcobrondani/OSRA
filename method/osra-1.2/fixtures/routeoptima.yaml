@@ -1,0 +1,150 @@
+# Reference scenario: RouteOptima (logistics).
+# Generated from the calibration document and weight_sensitivity.py; the
+# fixture tests check it against both. Findings are in remediation order.
+# Values under `drafts` await author review and are never published values.
+schema_version: 1
+kind: reference-scenario
+id: routeoptima
+name: RouteOptima
+sector: logistics
+source:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+  section: v1.2 Classification and Six-Factor Rescoring
+  also:
+  - calibration/weight_sensitivity.py, SCENARIOS (per-factor scores)
+findings:
+- id: TL-CP1
+  name: maps platform dependency
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 2
+    detection_deficit: 4
+    trust_depth: 3
+    blast_radius: 4
+    remediation_complexity: 4
+    materialisation_horizon: 5
+  horizon_reason: silent data quality degradation may be present (the 30-day pricing change
+    alone would be 2)
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '25.0'
+    rank: 1
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: TL-CP3
+  name: fleet GPS data
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 2
+    detection_deficit: 3
+    trust_depth: 2
+    blast_radius: 3
+    remediation_complexity: 2
+    materialisation_horizon: 5
+  horizon_reason: delayed or missing positions may be in use now
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '19.5'
+    rank: 2
+  drafts:
+    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
+      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: TL-CP2
+  name: demand model drift
+  severity: high
+  silent_failure: true
+  trust_gap: false
+  single_point: false
+  factors:
+    regulatory_exposure: 2
+    detection_deficit: 3
+    trust_depth: 1
+    blast_radius: 4
+    remediation_complexity: 2
+    materialisation_horizon: 5
+  horizon_reason: drift is under way
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '20.0'
+    rank: 3
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: TL-CP5
+  name: weather data quality
+  severity: medium
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 1
+    detection_deficit: 3
+    trust_depth: 2
+    blast_radius: 2
+    remediation_complexity: 1
+    materialisation_horizon: 5
+  horizon_reason: stale data may be in use now
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '15.5'
+    rank: 4
+  drafts:
+    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
+      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: TL-CP4
+  name: single-region concentration
+  severity: high
+  silent_failure: false
+  trust_gap: false
+  single_point: true
+  factors:
+    regulatory_exposure: 2
+    detection_deficit: 1
+    trust_depth: 1
+    blast_radius: 5
+    remediation_complexity: 4
+    materialisation_horizon: 3
+  horizon_reason: regional outages recur unpredictably
+  expected:
+    conditions_met: 1
+    category: concentration-risk
+    concentration_flag: false
+    clocks:
+    - P6M
+    score: '19.5'
+    rank: 5
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]

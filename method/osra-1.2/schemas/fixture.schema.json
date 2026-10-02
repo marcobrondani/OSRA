@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fixture.schema.json",
+  "title": "OSRA reference scenario",
+  "description": "One published calibration scenario as a machine-readable fixture: per finding, the facts that decide the conditions, the six factor scores, and the expected category, flag, clocks, score and rank (TR-100, TR-109). Values the calibration marks as awaiting author review are listed under drafts (TR-100a).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "id", "name", "sector", "source", "findings"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "reference-scenario"},
+    "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "name": {"$ref": "common.schema.json#/$defs/text"},
+    "sector": {"$ref": "common.schema.json#/$defs/text"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "section"],
+      "properties": {
+        "document": {"$ref": "common.schema.json#/$defs/text"},
+        "section": {"$ref": "common.schema.json#/$defs/text"},
+        "also": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/text"}}
+      }
+    },
+    "findings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/finding"}}
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "severity", "silent_failure", "trust_gap", "single_point", "factors", "expected"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^([A-Z]{2}-)?CP[0-9]+$"},
+        "name": {"$ref": "common.schema.json#/$defs/text"},
+        "severity": {
+          "description": "The highest severity among the finding's failure modes, under the v1.2 severity rule.",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "silent_failure": {
+          "description": "A failure mode is Silent with detection confidence Low or None (condition 2).",
+          "type": "boolean"
+        },
+        "trust_gap": {
+          "description": "A linked trust signal is a trust gap (condition 3).",
+          "type": "boolean"
+        },
+        "single_point": {"type": "boolean"},
+        "factors": {"$ref": "results.schema.json#/$defs/factors"},
+        "horizon_reason": {"$ref": "common.schema.json#/$defs/text"},
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["conditions_met", "category", "concentration_flag", "clocks", "score", "rank"],
+          "properties": {
+            "conditions_met": {"type": "integer", "minimum": 0, "maximum": 3},
+            "category": {"$ref": "results.schema.json#/$defs/category"},
+            "concentration_flag": {"type": "boolean"},
+            "clocks": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/duration"}},
+            "score": {"$ref": "common.schema.json#/$defs/decimal"},
+            "rank": {"type": "integer", "minimum": 1},
+            "tied_with": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "drafts": {
+          "description": "Fields whose value is a draft awaiting author review, each with the reason. A draft value is never presented as a published reference value (FR-104).",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "severity": {"$ref": "common.schema.json#/$defs/text"},
+            "silent_failure": {"$ref": "common.schema.json#/$defs/text"},
+            "trust_gap": {"$ref": "common.schema.json#/$defs/text"},
+            "single_point": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.regulatory_exposure": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.detection_deficit": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.trust_depth": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.blast_radius": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.remediation_complexity": {"$ref": "common.schema.json#/$defs/text"},
+            "factors.materialisation_horizon": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        }
+      }
+    }
+  }
+}

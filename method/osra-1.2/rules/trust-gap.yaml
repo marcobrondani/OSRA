@@ -1,0 +1,25 @@
+# The trust gap, which decides condition 3 in Phase 4.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 3, Step 3.3.
+schema_version: 1
+id: trust-gap
+cites: "Phase 3, Step 3.3"
+rules:
+  - id: trust-gap.gap
+    cites: "Phase 3, Step 3.3"
+    note: >-
+      A trust gap exists when a trust signal is Unverified or Unverifiable, or
+      it is Verified or Partially Verified but the verification's scope does
+      not cover the claim the organisation relies on (Scope Match = N), and a
+      decision, compliance claim, or risk assessment depends on that trust
+      signal being true. A Partial scope match is not a gap.
+    form: predicate
+    scope: trust_signal
+    output: trust_gap
+    when:
+      all:
+        - {field: reliance, present: true}
+        - any:
+            - {field: verification_status, in: [unverified, unverifiable]}
+            - all:
+                - {field: verification_status, in: [verified, partially-verified]}
+                - {field: scope_match, eq: "no"}

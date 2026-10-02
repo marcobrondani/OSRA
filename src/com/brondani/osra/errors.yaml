@@ -1,0 +1,129 @@
+# The OSRA-CODE error catalogue (ADR-0011). Every surface renders diagnostics
+# from these entries. Codes are stable: a code is never reused for a different
+# meaning. Messages are templates; logs record the code and identifiers only,
+# never assessment content (TR-89).
+#
+# exit_code is what the command-line interface returns when the diagnostic is
+# the most serious one reported: 1 for invalid assessment or fixture data,
+# 3 for a file that cannot be read, 4 for an invalid method pack.
+schema_version: 1
+errors:
+  OSRA-E101:
+    title: Required field missing
+    message: "{entity}: '{field}' is required."
+    remedy: Add the field. Later phases need it.
+    exit_code: 1
+  OSRA-E102:
+    title: Value not allowed
+    message: "{entity}: '{field}' is {value!r}, which is not one of the allowed values."
+    remedy: Use one of the values the method pack defines for this field.
+    exit_code: 1
+  OSRA-E103:
+    title: Wrong type
+    message: "{entity}: '{field}' must be {expected}, not {value!r}."
+    remedy: Change the value to the expected type.
+    exit_code: 1
+  OSRA-E104:
+    title: Wrong format
+    message: "{entity}: '{field}' is {value!r}, which does not have the required format."
+    remedy: Write the value in the format shown in the example.
+    exit_code: 1
+  OSRA-E105:
+    title: Unknown field
+    message: "{entity}: '{field}' is not a field of this artefact."
+    remedy: Remove the field, or check its spelling against the schema.
+    exit_code: 1
+  OSRA-E106:
+    title: Computed field entered
+    message: "{entity}: '{field}' is computed by the engine and cannot be entered."
+    remedy: >-
+      Remove the field. Enter the evidence it is computed from instead; the
+      engine decides it by the published rule (FR-32).
+    exit_code: 1
+  OSRA-E107:
+    title: Value out of range
+    message: "{entity}: '{field}' is {value!r}, which is outside the allowed range."
+    remedy: Use a value within the range shown in the example.
+    exit_code: 1
+  OSRA-E108:
+    title: Invalid value
+    message: "{entity}: '{field}' is not valid: {detail}."
+    remedy: Correct the value against the schema.
+    exit_code: 1
+  OSRA-E201:
+    title: Duplicate identifier
+    message: "{entity}: the identifier is used more than once in {file}."
+    remedy: Give each entry its own identifier. Identifiers are never shared or reused.
+    exit_code: 1
+  OSRA-E202:
+    title: Unknown dependency
+    message: "{entity}: '{field}' refers to {value}, which is not a dependency in the Substrate Map."
+    remedy: Refer to a dependency identifier from substrate.yaml, or add the dependency there first.
+    exit_code: 1
+  OSRA-E203:
+    title: Retired identifier reused
+    message: "{entity}: the identifier was retired when its entry was deleted and cannot be used again."
+    remedy: Use the next free identifier (ADR-0009).
+    exit_code: 1
+  OSRA-E204:
+    title: Duplicate scoring entry
+    message: "{entity}: the dependency is scored more than once in scoring.yaml."
+    remedy: Keep one scoring entry per dependency.
+    exit_code: 1
+  OSRA-E205:
+    title: Method pack mismatch
+    message: "{entity}: the assessment was made under method pack {value}, but pack {expected} is loaded."
+    remedy: Load the method pack the assessment was made under, or migrate the assessment deliberately (FR-07).
+    exit_code: 1
+  OSRA-E301:
+    title: Unsupported schema version
+    message: "{entity}: schema version {value!r} cannot be read; this software reads schema version {expected}."
+    remedy: Use a version of OSRA-CODE that reads this schema version.
+    exit_code: 3
+  OSRA-E302:
+    title: File not readable
+    message: "{entity}: {detail}."
+    remedy: Correct the file so that it is valid UTF-8 YAML with no repeated keys.
+    exit_code: 3
+  OSRA-E303:
+    title: File missing
+    message: "{entity}: the file does not exist."
+    remedy: Create the file, or point the command at the right directory.
+    exit_code: 3
+  OSRA-E304:
+    title: Wrong kind of file
+    message: "{entity}: expected a '{expected}' file, found {value!r}."
+    remedy: Check that the file holds the artefact its name says it does.
+    exit_code: 3
+  OSRA-E401:
+    title: Method pack checksum mismatch
+    message: "{entity}: the file does not match the checksum recorded for the method pack."
+    remedy: >-
+      Restore the file, or, if the change is deliberate, record new checksums
+      with 'osra-code pack rehash' and review the difference.
+    exit_code: 4
+  OSRA-E402:
+    title: Method pack rule invalid
+    message: "{entity}: {detail}."
+    remedy: Correct the rule against schemas/rules.schema.json.
+    exit_code: 4
+  OSRA-E403:
+    title: Method pack identifier duplicated
+    message: "{entity}: the identifier is used more than once in the method pack."
+    remedy: Give each rule, case and vocabulary value its own identifier.
+    exit_code: 4
+  OSRA-E404:
+    title: Method pack inconsistent
+    message: "{entity}: {detail}."
+    remedy: Make the method pack agree with itself; the schemas, taxonomies and rules must name the same values.
+    exit_code: 4
+  OSRA-E405:
+    title: Method pack file missing or unlisted
+    message: "{entity}: {detail}."
+    remedy: Every file in the pack must be listed in checksums.sha256, and every listed file must exist.
+    exit_code: 4
+  OSRA-E501:
+    title: Fixture inconsistent
+    message: "{entity}: {detail}."
+    remedy: Correct the fixture against the calibration document.
+    exit_code: 1

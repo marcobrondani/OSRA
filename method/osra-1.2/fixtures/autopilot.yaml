@@ -1,0 +1,142 @@
+# Reference scenario: Autopilot (IT managed services, agentic).
+# Generated from the calibration document and weight_sensitivity.py; the
+# fixture tests check it against both. Findings are in remediation order.
+# Values under `drafts` await author review and are never published values.
+schema_version: 1
+kind: reference-scenario
+id: autopilot
+name: Autopilot
+sector: IT managed services, agentic
+source:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+  section: v1.2 Classification and Six-Factor Rescoring
+  also:
+  - calibration/weight_sensitivity.py, SCENARIOS (per-factor scores)
+findings:
+- id: AO-CP1
+  name: model provider tool-use behaviour
+  severity: critical
+  silent_failure: true
+  trust_gap: true
+  single_point: true
+  factors:
+    regulatory_exposure: 4
+    detection_deficit: 5
+    trust_depth: 4
+    blast_radius: 5
+    remediation_complexity: 4
+    materialisation_horizon: 5
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: true
+    clocks:
+    - P30D
+    - P6M
+    score: '31.5'
+    rank: 1
+- id: AO-CP2
+  name: cross-tenant agent credentials
+  severity: critical
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 5
+    detection_deficit: 4
+    trust_depth: 2
+    blast_radius: 5
+    remediation_complexity: 3
+    materialisation_horizon: 5
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '29.0'
+    rank: 2
+- id: AO-CP3
+  name: community MCP server supply chain
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 4
+    detection_deficit: 5
+    trust_depth: 4
+    blast_radius: 4
+    remediation_complexity: 2
+    materialisation_horizon: 3
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '26.0'
+    rank: 3
+- id: AO-CP4
+  name: human approval effectiveness
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 5
+    trust_depth: 1
+    blast_radius: 5
+    remediation_complexity: 3
+    materialisation_horizon: 5
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '26.0'
+    rank: 4
+- id: AO-CP5
+  name: runbook knowledge base integrity
+  severity: high
+  silent_failure: true
+  trust_gap: false
+  single_point: false
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 4
+    trust_depth: 1
+    blast_radius: 4
+    remediation_complexity: 2
+    materialisation_horizon: 5
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '22.5'
+    rank: 5
+- id: AO-CP6
+  name: secrets vault
+  severity: high
+  silent_failure: false
+  trust_gap: false
+  single_point: true
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 1
+    trust_depth: 1
+    blast_radius: 4
+    remediation_complexity: 4
+    materialisation_horizon: 3
+  expected:
+    conditions_met: 1
+    category: concentration-risk
+    concentration_flag: false
+    clocks:
+    - P6M
+    score: '19.5'
+    rank: 6

@@ -1,0 +1,125 @@
+# Phase 3 vocabularies: trust signal categories, verification statuses,
+# verification methods and scope match.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 3, Steps 3.1 and 3.2.
+# Status definitions are those published in the Phase 3 workbook,
+# Verification Guide. workbook_label is the value used in the Phase 3
+# workbook validation lists.
+schema_version: 1
+id: taxonomy.trust
+categories:
+  id: trust.categories
+  cites: "Phase 3, Step 3.1"
+  values:
+    - id: vendor-performance
+      name: Vendor performance claims
+      workbook_label: Vendor performance
+      examples: >-
+        "99.95% uptime." "State-of-the-art accuracy." "Enterprise-grade
+        security." Benchmark scores. Model card metrics.
+    - id: certification
+      name: Certifications
+      workbook_label: Certification
+      examples: ISO 27001, ISO 42001, SOC 2 Type II, HIPAA compliance, FedRAMP.
+    - id: sla
+      name: SLAs
+      workbook_label: SLA
+      examples: >-
+        Uptime guarantees, response time guarantees, incident response
+        commitments, model deprecation notice periods.
+    - id: internal-testing
+      name: Internal testing
+      workbook_label: Internal testing
+      examples: >-
+        Red team results, bias testing, accuracy benchmarks, penetration
+        testing, load testing.
+    - id: governance-documentation
+      name: Governance documentation
+      workbook_label: Governance docs
+      examples: >-
+        Risk assessments, impact assessments, data protection impact
+        assessments, technical documentation (AI Act Annex IV).
+    - id: third-party-assessment
+      name: Third-party assessments
+      workbook_label: Third-party assessment
+      examples: Audit reports, conformity assessments, notified body opinions.
+    - id: implicit-trust
+      name: Implicit trust
+      workbook_label: Implicit trust
+      examples: >-
+        "We use Azure, so Microsoft handles security." "It's GPT-4, so it's
+        the best model." "The vendor is a Fortune 500 company."
+    - id: human-in-the-loop
+      name: Human-in-the-loop effectiveness
+      workbook_label: Human-in-the-loop
+      examples: >-
+        "A human reviews every AI decision." "Physicians/analysts can override
+        the system." Claims that human oversight mitigates AI risk — without
+        evidence that humans actually exercise meaningful oversight in
+        practice. Calibration testing across healthcare, finance, and
+        operational contexts shows that human override rates in time-pressured
+        environments are often far lower than governance documents assume.
+        This category treats the human control layer as a trust signal to be
+        verified, not a solved problem.
+    - id: agent-and-tool-delegation
+      name: Agent and tool delegation
+      workbook_label: Agent and tool delegation
+      examples: >-
+        "The agent can only call the tools it is permitted to call." "The MCP
+        server does what its tool description says." "Tool credentials are
+        scoped to one client or tenant." "Destructive actions always need
+        approval." Claims about an agent's action boundaries, a tool's
+        behaviour and a credential's scope, which are usually inherited from
+        an MCP server's documentation or an agent framework's defaults and
+        rarely tested.
+verification_status:
+  id: trust.verification-status
+  cites: "Phase 3, Step 3.2"
+  values:
+    - id: verified
+      name: Verified
+      definition: >-
+        Independently tested/audited by the organisation or a commissioned
+        third party. Evidence on file.
+    - id: partially-verified
+      name: Partially Verified
+      definition: >-
+        Some aspect verified but scope does not fully match the trust signal.
+        E.g. ISO cert covers process, not performance.
+    - id: unverified
+      name: Unverified
+      definition: >-
+        The organisation accepts this claim at face value. No independent
+        verification performed.
+    - id: unverifiable
+      name: Unverifiable
+      definition: >-
+        The claim cannot be independently verified due to vendor opacity,
+        proprietary systems, or contractual restrictions.
+verification_method:
+  id: trust.verification-method
+  cites: "Phase 3, Step 3.2"
+  values:
+    - id: internal-testing
+      name: Internal testing
+    - id: third-party-audit
+      name: Third-party audit
+    - id: right-to-audit
+      name: Contractual right-to-audit
+    - id: continuous-monitoring
+      name: Continuous monitoring
+    - id: one-time-assessment
+      name: One-time assessment
+scope_match:
+  id: trust.scope-match
+  cites: "Phase 3, Step 3.2"
+  question: Does the verification actually cover what the trust signal claims?
+  values:
+    - id: "yes"
+      name: "Yes"
+      workbook_label: "Y"
+    - id: "no"
+      name: "No"
+      workbook_label: "N"
+    - id: partial
+      name: Partial
+      workbook_label: Partial

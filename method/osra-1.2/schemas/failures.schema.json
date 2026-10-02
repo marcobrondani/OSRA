@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "failures.schema.json",
+  "title": "OSRA Failure Surface Register",
+  "description": "The Phase 2 artefact: failure modes per dependency with detection, impact, tested fallback, horizon and propagation (FR-11). Severity and the silent-failure flag are derived and cannot be entered (FR-12, FR-32). Stored as failures.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "state", "failure_modes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "failures"},
+    "state": {"$ref": "common.schema.json#/$defs/register_state"},
+    "confirmation": {"$ref": "common.schema.json#/$defs/confirmation"},
+    "retired": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/failure_mode_id"}
+    },
+    "failure_modes": {"type": "array", "items": {"$ref": "#/$defs/failure_mode"}}
+  },
+  "if": {"properties": {"state": {"const": "confirmed"}}},
+  "then": {"required": ["confirmation"]},
+  "$defs": {
+    "failure_mode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "dependency", "type", "description", "detection", "impact", "tested_fallback", "materialisation_horizon"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/failure_mode_id"},
+        "dependency": {"$ref": "common.schema.json#/$defs/dependency_id"},
+        "type": {"enum": ["hard", "degradation", "silent", "contractual", "cascade"]},
+        "description": {"$ref": "common.schema.json#/$defs/text"},
+        "detection": {
+          "description": "Phase 2, Step 2.2.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mechanism", "latency", "confidence"],
+          "properties": {
+            "mechanism": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "latency": {"enum": ["seconds", "minutes", "hours", "days", "never"]},
+            "confidence": {"enum": ["high", "medium", "low", "none"]}
+          }
+        },
+        "impact": {
+          "description": "The impact level of Phase 2, Step 2.4, step 1. Severity is derived from it.",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "tested_fallback": {
+          "description": "A fallback for this failure is in place and has been tested (Phase 2, Step 2.4, step 2).",
+          "type": "boolean"
+        },
+        "materialisation_horizon": {"enum": ["imminent", "days", "weeks", "months", "years"]},
+        "propagation": {
+          "description": "Phase 2, Step 2.3: traced for failures with detection latency over an hour or confidence below Medium.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "path": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "downstream_impact": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "downstream_detection": {"$ref": "common.schema.json#/$defs/optional_text"}
+          }
+        },
+        "notes": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+      }
+    }
+  }
+}

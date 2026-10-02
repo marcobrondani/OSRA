@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment.schema.json",
+  "title": "OSRA assessment",
+  "description": "One AI system's assessment: boundary, owner, classification, method version, type and declared deployment mode (FR-01, FR-05, FR-83, FR-85). Stored as assessment.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "system", "method_pack", "assessment_type", "deployment_mode", "agent_access", "status"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "assessment"},
+    "system": {
+      "description": "The System Boundary of Phase 1, Step 1.1, with the fields of the Phase 1 workbook.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "owner", "regulatory_classification", "boundary"],
+      "properties": {
+        "name": {"$ref": "common.schema.json#/$defs/text"},
+        "owner": {"$ref": "common.schema.json#/$defs/text"},
+        "regulatory_classification": {"$ref": "common.schema.json#/$defs/text"},
+        "boundary": {"$ref": "common.schema.json#/$defs/text"},
+        "primary_function": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "users": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "deployment_date": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "last_material_change": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "downstream_dependencies": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "upstream_data_sources": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "human_in_the_loop_design": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "agents_and_tools": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "compliance_evidence_location": {"$ref": "common.schema.json#/$defs/optional_text"}
+      }
+    },
+    "method_pack": {"$ref": "common.schema.json#/$defs/method_pack_ref"},
+    "assessment_type": {
+      "description": "Full execution, or one of the Minimum Viable Execution options (Part IV).",
+      "enum": ["full", "convergence-scan", "trust-surface-first"]
+    },
+    "deployment_mode": {
+      "description": "The deployment mode the practitioner declared, recorded and reported as declared (T-7).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared"],
+      "properties": {
+        "declared": {"enum": ["A", "B", "C"]},
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance_record"}
+      }
+    },
+    "agent_access": {
+      "description": "Whether agents may reach this assessment at all (FR-85), and if so what they may do (FR-35). The default is read-only.",
+      "enum": ["refused", "read-only", "draft"]
+    },
+    "status": {"enum": ["active", "abandoned"]},
+    "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+  }
+}
