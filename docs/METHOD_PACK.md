@@ -1,6 +1,6 @@
 # The OSRA Method Pack — Format
 
-**Status:** Draft, slice 0.1. Open for comment.
+**Status:** Draft, slice 0.2. Open for comment.
 **Applies to:** method pack `osra 1.2` (`method/osra-1.2/`), schema version 1.
 **Reads with:** [ADR-0003](adr/0003-rules-as-data.md) (why the method is data), [ADR-0004](adr/0004-content-code-separation.md) (why it is a separate directory), [ADR-0012](adr/0012-packaging-and-pack-distribution.md) (how it ships), and TRD sections 4, 6 and 9.
 
@@ -14,15 +14,17 @@ Where this document and the methodology disagree, the methodology wins and the p
 
 ```
 method/osra-1.2/
-  pack.yaml                   identity, methodology version, sources, licence (pending)
+  pack.yaml                   identity, methodology version, sources, licence (pending), rule order
   checksums.sha256            SHA-256 of every other file, in shasum format
   taxonomy/layers.yaml        the 9 dependency layers and their questions      (Phase 1, Step 1.2)
   taxonomy/substrate.yaml     single point, visibility, owner types, fallback  (Phase 1)
   taxonomy/failure.yaml       failure types, detection, impact, horizons       (Phase 2)
   taxonomy/trust.yaml         trust categories, verification, scope match      (Phase 3)
+  taxonomy/execution.yaml     assessment types: registers required, outputs    (Part IV)
   rules/severity.yaml         severity from impact and a tested fallback       (Phase 2, Step 2.4)
   rules/silent-failure.yaml   the SILENT FAILURE RISK flag                     (Phase 2)
   rules/trust-gap.yaml        the trust gap                                    (Phase 3, Step 3.3)
+  rules/trust-chain.yaml      trust chain depth                                (Phase 3, Step 3.4)
   rules/conditions.yaml       the three convergence conditions                 (Phase 4, Step 4.1)
   rules/category.yaml         categories, clocks, the Concentration flag       (Phase 4, Step 4.1)
   rules/scoring.yaml          six factors, anchors, weights, horizon, score    (Phase 4, Step 4.2)
@@ -71,13 +73,18 @@ A rule file has an `id`, a `cites` and a list of `rules`. Each rule has:
 | `step_down` | `when`, `target`, `steps` | When `when` holds, move `target` that many steps down the file's ordered `levels`, stopping at the last level |
 | `predicate` | `when`, `output`, optional `clock` | `output` = whether `when` holds; a `clock` is attached when it does |
 | `count` | `inputs`, `output` | `output` = how many of `inputs` are true |
+| `length` | `input`, `output` | `output` = the number of items in the `input` list |
 | `first_match` | `cases`, `output` | `output` = the `value` of the first case whose `when` holds. The last case must be `{always: true}`, so every subject gets exactly one value. Each case has its own `id` and `cites`. |
 | `most_imminent` | `map`, `select`, `output` | For the subject's category, take the failure modes selected by the matching `select` entry and return the highest mapped value |
 | `weighted_sum` | `output`, optional `range` | The sum of each factor of the file times its weight. A stated `range` must equal the weights' range at the scale's ends. |
 | `sort` | `category_order`, `keys`, `remaining_ties: report` | Order by category, then by each key. Subjects level on every key share a rank and are reported as a tie, never separated by name or by insertion order (TR-14). |
 | `top` | `min`, `max` | The first `min` to `max` subjects in order are the primary output |
 
-### 4.2 Predicates
+### 4.2 Order
+
+`pack.yaml` lists the rules in the order the engine applies them (`pipeline`), and the rules applied when reports are produced (`reporting`). Every top-level rule appears in exactly one of the two lists, and `check_pack` enforces this. A rule may read the outputs of the rules before it.
+
+### 4.3 Predicates
 
 Predicates are structured data. They are never strings to parse or expressions to evaluate (TR-86).
 
@@ -96,14 +103,14 @@ Predicates are structured data. They are never strings to parse or expressions t
 
 A value compared with a field the pack defines a vocabulary for must be one of that vocabulary's identifiers. `check_pack` reports any other value, so a typo such as `Critical` for `critical` cannot silently fail to match.
 
-### 4.3 Fields available to rules
+### 4.4 Fields available to rules
 
 Rules read entered fields under flat names. Derived fields become available once the rule that outputs them has run. The order is: severity, silent-failure flag and trust gap, then the conditions, then category and flag, then horizon and score, then ranking.
 
 | Scope | Entered (file field) | Derived (rule) |
 |---|---|---|
 | `failure_mode` | `type`, `impact`, `tested_fallback`, `materialisation_horizon`, `detection_latency` (`detection.latency`), `detection_confidence` (`detection.confidence`) | `severity` (severity.\*), `silent_failure_risk` (silent-failure.flag) |
-| `trust_signal` | `category`, `reliance`, `verification_status` (`verification.status`), `scope_match` (`verification.scope_match`) | `trust_gap` (trust-gap.gap) |
+| `trust_signal` | `category`, `reliance`, `verification_status` (`verification.status`), `scope_match` (`verification.scope_match`), `chain` | `trust_gap` (trust-gap.gap), `chain_depth` (trust-chain.depth) |
 | `dependency` | `layer`, `single_point`, `visibility`, `fallback`, `fallback_tested`; collections `failure_modes`, `trust_signals` | `condition_1`, `condition_2`, `condition_3`, `conditions_met`, `category`, `concentration_flag`, `materialisation_horizon` |
 | `finding` | the five entered factor scores (`scoring.yaml`) | `materialisation_horizon`, `score`, rank |
 
@@ -134,7 +141,16 @@ Beyond the schemas, validation checks that identifiers are unique, that no retir
 | `fixtures/category-rule.yaml` | `category-table` | The category rule for all 16 combinations of the three conditions and the single point flag, written out by hand (TR-101) |
 | `fixtures/sensitivity.yaml` | `sensitivity` | The eight weight pairs and every ranking change they produce (TR-102) |
 
-The scenario fixtures hold the published *finding-level* facts. They do not hold full registers, because the calibration did not publish them. From slice 0.2, verification builds the minimal registers that reproduce each finding's facts and runs the engine over them. That construction will be documented with the engine.
+The scenario fixtures hold the published *finding-level* facts. They do not hold full registers, because the calibration did not publish them. `osra-code verify` therefore builds, for each reference finding, the smallest registers that carry exactly those facts, and runs the engine over them:
+
+- one dependency, with the finding's single point flag;
+- one failure mode. Its impact is the finding's severity, with no tested fallback, so the severity rule returns that severity. It is a Silent failure with detection confidence Low if the finding has a silent failure, and a Hard failure with confidence High otherwise. Its horizon is the one that maps to the published horizon score;
+- one relied-on, Unverified trust signal if the finding has a trust gap, and none otherwise;
+- the five entered factor scores.
+
+One failure mode is enough. Every scored finding meets condition 1 or condition 2, that failure mode meets it, so it is the one the horizon rule selects. The engine must then reproduce every published conditions count, category, Concentration flag, clock, score, rank and tie. It must also reproduce the category table, and every ranking change in the sensitivity reference at each weight pair.
+
+Because the calibration publishes horizon *scores* and not the Phase 2 horizon values, verification cannot test the horizon map itself. The map is instead compared with the text of Phase 4, Step 4.2 by the test suite.
 
 ### 6.1 Draft values
 

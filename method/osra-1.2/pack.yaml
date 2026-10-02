@@ -18,6 +18,26 @@ catalogue:
 # of the pack itself is pending the author's decision (ADR-0004); until then
 # no licence file is included here.
 licence: null
+# The order in which the engine applies the rules. Each rule may read the
+# outputs of the rules before it. Rules listed under reporting are applied
+# when reports are produced, not by the engine.
+pipeline:
+  - severity.from-impact
+  - severity.tested-fallback
+  - silent-failure.flag
+  - trust-gap.gap
+  - trust-chain.depth
+  - condition.high-severity
+  - condition.silent-failure
+  - condition.unverified-trust
+  - condition.count
+  - category.assign
+  - category.concentration-flag
+  - scoring.horizon
+  - scoring.score
+  - ranking.order
+reporting:
+  - ranking.primary-output
 # Regulatory mappings (DORA, NIS2, the EU AI Act) are added in slice 0.3,
 # once every clause has been checked against the primary text (TR-16a).
 mappings: []

@@ -159,6 +159,11 @@ def test_every_citation_resolves_in_the_methodology(pack):
     for ident, cite in citations:
         if "workbook" in cite:
             continue  # a published template, checked by the template generator (slice 0.3)
+        part = re.match(r"Part ([IVX]+), (.+)$", cite)
+        if part:
+            assert f"## PART {part.group(1)}:" in METHOD, (ident, cite)
+            assert f"### {part.group(2)}" in METHOD, (ident, cite)
+            continue
         phase = re.match(r"Phase (\d)", cite).group(1)
         assert f"### PHASE {phase} —" in METHOD, (ident, cite)
         step = re.search(r"Step (\d)\.(\d)", cite)

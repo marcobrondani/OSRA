@@ -4,149 +4,438 @@
   "title": "OSRA method pack rule file",
   "description": "A file under rules/. Every rule carries an identifier and a citation (TR-11) and uses one of a small, closed set of forms (ADR-0003). Predicates are structured data, never expressions to evaluate.",
   "type": "object",
-  "required": ["schema_version", "id", "cites", "rules"],
+  "required": [
+    "schema_version",
+    "id",
+    "cites",
+    "rules"
+  ],
   "properties": {
-    "schema_version": {"const": 1},
-    "id": {"$ref": "#/$defs/rule_id"},
-    "cites": {"$ref": "#/$defs/citation"},
-    "rules": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rule"}}
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/rule_id"
+    },
+    "cites": {
+      "$ref": "#/$defs/citation"
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
   },
   "$defs": {
-    "rule_id": {"type": "string", "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)*$"},
-    "citation": {"type": "string", "pattern": "^(Part|Phase) [IVX0-9]+"},
-    "field": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
-    "scope": {"enum": ["failure_mode", "trust_signal", "dependency", "finding"]},
-    "collection": {"enum": ["failure_modes", "trust_signals"]},
-    "scalar": {"type": ["string", "number", "boolean", "null"]},
+    "rule_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+    },
+    "citation": {
+      "type": "string",
+      "pattern": "^(Part|Phase) [IVX0-9]+"
+    },
+    "field": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "scope": {
+      "enum": [
+        "failure_mode",
+        "trust_signal",
+        "dependency",
+        "finding"
+      ]
+    },
+    "collection": {
+      "enum": [
+        "failure_modes",
+        "trust_signals"
+      ]
+    },
+    "scalar": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "null"
+      ]
+    },
     "predicate": {
       "oneOf": [
         {
-          "type": "object", "additionalProperties": false, "required": ["all"],
-          "properties": {"all": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/predicate"}}}
-        },
-        {
-          "type": "object", "additionalProperties": false, "required": ["any"],
-          "properties": {"any": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/predicate"}}}
-        },
-        {
-          "type": "object", "additionalProperties": false, "required": ["not"],
-          "properties": {"not": {"$ref": "#/$defs/predicate"}}
-        },
-        {
-          "type": "object", "additionalProperties": false, "required": ["some", "where"],
-          "properties": {"some": {"$ref": "#/$defs/collection"}, "where": {"$ref": "#/$defs/predicate"}}
-        },
-        {
-          "type": "object", "additionalProperties": false, "required": ["always"],
-          "properties": {"always": {"const": true}}
-        },
-        {
-          "type": "object", "additionalProperties": false, "required": ["field"],
-          "minProperties": 2, "maxProperties": 2,
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "all"
+          ],
           "properties": {
-            "field": {"$ref": "#/$defs/field"},
-            "eq": {"$ref": "#/$defs/scalar"},
-            "in": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scalar"}},
-            "lt": {"type": "number"},
-            "le": {"type": "number"},
-            "gt": {"type": "number"},
-            "ge": {"type": "number"},
-            "present": {"type": "boolean"}
+            "all": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/predicate"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "any"
+          ],
+          "properties": {
+            "any": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/predicate"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "not"
+          ],
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/predicate"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "some",
+            "where"
+          ],
+          "properties": {
+            "some": {
+              "$ref": "#/$defs/collection"
+            },
+            "where": {
+              "$ref": "#/$defs/predicate"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "always"
+          ],
+          "properties": {
+            "always": {
+              "const": true
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "field"
+          ],
+          "minProperties": 2,
+          "maxProperties": 2,
+          "properties": {
+            "field": {
+              "$ref": "#/$defs/field"
+            },
+            "eq": {
+              "$ref": "#/$defs/scalar"
+            },
+            "in": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/scalar"
+              }
+            },
+            "lt": {
+              "type": "number"
+            },
+            "le": {
+              "type": "number"
+            },
+            "gt": {
+              "type": "number"
+            },
+            "ge": {
+              "type": "number"
+            },
+            "present": {
+              "type": "boolean"
+            }
           }
         }
       ]
     },
     "rule_base": {
       "type": "object",
-      "required": ["id", "cites", "form"],
+      "required": [
+        "id",
+        "cites",
+        "form"
+      ],
       "properties": {
-        "id": {"$ref": "#/$defs/rule_id"},
-        "cites": {"$ref": "#/$defs/citation"},
-        "name": {"type": "string"},
-        "note": {"type": "string"}
+        "id": {
+          "$ref": "#/$defs/rule_id"
+        },
+        "cites": {
+          "$ref": "#/$defs/citation"
+        },
+        "name": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
     "rule": {
-      "allOf": [{"$ref": "#/$defs/rule_base"}],
+      "allOf": [
+        {
+          "$ref": "#/$defs/rule_base"
+        }
+      ],
       "oneOf": [
         {
           "description": "map: output = map[input].",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "input", "output", "map"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "input",
+            "output",
+            "map"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "map"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "input": {"$ref": "#/$defs/field"},
-            "output": {"$ref": "#/$defs/field"},
-            "map": {"type": "object", "additionalProperties": {"$ref": "#/$defs/scalar"}}
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "map"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "input": {
+              "$ref": "#/$defs/field"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            },
+            "map": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/scalar"
+              }
+            }
           }
         },
         {
           "description": "step_down: when the predicate holds, move target that many steps down the file's ordered levels, stopping at the last level.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "when", "target", "steps"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "when",
+            "target",
+            "steps"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "step_down"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "when": {"$ref": "#/$defs/predicate"},
-            "target": {"$ref": "#/$defs/field"},
-            "steps": {"type": "integer", "minimum": 1}
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "step_down"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "when": {
+              "$ref": "#/$defs/predicate"
+            },
+            "target": {
+              "$ref": "#/$defs/field"
+            },
+            "steps": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         },
         {
           "description": "predicate: output = whether the predicate holds. An optional clock is attached when it does.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "output", "when"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "output",
+            "when"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "predicate"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "output": {"$ref": "#/$defs/field"},
-            "when": {"$ref": "#/$defs/predicate"},
-            "clock": {"type": "string", "pattern": "^P"}
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "predicate"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            },
+            "when": {
+              "$ref": "#/$defs/predicate"
+            },
+            "clock": {
+              "type": "string",
+              "pattern": "^P"
+            }
           }
         },
         {
           "description": "count: output = number of inputs that are true.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "inputs", "output"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "inputs",
+            "output"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "count"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "inputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/field"}},
-            "output": {"$ref": "#/$defs/field"}
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "count"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "inputs": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/field"
+              }
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            }
+          }
+        },
+        {
+          "description": "length: output = the number of items in the input list (0 when absent).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "input",
+            "output"
+          ],
+          "properties": {
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "length"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "input": {
+              "$ref": "#/$defs/field"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            }
           }
         },
         {
           "description": "first_match: output = the value of the first case whose predicate holds. The last case must always hold, so every subject lands in exactly one case.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "output", "cases"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "output",
+            "cases"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "first_match"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "output": {"$ref": "#/$defs/field"},
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "first_match"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            },
             "cases": {
               "type": "array",
               "minItems": 1,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["id", "cites", "when", "value"],
+                "required": [
+                  "id",
+                  "cites",
+                  "when",
+                  "value"
+                ],
                 "properties": {
-                  "id": {"$ref": "#/$defs/rule_id"},
-                  "cites": {"$ref": "#/$defs/citation"},
-                  "note": {"type": "string"},
-                  "when": {"$ref": "#/$defs/predicate"},
-                  "value": {"$ref": "#/$defs/scalar"}
+                  "id": {
+                    "$ref": "#/$defs/rule_id"
+                  },
+                  "cites": {
+                    "$ref": "#/$defs/citation"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "when": {
+                    "$ref": "#/$defs/predicate"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/scalar"
+                  }
                 }
               }
             }
@@ -156,23 +445,56 @@
           "description": "most_imminent: output = the highest mapped value among the failure modes selected for the subject's category.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "output", "map", "select"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "output",
+            "map",
+            "select"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "most_imminent"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "output": {"$ref": "#/$defs/field"},
-            "map": {"type": "object", "additionalProperties": {"type": "integer"}},
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "most_imminent"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            },
+            "map": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
             "select": {
               "type": "array",
               "minItems": 1,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["categories", "failure_modes_where"],
+                "required": [
+                  "categories",
+                  "failure_modes_where"
+                ],
                 "properties": {
-                  "categories": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-                  "failure_modes_where": {"$ref": "#/$defs/predicate"}
+                  "categories": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "failure_modes_where": {
+                    "$ref": "#/$defs/predicate"
+                  }
                 }
               }
             }
@@ -182,17 +504,42 @@
           "description": "weighted_sum: output = the sum of each factor times its weight, over the factors of the file.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "output"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "output"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "weighted_sum"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "output": {"$ref": "#/$defs/field"},
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "weighted_sum"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "output": {
+              "$ref": "#/$defs/field"
+            },
             "range": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["min", "max"],
-              "properties": {"min": {"type": "string"}, "max": {"type": "string"}}
+              "required": [
+                "min",
+                "max"
+              ],
+              "properties": {
+                "min": {
+                  "type": "string"
+                },
+                "max": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -200,39 +547,92 @@
           "description": "sort: order by category, then by each key; subjects level on every key are reported as ties.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "category_order", "keys", "remaining_ties"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "category_order",
+            "keys",
+            "remaining_ties"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "sort"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "category_order": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "sort"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "category_order": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
             "keys": {
               "type": "array",
               "minItems": 1,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["field", "direction"],
+                "required": [
+                  "field",
+                  "direction"
+                ],
                 "properties": {
-                  "field": {"$ref": "#/$defs/field"},
-                  "direction": {"enum": ["asc", "desc"]}
+                  "field": {
+                    "$ref": "#/$defs/field"
+                  },
+                  "direction": {
+                    "enum": [
+                      "asc",
+                      "desc"
+                    ]
+                  }
                 }
               }
             },
-            "remaining_ties": {"const": "report"}
+            "remaining_ties": {
+              "const": "report"
+            }
           }
         },
         {
           "description": "top: the first min to max subjects in order are the primary output.",
           "type": "object",
           "additionalProperties": false,
-          "required": ["id", "cites", "form", "scope", "min", "max"],
+          "required": [
+            "id",
+            "cites",
+            "form",
+            "scope",
+            "min",
+            "max"
+          ],
           "properties": {
-            "id": true, "cites": true, "name": true, "note": true,
-            "form": {"const": "top"},
-            "scope": {"$ref": "#/$defs/scope"},
-            "min": {"type": "integer", "minimum": 1},
-            "max": {"type": "integer", "minimum": 1}
+            "id": true,
+            "cites": true,
+            "name": true,
+            "note": true,
+            "form": {
+              "const": "top"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "min": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         }
       ]

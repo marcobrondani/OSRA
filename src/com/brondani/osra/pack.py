@@ -130,6 +130,7 @@ _VOCABULARIES: dict[str, tuple[str, tuple[str, ...]]] = {
     "verification_status": ("taxonomy/trust.yaml", ("verification_status", "values")),
     "method": ("taxonomy/trust.yaml", ("verification_method", "values")),
     "scope_match": ("taxonomy/trust.yaml", ("scope_match", "values")),
+    "assessment_type": ("taxonomy/execution.yaml", ("assessment_types", "values")),
 }
 
 
@@ -253,6 +254,7 @@ def check_pack(pack: MethodPack) -> list[Diagnostic]:
     problems += _check_category(pack)
     problems += _check_scoring(pack)
     problems += _check_catalogue(pack)
+    problems += _check_pipeline(pack)
     return problems
 
 
@@ -303,6 +305,7 @@ _SCHEMA_ENUMS = [
     ("results.schema.json", "/properties/failure_modes/items/properties/severity", "severity"),
     ("results.schema.json", "/$defs/category", "category"),
     ("fixture.schema.json", "/$defs/finding/properties/severity", "severity"),
+    ("assessment.schema.json", "/properties/assessment_type", "assessment_type"),
 ]
 
 
@@ -456,4 +459,25 @@ def _check_catalogue(pack: MethodPack) -> list[Diagnostic]:
         for ref in row["primary"] + row["supporting"]:
             if ref not in ids:
                 problems.append(_inconsistent(f"quick reference: {row['convergence_type']}", f"action {ref} is not in the catalogue"))
+    return problems
+
+
+def _check_pipeline(pack: MethodPack) -> list[Diagnostic]:
+    """Every top-level rule is applied exactly once, by the engine or by
+    reporting, and the engine's order lets each rule read what it needs."""
+    problems = []
+    top_level = [r["id"] for path in sorted(p for p in pack.documents if p.startswith("rules/"))
+                 for r in pack.doc(path).get("rules", [])]
+    listed = list(pack.manifest.get("pipeline", [])) + list(pack.manifest.get("reporting", []))
+    for rule_id in sorted(set(top_level) - set(listed)):
+        problems.append(_inconsistent(rule_id, "the rule is in neither the pipeline nor reporting in pack.yaml"))
+    for rule_id in sorted(set(listed) - set(top_level)):
+        problems.append(_inconsistent("pack.yaml", f"'{rule_id}' is listed but is not a rule"))
+    for rule_id in sorted({r for r in listed if listed.count(r) > 1}):
+        problems.append(_inconsistent("pack.yaml", f"'{rule_id}' is listed more than once"))
+    registers = {"substrate", "failures", "trust", "scoring"}
+    for value in pack.taxonomy("execution")["assessment_types"]["values"]:
+        for register in value["requires"]:
+            if register not in registers:
+                problems.append(_inconsistent(f"assessment type {value['id']}", f"requires unknown register '{register}'"))
     return problems

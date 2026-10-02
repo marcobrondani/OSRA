@@ -1,7 +1,7 @@
 schema_version: 1
 kind: substrate
 state: confirmed
-confirmation: {by: Assessor, at: "2026-09-30T12:00:00Z", surface: cli}
+confirmation: {by: Assessor, at: "2026-09-30T12:00:00Z", surface: cli, interactive: true}
 retired: [DEP-03]
 dependencies:
   - id: DEP-01
