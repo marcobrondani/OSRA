@@ -213,6 +213,25 @@ def cmd_mcp(args, pack) -> int:
     return 0
 
 
+def cmd_ui(args, pack) -> int:
+    from .web import serve
+
+    author = args.author or os.environ.get("OSRA_AUTHOR")
+    if not author:
+        raise UsageError("say who is working with --author NAME, or set OSRA_AUTHOR")
+    if args.host not in ("127.0.0.1", "localhost", "::1"):
+        print(f"WARNING: the UI is bound to {args.host}, not the loopback interface. Anyone who can reach this address "
+              "can read and change your assessments; there are no accounts.", file=sys.stderr)
+    args.workspace.mkdir(parents=True, exist_ok=True)
+    host = f"[{args.host}]" if ":" in args.host else args.host
+    print(f"OSRA web UI for {author}: http://{host}:{args.port}/  (Ctrl+C to stop)", file=sys.stderr)
+    try:
+        serve(args.workspace, pack, author, args.host, args.port)
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
 def cmd_export(args, pack) -> int:
     from .workbook import export
 
@@ -422,6 +441,14 @@ def add_commands(commands, with_pack) -> None:
                    help="let the agent draft into assessments whose agent access is 'draft' (default: read-only)")
     p.add_argument("--pack", type=Path, default=None)
     p.set_defaults(func=cmd_mcp, needs_pack=True)
+
+    p = commands.add_parser("ui", help="run the local web UI for working without an agent")
+    p.add_argument("workspace", type=Path, help="directory holding the assessments, one sub-directory each")
+    p.add_argument("--author", help="who is working, recorded with every change (default: $OSRA_AUTHOR)")
+    p.add_argument("--host", default="127.0.0.1", help="interface to bind (default: the loopback interface only)")
+    p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--pack", type=Path, default=None)
+    p.set_defaults(func=cmd_ui, needs_pack=True)
 
     p = commands.add_parser("export", help="write the assessment to the four OSRA workbooks")
     p.add_argument("directory", type=Path)

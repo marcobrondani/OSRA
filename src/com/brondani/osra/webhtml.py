@@ -7,8 +7,8 @@ assessment content can never become markup by accident.
 
 from __future__ import annotations
 
-import html
-from typing import Any, Iterable
+import html as _html
+from typing import Any as _Any, Iterable as _Iterable
 
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
@@ -22,25 +22,25 @@ def h(value: Any) -> Markup:
         return value
     if value is None:
         return Markup("")
-    return Markup(html.escape(str(value), quote=True))
+    return Markup(_html.escape(str(value), quote=True))
 
 
 def join(parts: Iterable[Any]) -> Markup:
     return Markup("".join(h(p) for p in parts if p is not None and p is not False))
 
 
-def tag(name: str, *children: Any, **attrs: Any) -> Markup:
+def tag(tag_name: str, /, *children: Any, **attrs: Any) -> Markup:
     rendered = []
     for key, value in attrs.items():
         if value is None or value is False:
             continue
         key = key.rstrip("_").replace("_", "-")
         rendered.append(f" {key}" if value is True else f' {key}="{h(value)}"')
-    opening = f"<{name}{''.join(rendered)}>"
-    if name in VOID:
+    opening = f"<{tag_name}{''.join(rendered)}>"
+    if tag_name in VOID:
         return Markup(opening)
     body = join(_flatten(children))
-    return Markup(f"{opening}{body}</{name}>")
+    return Markup(f"{opening}{body}</{tag_name}>")
 
 
 def _flatten(items: Iterable[Any]) -> Iterable[Any]:
