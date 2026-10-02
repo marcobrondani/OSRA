@@ -28,7 +28,8 @@ its evidence, its calibration, and the documents for turning it into software
 - Setup: `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`.
   Checks: `.venv/bin/osra-code check`, `.venv/bin/osra-code verify` (the
   release gate: every published reference result) and `.venv/bin/pytest`.
-  CLI usage: `docs/CLI.md`; agents (MCP server, `osra-code mcp`): `docs/AGENTS.md`.
+  CLI and web UI (`osra-code ui`): `docs/CLI.md`; agents (MCP server,
+  `osra-code mcp`): `docs/AGENTS.md`.
 
 ## Conventions
 - British spelling. Method terms are fixed: Phase, Surface, Artefact,

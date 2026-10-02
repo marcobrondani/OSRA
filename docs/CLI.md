@@ -4,6 +4,16 @@
 
 Install from a checkout with `python3 -m venv .venv && .venv/bin/pip install -e .`. Python 3.12 or later.
 
+## The web UI
+
+Everything below can also be done in a browser, without the terminal:
+
+```sh
+osra-code ui ~/osra-assessments --author "A. Assessor"
+```
+
+It serves `http://127.0.0.1:8765/` to your own machine only: no accounts, nothing fetched from the network, no JavaScript. Each page carries the method's guidance where you need it (the layer questions while mapping, what each value means, the anchors and the lower-anchor rule while scoring, what is still missing), shows the reason next to any rejected entry, and lets you confirm a register after showing what changed since its last confirmation. Changes are recorded as yours, through the `web` surface. Binding to another interface with `--host` prints a warning: anyone who can reach that address could read and change the assessments.
+
 ## Who is writing
 
 Every write is attributed. Give your name with `--by NAME`, or set `OSRA_AUTHOR` once. Writes through the command line are recorded as a person using the `cli` surface.
