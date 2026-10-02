@@ -36,10 +36,14 @@ class PackError(Exception):
 
 
 def default_pack_path() -> Path:
-    """The pack this software was built against. In a source checkout it is
-    ``method/osra-1.2`` at the repository root. How the pack is laid out inside
-    an installed package is decided with packaging (ARCHITECTURE section 13)."""
-    return Path(__file__).resolve().parents[4] / "method" / "osra-1.2"
+    """The pack this software was built against. An installed package carries
+    it in ``com/brondani/osra_method/osra-1.2``, a directory beside the code
+    (ADR-0004, ADR-0012); a source checkout has it at ``method/osra-1.2``."""
+    here = Path(__file__).resolve()
+    installed = here.parents[1] / "osra_method" / "osra-1.2"
+    if (installed / CHECKSUMS).is_file():
+        return installed
+    return here.parents[4] / "method" / "osra-1.2"
 
 
 @dataclass

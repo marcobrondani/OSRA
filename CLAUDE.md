@@ -29,7 +29,8 @@ its evidence, its calibration, and the documents for turning it into software
   Checks: `.venv/bin/osra-code check`, `.venv/bin/osra-code verify` (the
   release gate: every published reference result) and `.venv/bin/pytest`.
   CLI and web UI (`osra-code ui`): `docs/CLI.md`; agents (MCP server,
-  `osra-code mcp`): `docs/AGENTS.md`.
+  `osra-code mcp`): `docs/AGENTS.md`; installation and the offline bundle
+  (`scripts/offline_bundle.py`): `docs/INSTALL.md`.
 
 ## Conventions
 - British spelling. Method terms are fixed: Phase, Surface, Artefact,
