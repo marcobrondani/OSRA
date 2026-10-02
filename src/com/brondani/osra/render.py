@@ -99,7 +99,7 @@ def html_document(doc: dict[str, Any]) -> str:
         elif kind == "paragraph":
             out.append(f"<p>{_h(block['text'])}</p>")
         elif kind == "notice":
-            out.append(f'<div class="notice" role="note"><strong>{_h(block.get("label", "Note"))}</strong>{_h(block["text"])}</div>')
+            out.append(f'<div class="notice" role="note"><strong>{_h(block.get("label", "Note"))}:</strong> {_h(block["text"])}</div>')
         elif kind == "list":
             out.append("<ul>" + "".join(f"<li>{_h(item)}</li>" for item in block["items"]) + "</ul>")
         elif kind == "table":
