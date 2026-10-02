@@ -1,6 +1,6 @@
 # OSRA-CODE — Command Line
 
-**Status:** Draft, slice 0.2. The commands below cover an assessment from creation to ranked results without an agent (mode C). Reports, workbook import and export, and action mapping arrive in slice 0.3.
+**Status:** Draft, slice 0.3. The commands below cover an assessment from creation to board output without an agent (mode C).
 
 Install from a checkout with `python3 -m venv .venv && .venv/bin/pip install -e .`. Python 3.12 or later.
 
@@ -45,6 +45,38 @@ osra-code score screening
 
 `score` prints the convergence matrix and the findings in remediation order, writes `results/results.yaml`, and keeps a snapshot of everything the run was built from under `snapshots/`. `osra-code results DIR` shows the current results again.
 
+## The Convergence Risk Summary and reports
+
+The narrative of each finding is yours; the software writes none. Record it, confirm it, then produce the reports:
+
+```sh
+osra-code summary DEP-01 screening \
+  what_converges="A silent model change, unmonitored outputs and an unverified benchmark meet at the base model" \
+  'failure_modes=[FM-01]' 'trust_signals=[TS-01]' \
+  why_governance_missed="Vendor reviews check uptime, not behaviour" \
+  regulatory_exposure="DORA identification of ICT dependencies; AI Act accuracy" \
+  'clauses=[dora.art-8, ai-act.art-15]' \
+  recommended_action="Validate weekly on an independent set; evaluate a second model" \
+  'actions=[D2, V1, R5]' internal_document="Third-party risk register" \
+  governance_change="New risk register entry and a board metric"
+osra-code confirm summary screening
+osra-code report screening
+```
+
+`report` writes, under `reports/run-NNNN/`, each report as a document model (`.json`) and as Markdown, self-contained HTML and DOCX (`--as md html docx` to choose). Name reports to produce only some: `substrate-map`, `failure-surface-register`, `trust-surface-register`, `convergence-risk-summary`, `board`, `ciso`, `cto`, and `refresh` once there are two runs. Text missing from the summary is shown as not recorded, a finding without an action as a gap, and text that looks like a credential is withheld.
+
+Clause identifiers come from the method pack's regulatory mappings (`method/osra-1.2/mappings/`), each checked against EUR-Lex. Actions come from the Action Catalogue (D1 to D6, V1 to V6, R1 to R5, G1 to G6); where none applies, say why with `action_gap=TEXT`.
+
+## Workbooks
+
+| Command | Effect |
+|---|---|
+| `osra-code export DIR OUT` | Write the four OSRA workbooks, with every field and the engine's computed values in protected, marked columns |
+| `osra-code import DIR WORKBOOK...` | Create an assessment from workbooks. Revised workbooks give back exactly what was exported; a register confirmed and then edited in the workbook returns to draft. Workbooks as published in v1.2 import as a draft, with a note for everything they cannot supply; give the system boundary with `--boundary` |
+| `osra-code templates OUT` | Generate the blank workbooks from the method pack |
+
+The workbooks hold no formulas: the engine writes every computed value.
+
 Values are read as text, except `true`, `false`, `null`, whole numbers and `[lists]`. Field names and allowed values are those of the schemas; a rejected value is reported with the rule, the field and a valid example.
 
 ## Changing things
@@ -55,6 +87,7 @@ Values are read as text, except `true`, `false`, `null`, whole numbers and `[lis
 | `osra-code remove ID DIR` | Remove an entity. Its identifier is retired and never reused. A dependency still referenced cannot be removed. |
 | `osra-code resolve-tie DIR --order DEP-02 DEP-01 --reason TEXT` | Order findings that the published tie-break leaves level. |
 | `osra-code record DIR` | Bring changes made to the files by hand into the history. Writes are refused until this is done. |
+| `osra-code summary DEP DIR FIELD=VALUE ...` | Write the Convergence Risk Summary narrative for a finding. Changing it does not withdraw the results. |
 
 Computed values (severity, the silent failure flag, the trust gap, conditions, category, Concentration flag, clocks, the horizon score, score and rank) cannot be entered.
 

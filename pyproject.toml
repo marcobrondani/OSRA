@@ -17,6 +17,8 @@ license-files = []
 dependencies = [
   "PyYAML>=6.0",
   "jsonschema>=4.21",
+  "openpyxl>=3.1",
+  "defusedxml>=0.7",
 ]
 
 [project.optional-dependencies]

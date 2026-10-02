@@ -26,6 +26,12 @@ def order(node: Any, schema: Any, schemas: SchemaSet, base: str) -> Any:
     if isinstance(node, dict):
         props = schema.get("properties", {}) if isinstance(schema, dict) else {}
         extra = schema.get("additionalProperties") if isinstance(schema, dict) else None
+        required = set(schema.get("required", [])) if isinstance(schema, dict) else set()
+        # An optional key with no value is the same as an absent key; it is
+        # written as absent, so that every form of the same data is one file.
+        # Free-form mappings (such as an explanation's inputs) keep every key.
+        if props:
+            node = {k: v for k, v in node.items() if k in required or v not in (None, [], {})}
         keys = [k for k in props if k in node] + sorted((k for k in node if k not in props), key=str)
         return {
             k: order(node[k], props.get(k, extra if isinstance(extra, dict) else {}), schemas, base)
