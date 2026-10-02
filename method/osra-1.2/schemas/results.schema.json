@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "results.schema.json",
+  "title": "OSRA Convergence Map (results of a run)",
+  "description": "The Phase 4 artefact as the engine produces it: derived Phase 2 and Phase 3 values, the convergence matrix for every dependency, and the scored and ranked findings, each value with the rule that produced it (FR-40 to FR-46, TR-05, TR-81). Generated, never entered. Stored under results/.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "run", "failure_modes", "trust_signals", "matrix", "findings", "explanations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "results"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["at", "method_pack", "software_version", "weights", "draft_inputs"],
+      "properties": {
+        "at": {"$ref": "common.schema.json#/$defs/timestamp"},
+        "method_pack": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "checksum"],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/text"},
+            "version": {"$ref": "common.schema.json#/$defs/text"},
+            "checksum": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+            "origin": {"$ref": "common.schema.json#/$defs/optional_text"}
+          }
+        },
+        "software_version": {"$ref": "common.schema.json#/$defs/text"},
+        "weights": {
+          "type": "object",
+          "additionalProperties": {"$ref": "common.schema.json#/$defs/decimal"}
+        },
+        "draft_inputs": {
+          "description": "How many values still marked draft the results depended on (TR-100a).",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "failure_modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "silent_failure_risk"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/failure_mode_id"},
+          "severity": {"enum": ["critical", "high", "medium", "low"]},
+          "silent_failure_risk": {"type": "boolean"}
+        }
+      }
+    },
+    "trust_signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "trust_gap", "chain_depth"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/trust_signal_id"},
+          "trust_gap": {"type": "boolean"},
+          "chain_depth": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "matrix": {
+      "description": "One row per dependency (Phase 4, Step 4.1).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dependency", "condition_1", "condition_2", "condition_3", "conditions_met", "single_point", "category", "concentration_flag", "clocks"],
+        "properties": {
+          "dependency": {"$ref": "common.schema.json#/$defs/dependency_id"},
+          "condition_1": {"type": "boolean"},
+          "condition_2": {"type": "boolean"},
+          "condition_3": {"type": "boolean"},
+          "conditions_met": {"type": "integer", "minimum": 0, "maximum": 3},
+          "single_point": {"type": "boolean"},
+          "category": {"$ref": "#/$defs/category"},
+          "concentration_flag": {"type": "boolean"},
+          "clocks": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/duration"}}
+        }
+      }
+    },
+    "findings": {
+      "description": "Scored findings in rank order (Phase 4, Steps 4.2 and 4.3). Monitored Risks are not scored.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "dependency", "category", "concentration_flag", "factors", "score", "rank", "tied_with"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/finding_id"},
+          "dependency": {"$ref": "common.schema.json#/$defs/dependency_id"},
+          "category": {"enum": ["critical-convergence", "convergence-point", "concentration-risk"]},
+          "concentration_flag": {"type": "boolean"},
+          "factors": {"$ref": "#/$defs/factors"},
+          "score": {"$ref": "common.schema.json#/$defs/decimal"},
+          "rank": {"type": "integer", "minimum": 1},
+          "tied_with": {
+            "description": "Findings the published tie-break cannot separate from this one and the practitioner has not yet resolved.",
+            "type": "array",
+            "items": {"$ref": "common.schema.json#/$defs/finding_id"}
+          },
+          "tie_resolution": {"$ref": "common.schema.json#/$defs/optional_text"}
+        }
+      }
+    },
+    "explanations": {
+      "description": "One record per computed value: the rule, its citation, the inputs and the output (TR-11, TR-81).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["subject", "output", "rule", "cites", "inputs", "value"],
+        "properties": {
+          "subject": {"$ref": "common.schema.json#/$defs/entity_id"},
+          "output": {"$ref": "common.schema.json#/$defs/text"},
+          "rule": {"$ref": "common.schema.json#/$defs/text"},
+          "cites": {"$ref": "common.schema.json#/$defs/text"},
+          "inputs": {"type": "object"},
+          "value": {}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "category": {"enum": ["critical-convergence", "convergence-point", "concentration-risk", "monitored-risk"]},
+    "factors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regulatory_exposure", "detection_deficit", "trust_depth", "blast_radius", "remediation_complexity", "materialisation_horizon"],
+      "properties": {
+        "regulatory_exposure": {"type": "integer", "minimum": 1, "maximum": 5},
+        "detection_deficit": {"type": "integer", "minimum": 1, "maximum": 5},
+        "trust_depth": {"type": "integer", "minimum": 1, "maximum": 5},
+        "blast_radius": {"type": "integer", "minimum": 1, "maximum": 5},
+        "remediation_complexity": {"type": "integer", "minimum": 1, "maximum": 5},
+        "materialisation_horizon": {"type": "integer", "minimum": 1, "maximum": 5}
+      }
+    }
+  }
+}

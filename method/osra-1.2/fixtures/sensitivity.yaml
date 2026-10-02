@@ -1,0 +1,46 @@
+# The published weight sensitivity results (TR-102): every scored finding
+# rescored with the two weighted factors, regulatory exposure and blast radius,
+# set to each weight pair below. Rankings are category first, then score, then
+# the Step 4.3 tie-break.
+# Source: calibration/OSRA_Scoring_Calibration_v1.2.md, Weight Sensitivity
+# (v1.2). Kendall tau is against the baseline ranking, to two decimals.
+schema_version: 1
+kind: sensitivity
+cites: "Phase 4, Step 4.2"
+source:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+  section: Weight Sensitivity (v1.2)
+baseline: {regulatory_exposure: "1.5", blast_radius: "1.5"}
+weight_sets:
+  - {regulatory_exposure: "1.0", blast_radius: "1.0"}
+  - {regulatory_exposure: "1.5", blast_radius: "1.5"}
+  - {regulatory_exposure: "2.0", blast_radius: "2.0"}
+  - {regulatory_exposure: "1.5", blast_radius: "1.0"}
+  - {regulatory_exposure: "1.0", blast_radius: "1.5"}
+  - {regulatory_exposure: "2.0", blast_radius: "1.5"}
+  - {regulatory_exposure: "1.5", blast_radius: "2.0"}
+  - {regulatory_exposure: "3.0", blast_radius: "3.0"}
+# Every weight pair leaves every category and every scenario's first finding
+# unchanged. Only the changes below move the ranking; any pair not listed for
+# a scenario reproduces its baseline ranking.
+changes:
+  - scenario: gridsense
+    weights: {regulatory_exposure: "2.0", blast_radius: "2.0"}
+    swapped: [NW-CP3, NW-CP2]
+    kendall_tau: "0.80"
+  - scenario: gridsense
+    weights: {regulatory_exposure: "1.5", blast_radius: "2.0"}
+    swapped: [NW-CP3, NW-CP2]
+    kendall_tau: "0.80"
+  - scenario: gridsense
+    weights: {regulatory_exposure: "3.0", blast_radius: "3.0"}
+    swapped: [NW-CP3, NW-CP2]
+    kendall_tau: "0.80"
+  - scenario: autopilot
+    weights: {regulatory_exposure: "1.0", blast_radius: "1.5"}
+    swapped: [AO-CP3, AO-CP4]
+    kendall_tau: "0.87"
+  - scenario: autopilot
+    weights: {regulatory_exposure: "1.5", blast_radius: "2.0"}
+    swapped: [AO-CP3, AO-CP4]
+    kendall_tau: "0.87"

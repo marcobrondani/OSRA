@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "com.brondani.osra"
+description = "OSRA-CODE: the OSRA methodology (Operational Substrate Risk Audit) as software."
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["version"]
+authors = [{ name = "Marco Brondani" }]
+# No licence is declared for the code yet. The decision belongs to the author
+# and is pending (docs/VISION.md, ADR-0004). The repository's LICENSE covers
+# the published methodology (CC BY-SA 4.0) and is deliberately not attached
+# to the package.
+license-files = []
+dependencies = [
+  "PyYAML>=6.0",
+  "jsonschema>=4.21",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+]
+
+[project.scripts]
+osra-code = "com.brondani.osra.cli:main"
+
+[tool.hatch.version]
+path = "src/com/brondani/osra/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/com"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

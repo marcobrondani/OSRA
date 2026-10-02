@@ -1,0 +1,4 @@
+# The method pack is verified byte for byte against checksums.sha256, and
+# fixtures must not change on checkout (TR-70a). No line-ending conversion.
+method/** -text
+tests/data/** -text

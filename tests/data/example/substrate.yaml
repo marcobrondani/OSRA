@@ -1,0 +1,33 @@
+schema_version: 1
+kind: substrate
+state: confirmed
+confirmation: {by: Assessor, at: "2026-09-30T12:00:00Z", surface: cli}
+retired: [DEP-03]
+dependencies:
+  - id: DEP-01
+    name: Hosted base model
+    layer: model
+    provider: Model provider
+    owner_type: vendor
+    location: EU region
+    single_point: true
+    visibility: known-unmonitored
+    fallback: no
+    provenance:
+      created: {author_type: human, author: Assessor, at: "2026-09-30T09:10:00Z", surface: cli}
+  - id: DEP-02
+    name: Cloud region
+    layer: compute
+    owner_type: vendor
+    single_point: true
+    visibility: visible
+    fallback: partial
+    fallback_tested: false
+  - id: DEP-04
+    name: Sanctions data feed
+    layer: data
+    owner_type: third-party
+    single_point: false
+    visibility: visible
+    fallback: yes
+    fallback_tested: true

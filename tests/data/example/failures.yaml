@@ -1,0 +1,33 @@
+schema_version: 1
+kind: failures
+state: confirmed
+confirmation: {by: Assessor, at: "2026-09-30T12:05:00Z", surface: cli}
+failure_modes:
+  - id: FM-01
+    dependency: DEP-01
+    type: silent
+    description: Behaviour changes after a provider update without notice.
+    detection: {mechanism: Flagging volume dashboard, latency: never, confidence: low}
+    impact: critical
+    tested_fallback: false
+    materialisation_horizon: imminent
+    propagation:
+      path: Screening decisions
+      downstream_impact: Missed or false flags on live transactions
+      downstream_detection: null
+  - id: FM-02
+    dependency: DEP-02
+    type: hard
+    description: Region outage.
+    detection: {mechanism: Uptime probe, latency: minutes, confidence: high}
+    impact: high
+    tested_fallback: false
+    materialisation_horizon: weeks
+  - id: FM-03
+    dependency: DEP-04
+    type: degradation
+    description: Feed delivers stale lists.
+    detection: {mechanism: null, latency: days, confidence: none}
+    impact: medium
+    tested_fallback: true
+    materialisation_horizon: weeks

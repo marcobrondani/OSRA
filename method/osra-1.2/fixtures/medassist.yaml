@@ -1,0 +1,151 @@
+# Reference scenario: MedAssist AI (healthcare).
+# Generated from the calibration document and weight_sensitivity.py; the
+# fixture tests check it against both. Findings are in remediation order.
+# Values under `drafts` await author review and are never published values.
+schema_version: 1
+kind: reference-scenario
+id: medassist
+name: MedAssist AI
+sector: healthcare
+source:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+  section: v1.2 Classification and Six-Factor Rescoring
+  also:
+  - calibration/weight_sensitivity.py, SCENARIOS (per-factor scores)
+findings:
+- id: MH-CP1
+  name: model opacity
+  severity: critical
+  silent_failure: true
+  trust_gap: true
+  single_point: true
+  factors:
+    regulatory_exposure: 5
+    detection_deficit: 5
+    trust_depth: 5
+    blast_radius: 5
+    remediation_complexity: 5
+    materialisation_horizon: 5
+  horizon_reason: quarterly updates already ship without validation
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: true
+    clocks:
+    - P30D
+    - P6M
+    score: '35.0'
+    rank: 1
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: MH-CP4
+  name: physician over-reliance
+  severity: critical
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 5
+    detection_deficit: 5
+    trust_depth: 3
+    blast_radius: 5
+    remediation_complexity: 5
+    materialisation_horizon: 5
+  horizon_reason: over-reliance is current practice
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '33.0'
+    rank: 2
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: MH-CP2
+  name: EHR integration fragility
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 4
+    detection_deficit: 4
+    trust_depth: 3
+    blast_radius: 4
+    remediation_complexity: 4
+    materialisation_horizon: 5
+  horizon_reason: partial feeds may be occurring now
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '28.0'
+    rank: 3
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: MH-CP3
+  name: MDR certification scope
+  severity: critical
+  silent_failure: false
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 4
+    detection_deficit: 2
+    trust_depth: 3
+    blast_radius: 3
+    remediation_complexity: 3
+    materialisation_horizon: 2
+  horizon_reason: the AI Act obligations for Annex I high-risk systems apply on a published
+    date
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '20.5'
+    rank: 4
+  drafts:
+    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
+      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: MH-CP5
+  name: cross-border patient data
+  severity: high
+  silent_failure: false
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 2
+    trust_depth: 2
+    blast_radius: 2
+    remediation_complexity: 3
+    materialisation_horizon: 1
+  horizon_reason: slow regulatory evolution
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '15.5'
+    rank: 5
+  drafts:
+    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
+      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]

@@ -1,0 +1,122 @@
+# Reference scenario: StreamPay (digital services).
+# Generated from the calibration document and weight_sensitivity.py; the
+# fixture tests check it against both. Findings are in remediation order.
+# Values under `drafts` await author review and are never published values.
+schema_version: 1
+kind: reference-scenario
+id: streampay
+name: StreamPay
+sector: digital services
+source:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+  section: v1.2 Classification and Six-Factor Rescoring
+  also:
+  - calibration/weight_sensitivity.py, SCENARIOS (per-factor scores)
+findings:
+- id: SP-CP1
+  name: LLM API dependency
+  severity: critical
+  silent_failure: true
+  trust_gap: true
+  single_point: true
+  factors:
+    regulatory_exposure: 5
+    detection_deficit: 4
+    trust_depth: 4
+    blast_radius: 5
+    remediation_complexity: 5
+    materialisation_horizon: 5
+  horizon_reason: silent behaviour changes may already be active
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: true
+    clocks:
+    - P30D
+    - P6M
+    score: '33.0'
+    rank: 1
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: SP-CP2
+  name: device fingerprinting
+  severity: high
+  silent_failure: true
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 4
+    trust_depth: 3
+    blast_radius: 3
+    remediation_complexity: 3
+    materialisation_horizon: 5
+  horizon_reason: stale device data may already be in use
+  expected:
+    conditions_met: 3
+    category: critical-convergence
+    concentration_flag: false
+    clocks:
+    - P30D
+    score: '24.0'
+    rank: 2
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: SP-CP3
+  name: RAG database integrity
+  severity: high
+  silent_failure: true
+  trust_gap: false
+  single_point: false
+  factors:
+    regulatory_exposure: 3
+    detection_deficit: 3
+    trust_depth: 1
+    blast_radius: 4
+    remediation_complexity: 2
+    materialisation_horizon: 5
+  horizon_reason: stale patterns or index corruption may be present now
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '21.5'
+    rank: 3
+  drafts:
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]
+- id: SP-CP4
+  name: cross-border regulatory
+  severity: critical
+  silent_failure: false
+  trust_gap: true
+  single_point: false
+  factors:
+    regulatory_exposure: 4
+    detection_deficit: 2
+    trust_depth: 2
+    blast_radius: 3
+    remediation_complexity: 4
+    materialisation_horizon: 1
+  horizon_reason: national implementations diverge over years
+  expected:
+    conditions_met: 2
+    category: convergence-point
+    concentration_flag: false
+    clocks:
+    - P90D
+    score: '19.5'
+    rank: 4
+  drafts:
+    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
+      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
+    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
+      scored in the calibration run; this value applies the anchors to the scenario text.
+      [DRAFT — author review]

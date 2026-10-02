@@ -1,0 +1,84 @@
+# The category of each dependency, decided by the first rule that matches,
+# and the Concentration flag. The category sets the clock; the score does not
+# decide the category.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 4, Step 4.1.
+# Clocks are ISO 8601 durations. A Monitored Risk has no clock: it goes to
+# the standard risk management cycle.
+schema_version: 1
+id: category
+cites: "Phase 4, Step 4.1"
+categories:
+  - id: critical-convergence
+    name: Critical Convergence
+    order: 1
+    scored: true
+    clock: P30D
+    action_level: "Immediate: remediation within 30 days"
+  - id: convergence-point
+    name: Convergence Point
+    order: 2
+    scored: true
+    clock: P90D
+    action_level: "Short-term: remediation within 90 days"
+  - id: concentration-risk
+    name: Concentration Risk
+    order: 3
+    scored: true
+    clock: P6M
+    action_level: "Medium-term: exit strategy and redundancy planning within 6 months"
+  - id: monitored-risk
+    name: Monitored Risk
+    order: 4
+    scored: false
+    clock: null
+    action_level: Standard risk management cycle
+rules:
+  - id: category.assign
+    cites: "Phase 4, Step 4.1"
+    form: first_match
+    scope: dependency
+    output: category
+    cases:
+      - id: category.critical-convergence
+        cites: "Phase 4, Step 4.1, order 1"
+        when: {field: conditions_met, eq: 3}
+        value: critical-convergence
+      - id: category.convergence-point
+        cites: "Phase 4, Step 4.1, order 2"
+        when: {field: conditions_met, eq: 2}
+        value: convergence-point
+      - id: category.concentration-risk
+        cites: "Phase 4, Step 4.1, order 3"
+        note: >-
+          Fewer than two conditions met, and the dependency is a single point
+          of dependency with at least one Critical or High failure mode.
+        when:
+          all:
+            - {field: conditions_met, lt: 2}
+            - {field: single_point, eq: true}
+            - some: failure_modes
+              where: {field: severity, in: [critical, high]}
+        value: concentration-risk
+      - id: category.monitored-risk
+        cites: "Phase 4, Step 4.1, order 4"
+        note: Every other dependency.
+        when: {always: true}
+        value: monitored-risk
+  - id: category.concentration-flag
+    cites: "Phase 4, Step 4.1, Concentration flag"
+    note: >-
+      A Critical Convergence or Convergence Point that is also a single point
+      of dependency with a Critical or High failure mode keeps its category
+      and its clock, and carries a Concentration flag as well. The flag adds
+      the six-month exit strategy and redundancy planning clock, which runs
+      alongside the shorter remediation clock rather than replacing it.
+    form: predicate
+    scope: dependency
+    output: concentration_flag
+    when:
+      all:
+        - {field: category, in: [critical-convergence, convergence-point]}
+        - {field: single_point, eq: true}
+        - some: failure_modes
+          where: {field: severity, in: [critical, high]}
+    clock: P6M

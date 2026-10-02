@@ -19,6 +19,14 @@ its evidence, its calibration, and the documents for turning it into software
 - `private/` — gitignored. Business documents live here. Never commit them,
   never quote them in commit messages, PR descriptions or public files.
 - `calibration/weight_sensitivity.py` — recomputes every published figure.
+- `method/osra-1.2/` — the method pack: the methodology as data (format in
+  `docs/METHOD_PACK.md`). Text taken from the methodology is verbatim and the
+  tests compare it. After any change to a pack file, run
+  `osra-code pack rehash` and review the diff.
+- `src/com/brondani/osra/` — OSRA-CODE, Python package `com.brondani.osra`,
+  command `osra-code`. Python 3.12 or later.
+- Setup: `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`.
+  Checks: `.venv/bin/osra-code check` and `.venv/bin/pytest`.
 
 ## Conventions
 - British spelling. Method terms are fixed: Phase, Surface, Artefact,
@@ -43,7 +51,8 @@ its evidence, its calibration, and the documents for turning it into software
 
 ## Open items
 - Calibration drafts (horizon scores for scenarios 1–4, six restated
-  severities) await author review. Scheduled before 1.0, not before the
+  severities) await author review; the fixtures mark them, and
+  `osra-code check` counts every draft value. Scheduled before 1.0, not before the
   fixtures: early slices may build on draft values, marked as draft.
 - EuroBank Sentinel: per-condition breakdown for CP4 and CP5 still to be
   recorded in the calibration document, also before 1.0.

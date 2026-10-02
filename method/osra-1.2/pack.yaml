@@ -1,0 +1,23 @@
+# The OSRA v1.2 method pack: the methodology as data (ADR-0003).
+# Every file in the pack is listed with its SHA-256 in checksums.sha256.
+# The format of each file is described in docs/METHOD_PACK.md.
+schema_version: 1
+kind: method-pack
+id: osra
+version: "1.2"
+methodology:
+  title: The OSRA Methodology and Framework
+  version: "1.2"
+  document: methodology/OSRA_Architecture_v1.2.md
+  includes: Corrections within v1.2 (September 2026)
+calibration:
+  document: calibration/OSRA_Scoring_Calibration_v1.2.md
+catalogue:
+  document: action-catalogue/OSRA_Action_Catalogue_v1.2.md
+# The pack is derived from material published under CC BY-SA 4.0. The licence
+# of the pack itself is pending the author's decision (ADR-0004); until then
+# no licence file is included here.
+licence: null
+# Regulatory mappings (DORA, NIS2, the EU AI Act) are added in slice 0.3,
+# once every clause has been checked against the primary text (TR-16a).
+mappings: []

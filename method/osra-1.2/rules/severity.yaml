@@ -1,0 +1,41 @@
+# Failure severity. Severity measures consequence and is decided by the
+# impact of the failure and by the fallback, in two steps. Detection does not
+# enter severity.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 2, Step 2.4.
+schema_version: 1
+id: severity
+cites: "Phase 2, Step 2.4"
+levels:
+  # Ordered from most to least severe. step_down moves along this order.
+  - id: critical
+    name: Critical
+  - id: high
+    name: High
+  - id: medium
+    name: Medium
+  - id: low
+    name: Low
+rules:
+  - id: severity.from-impact
+    cites: "Phase 2, Step 2.4, step 1"
+    form: map
+    scope: failure_mode
+    input: impact
+    output: severity
+    map:
+      critical: critical
+      high: high
+      medium: medium
+      low: low
+  - id: severity.tested-fallback
+    cites: "Phase 2, Step 2.4, step 2"
+    note: >-
+      If a fallback is in place and has been tested, lower the level by one
+      (Low stays Low). A fallback that is untested, limited or absent leaves
+      the level unchanged, because an untested fallback is itself an
+      unverified trust signal and belongs in Phase 3.
+    form: step_down
+    scope: failure_mode
+    when: {field: tested_fallback, eq: true}
+    target: severity
+    steps: 1

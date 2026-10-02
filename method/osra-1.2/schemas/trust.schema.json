@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trust.schema.json",
+  "title": "OSRA Trust Surface Register",
+  "description": "The Phase 3 artefact: trust signals linked to dependencies, with reliance, verification and trust chains (FR-13, FR-13a, FR-14). The trust gap is derived and cannot be entered (FR-32). Stored as trust.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "state", "trust_signals"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "trust"},
+    "state": {"$ref": "common.schema.json#/$defs/register_state"},
+    "confirmation": {"$ref": "common.schema.json#/$defs/confirmation"},
+    "retired": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/trust_signal_id"}
+    },
+    "trust_signals": {"type": "array", "items": {"$ref": "#/$defs/trust_signal"}}
+  },
+  "if": {"properties": {"state": {"const": "confirmed"}}},
+  "then": {"required": ["confirmation"]},
+  "$defs": {
+    "trust_signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "dependencies", "category", "claim", "reliance", "verification"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/trust_signal_id"},
+        "dependencies": {
+          "description": "The dependencies this signal concerns. Phase 4 reads trust gaps only through these links (TR-03).",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/dependency_id"}
+        },
+        "category": {"enum": ["vendor-performance", "certification", "sla", "internal-testing", "governance-documentation", "third-party-assessment", "implicit-trust", "human-in-the-loop", "agent-and-tool-delegation"]},
+        "claim": {"$ref": "common.schema.json#/$defs/text"},
+        "reliance": {
+          "description": "What decision, compliance claim or risk assessment depends on the claim being true. Null states that nothing does, and then the signal cannot be a trust gap.",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "consequence_if_false": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "verification": {
+          "description": "Phase 3, Step 3.2.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status"],
+          "properties": {
+            "status": {"enum": ["verified", "partially-verified", "unverified", "unverifiable"]},
+            "method": {"enum": ["internal-testing", "third-party-audit", "right-to-audit", "continuous-monitoring", "one-time-assessment", null]},
+            "last_verified": {"oneOf": [{"$ref": "common.schema.json#/$defs/date"}, {"type": "null"}]},
+            "currency": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "scope_match": {"enum": ["yes", "no", "partial", null]}
+          },
+          "if": {"properties": {"status": {"enum": ["verified", "partially-verified"]}}},
+          "then": {
+            "required": ["scope_match"],
+            "properties": {"scope_match": {"enum": ["yes", "no", "partial"]}}
+          }
+        },
+        "verification_requirements": {
+          "description": "What verification would require (Phase 3, Step 3.3).",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cost": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "access": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "expertise": {"$ref": "common.schema.json#/$defs/optional_text"},
+            "time": {"$ref": "common.schema.json#/$defs/optional_text"}
+          }
+        },
+        "chain": {
+          "description": "The trust chain behind the signal (Phase 3, Step 3.4): each layer the organisation's trust passes through, nearest first. Chain depth is the number of layers and is derived.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["party", "verified"],
+            "properties": {
+              "party": {"$ref": "common.schema.json#/$defs/text"},
+              "trusts": {"$ref": "common.schema.json#/$defs/optional_text"},
+              "verified": {"type": "boolean"}
+            }
+          }
+        },
+        "notes": {"$ref": "common.schema.json#/$defs/optional_text"},
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+      }
+    }
+  }
+}

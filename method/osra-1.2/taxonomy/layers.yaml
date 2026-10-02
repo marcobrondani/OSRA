@@ -1,0 +1,92 @@
+# The nine dependency layers of Phase 1 and the questions asked at each.
+# Source: methodology/OSRA_Architecture_v1.2.md, Phase 1, Step 1.2.
+# workbook_label is the value used in the Phase 1 workbook validation list.
+schema_version: 1
+id: taxonomy.layers
+cites: "Phase 1, Step 1.2"
+layers:
+  - id: model
+    name: Model Layer
+    workbook_label: Model Layer
+    questions:
+      - Whose base model?
+      - Which version?
+      - Fine-tuned by whom?
+      - On what data?
+      - Weights hosted where?
+      - Model card available?
+      - When last updated?
+      - Update notification mechanism?
+  - id: agent-and-tool
+    name: Agent and Tool Layer
+    workbook_label: Agent and Tool Layer
+    questions:
+      - Which AI agents act inside the system or on its behalf?
+      - Which tools and MCP servers can each agent call, with which credentials and permissions?
+      - Who publishes and maintains each MCP server, and is its version pinned?
+      - Are tool descriptions fetched at runtime?
+      - Which model provider drives tool selection?
+      - Which actions require human approval, and what evidence shows the approval is exercised?
+  - id: compute
+    name: Compute Layer
+    workbook_label: Compute Layer
+    questions:
+      - Which cloud provider(s)?
+      - Which region(s)?
+      - Which availability zone(s)?
+      - GPU/TPU type?
+      - Dedicated or shared?
+      - Burst capacity?
+      - Fallback compute?
+  - id: data
+    name: Data Layer
+    workbook_label: Data Layer
+    questions:
+      - Where does training data originate?
+      - Where is it stored?
+      - What pipeline processes it?
+      - Who owns the pipeline?
+      - What third-party data sources?
+      - What latency?
+      - What happens if a source goes offline?
+  - id: network
+    name: Network Layer
+    workbook_label: Network Layer
+    questions:
+      - What API chains connect system components?
+      - What are the dependencies between them?
+      - What happens if an intermediate API goes down?
+      - What CDN/edge infrastructure?
+      - What DNS provider?
+  - id: software
+    name: Software Layer
+    workbook_label: Software Layer
+    questions:
+      - What frameworks, libraries, and runtime dependencies?
+      - What container/orchestration platform?
+      - What package repositories?
+      - What are the SBOM and AIBOM contents?
+  - id: energy
+    name: Energy Layer
+    workbook_label: Energy Layer
+    questions:
+      - What power grid serves the primary data centre?
+      - What backup power (duration, capacity)?
+      - What cooling systems?
+      - What is the energy cost trajectory?
+  - id: contractual
+    name: Contractual Layer
+    workbook_label: Contractual Layer
+    questions:
+      - What SLAs govern each dependency?
+      - What are the actual uptime guarantees (not the marketed ones)?
+      - What are the termination/change notification clauses?
+      - What exit strategy exists per provider?
+  - id: geographic-jurisdictional
+    name: Geographic/Jurisdictional Layer
+    workbook_label: Geographic / Jurisdictional
+    questions:
+      - Where physically are compute, data, and model components?
+      - Which jurisdictions apply?
+      - What cross-border data transfer mechanisms?
+      - What sovereign data requirements?
