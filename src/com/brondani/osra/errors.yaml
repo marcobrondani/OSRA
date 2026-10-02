@@ -204,3 +204,23 @@ errors:
     message: "{entity}: {value} changed outside OSRA-CODE since it was last recorded; nothing was written."
     remedy: Review the change, record it with 'osra-code record', then repeat the command.
     exit_code: 1
+  OSRA-E615:
+    title: Unknown action
+    message: "{entity}: '{field}' is {value}, which is not an action in the catalogue."
+    remedy: Choose actions from the Action Catalogue (D1 to D6, V1 to V6, R1 to R5, G1 to G6), or record why none applies in action_gap.
+    exit_code: 1
+  OSRA-E616:
+    title: Unknown regulatory clause
+    message: "{entity}: '{field}' is {value}, which is not a clause in the method pack's regulatory mappings."
+    remedy: Use a clause identifier from the mappings, for example as listed by the valid example.
+    exit_code: 1
+  OSRA-E617:
+    title: Reference to another dependency's entry
+    message: "{entity}: '{field}' is {value}, which does not belong to {expected}."
+    remedy: List only failure modes of this dependency, and trust signals linked to it.
+    exit_code: 1
+  OSRA-E618:
+    title: Duplicate summary entry
+    message: "{entity}: the dependency has more than one entry in summary.yaml."
+    remedy: Keep one summary entry per finding.
+    exit_code: 1

@@ -1,8 +1,8 @@
 """Validation of an assessment's files against the method pack (FR-16, TR-18).
 
-An assessment is a directory with ``assessment.yaml`` and up to four
-registers: ``substrate.yaml``, ``failures.yaml``, ``trust.yaml`` and
-``scoring.yaml``. Validation checks each file against its schema, then checks
+An assessment is a directory with ``assessment.yaml``, up to four registers
+(``substrate.yaml``, ``failures.yaml``, ``trust.yaml``, ``scoring.yaml``) and
+the Convergence Risk Summary narrative (``summary.yaml``). Validation checks each file against its schema, then checks
 what a schema cannot: identifiers are unique and never reuse a retired one,
 and every reference to a dependency names a dependency in the Substrate Map.
 
@@ -26,6 +26,7 @@ FILES = {
     "failures": "failures.yaml",
     "trust": "trust.yaml",
     "scoring": "scoring.yaml",
+    "summary": "summary.yaml",
 }
 # The list in each register, and the identifier prefix of its entries.
 _ENTRIES = {
@@ -90,6 +91,7 @@ def check_assessment(pack: MethodPack, documents: dict[str, Any]) -> list[Diagno
         seen.add(dep)
         if dep not in dependencies:
             problems.append(_unknown(entity, "dependency", dep, FILES["scoring"]))
+    problems += _check_summary(pack, valid, dependencies)
     for i, resolution in enumerate(_entries(scoring, "tie_resolutions")):
         for j, dep in enumerate(resolution.get("order", []) if isinstance(resolution, dict) else []):
             if isinstance(dep, str) and dep not in dependencies:
@@ -147,3 +149,45 @@ def _check_identifiers(document: Any, list_key: str, file: str) -> list[Diagnost
 
 def _unknown(entity: str, field: str, value: str, file: str) -> Diagnostic:
     return diagnostic("OSRA-E202", entity=entity, field=field, value=value, file=file, example="DEP-01")
+
+
+def _check_summary(pack: MethodPack, valid: dict[str, Any], dependencies: set) -> list[Diagnostic]:
+    file = FILES["summary"]
+    summary = valid.get("summary")
+    if summary is None:
+        return []
+    problems: list[Diagnostic] = []
+    failure_modes = {fm.get("id"): fm.get("dependency")
+                     for fm in _entries(valid.get("failures"), "failure_modes") if isinstance(fm, dict)}
+    signals = {ts.get("id"): ts.get("dependencies") or []
+               for ts in _entries(valid.get("trust"), "trust_signals") if isinstance(ts, dict)}
+    actions = {a["id"] for a in pack.catalogue["actions"]}
+    clauses = pack.clause_ids()
+    seen: set[str] = set()
+    for entry in _entries(summary, "entries"):
+        dep = entry.get("dependency") if isinstance(entry, dict) else None
+        if not isinstance(dep, str):
+            continue
+        entity = f"summary of {dep}"
+        if dep in seen:
+            problems.append(diagnostic("OSRA-E618", entity=entity, file=file))
+        seen.add(dep)
+        if dep not in dependencies:
+            problems.append(_unknown(entity, "dependency", dep, file))
+        for i, fm in enumerate(entry.get("failure_modes") or []):
+            if failure_modes.get(fm) != dep:
+                problems.append(diagnostic("OSRA-E617", entity=entity, field=f"failure_modes[{i}]", file=file,
+                                           value=fm, expected=dep))
+        for i, ts in enumerate(entry.get("trust_signals") or []):
+            if dep not in signals.get(ts, []):
+                problems.append(diagnostic("OSRA-E617", entity=entity, field=f"trust_signals[{i}]", file=file,
+                                           value=ts, expected=dep))
+        for i, action in enumerate(entry.get("actions") or []):
+            if action not in actions:
+                problems.append(diagnostic("OSRA-E615", entity=entity, field=f"actions[{i}]", file=file,
+                                           value=action, example="D1"))
+        for i, clause in enumerate(entry.get("clauses") or []):
+            if clause not in clauses:
+                problems.append(diagnostic("OSRA-E616", entity=entity, field=f"clauses[{i}]", file=file,
+                                           value=clause, example=min(clauses) if clauses else None))
+    return problems

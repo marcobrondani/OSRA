@@ -1,0 +1,100 @@
+# EU AI Act clauses cited by OSRA, each checked against the primary text on
+# EUR-Lex (TR-16a). The Official Journal text is the original, not a
+# consolidated version. `actions` lists the Action Catalogue entries whose
+# regulatory alignment cites the clause; `integration` quotes Part V of the
+# methodology where it cites the clause.
+schema_version: 1
+kind: mapping
+id: ai-act
+regime: EU AI Act
+version: "1.0"
+verified: "2026-10-02"
+sources:
+  - id: ai-act
+    instrument: Regulation (EU) 2024/1689 laying down harmonised rules on artificial intelligence
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R1689
+    text: Official Journal text, OJ L 2024/1689, 12.7.2024 (original, not consolidated)
+clauses:
+  - id: ai-act.art-6.1
+    source: ai-act
+    reference: Article 6(1)
+    title: Classification rules for high-risk AI systems
+    note: >-
+      An AI system is high-risk where it is a safety component of a product,
+      or itself a product, covered by the Union harmonisation legislation in
+      Annex I and required to undergo a third-party conformity assessment.
+    verified: "2026-10-02"
+  - id: ai-act.art-9
+    source: ai-act
+    reference: Article 9
+    title: Risk management system
+    quote: >-
+      A risk management system shall be established, implemented, documented
+      and maintained in relation to high-risk AI systems.
+    note: The quote is Article 9(1).
+    verified: "2026-10-02"
+    actions: [D1, V1, V6, R4]
+    integration: Phase 4 Convergence Risk Summary provides the risk management evidence Article 9 requires.
+  - id: ai-act.art-10
+    source: ai-act
+    reference: Article 10
+    title: Data and data governance
+    verified: "2026-10-02"
+    actions: [D5]
+  - id: ai-act.art-14
+    source: ai-act
+    reference: Article 14
+    title: Human oversight
+    verified: "2026-10-02"
+    actions: [D6]
+  - id: ai-act.art-15
+    source: ai-act
+    reference: Article 15
+    title: Accuracy, robustness and cybersecurity
+    quote: >-
+      High-risk AI systems shall be designed and developed in such a way that
+      they achieve an appropriate level of accuracy, robustness, and
+      cybersecurity, and that they perform consistently in those respects
+      throughout their lifecycle.
+    note: The quote is Article 15(1).
+    verified: "2026-10-02"
+    actions: [D2, R5]
+  - id: ai-act.art-25
+    source: ai-act
+    reference: Article 25
+    title: Responsibilities along the AI value chain
+    verified: "2026-10-02"
+  - id: ai-act.art-43
+    source: ai-act
+    reference: Article 43
+    title: Conformity assessment
+    verified: "2026-10-02"
+  - id: ai-act.art-73
+    source: ai-act
+    reference: Article 73
+    title: Reporting of serious incidents
+    note: >-
+      Article 73(2): not later than 15 days after the provider or, where
+      applicable, the deployer becomes aware of the serious incident. 73(3):
+      not later than two days for a widespread infringement or a serious
+      incident as defined in Article 3, point (49)(b). 73(4): not later than
+      10 days in the event of the death of a person.
+    verified: "2026-10-02"
+    actions: [G5]
+  - id: ai-act.annex-i
+    source: ai-act
+    reference: Annex I
+    title: List of Union harmonisation legislation
+    verified: "2026-10-02"
+  - id: ai-act.annex-iv
+    source: ai-act
+    reference: Annex IV
+    title: Technical documentation referred to in Article 11(1)
+    verified: "2026-10-02"
+    integration: Phase 1 output fulfils Annex IV hardware/software documentation requirements at genuine depth.
+  - id: ai-act.annex-iv.1e
+    source: ai-act
+    reference: Annex IV, point 1(e)
+    title: Technical documentation referred to in Article 11(1)
+    quote: the description of the hardware on which the AI system is intended to run;
+    verified: "2026-10-02"

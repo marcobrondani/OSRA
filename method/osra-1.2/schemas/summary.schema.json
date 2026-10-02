@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "summary.schema.json",
+  "title": "OSRA Convergence Risk Summary narrative",
+  "description": "What a person writes for each finding of the Convergence Risk Summary: what converges, why governance missed it, the regulatory exposure, the recommended action and the actions chosen from the catalogue (Phase 4, Step 4.3, FR-50, FR-51, FR-63), and where the finding connects to existing governance (Step 4.4). The software does not write this text. Stored as summary.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "state", "entries"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "summary"},
+    "state": {"$ref": "common.schema.json#/$defs/register_state"},
+    "confirmation": {"$ref": "common.schema.json#/$defs/confirmation"},
+    "entries": {"type": "array", "items": {"$ref": "#/$defs/entry"}}
+  },
+  "if": {"properties": {"state": {"const": "confirmed"}}},
+  "then": {"required": ["confirmation"]},
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency"],
+      "properties": {
+        "dependency": {"$ref": "common.schema.json#/$defs/dependency_id"},
+        "what_converges": {
+          "description": "Which substrate dependency, which failure mode, which trust gap.",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "failure_modes": {
+          "description": "The failure modes that converge here.",
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/failure_mode_id"}
+        },
+        "trust_signals": {
+          "description": "The trust gaps that converge here.",
+          "type": "array", "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/trust_signal_id"}
+        },
+        "why_governance_missed": {
+          "description": "Which frameworks or processes should have caught it and why they did not.",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "regulatory_exposure": {
+          "description": "Which specific regulations create liability, in the practitioner's words.",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "clauses": {
+          "description": "The regulatory clauses most relevant to this finding, from the pack's mappings (Step 4.4).",
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9-]+\\.[a-z0-9.-]+$"}
+        },
+        "recommended_action": {
+          "description": "Specific, prioritised steps to reduce convergence risk.",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "actions": {
+          "description": "Actions chosen from the catalogue (FR-50).",
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[DVRG][0-9]+$"}
+        },
+        "action_gap": {
+          "description": "Why no catalogue action applies, when none does (FR-51).",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "internal_document": {
+          "description": "Which internal governance document should address this risk but currently does not (Step 4.4).",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "governance_change": {
+          "description": "What change to existing governance is required (Step 4.4).",
+          "$ref": "common.schema.json#/$defs/optional_text"
+        },
+        "provenance": {"$ref": "common.schema.json#/$defs/provenance"}
+      }
+    }
+  }
+}

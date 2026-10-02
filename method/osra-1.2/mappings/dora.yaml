@@ -1,0 +1,156 @@
+# DORA clauses cited by OSRA, each checked against the primary text on
+# EUR-Lex (TR-16a). The Official Journal text is the original, not a
+# consolidated version. `actions` lists the Action Catalogue entries whose
+# regulatory alignment cites the clause; `integration` quotes Part V of the
+# methodology where it cites the clause.
+schema_version: 1
+kind: mapping
+id: dora
+regime: DORA
+version: "1.0"
+verified: "2026-10-02"
+sources:
+  - id: dora
+    instrument: Regulation (EU) 2022/2554 on digital operational resilience for the financial sector
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022R2554
+    text: Official Journal text, OJ L 333/1, 27.12.2022 (original, not consolidated)
+  - id: dora-incident-reporting
+    instrument: Commission Delegated Regulation (EU) 2025/301 (incident reporting content and time limits)
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R0301
+    text: Official Journal text, OJ L 2025/301, 20.2.2025
+clauses:
+  - id: dora.art-5
+    source: dora
+    reference: Article 5
+    title: Governance and organisation
+    quote: >-
+      The management body of the financial entity shall define, approve,
+      oversee and be responsible for the implementation of all arrangements
+      related to the ICT risk management framework referred to in Article
+      6(1).
+    note: The quote is Article 5(2), first sentence.
+    verified: "2026-10-02"
+    actions: [G2]
+    integration: Phase 4 gives the management body the evidence Article 5 makes it responsible for.
+  - id: dora.art-6
+    source: dora
+    reference: Article 6
+    title: ICT risk management framework
+    verified: "2026-10-02"
+    actions: [G1, G6]
+  - id: dora.art-8
+    source: dora
+    reference: Article 8
+    title: Identification
+    quote: >-
+      As part of the ICT risk management framework referred to in Article
+      6(1), financial entities shall identify, classify and adequately
+      document all ICT supported business functions, roles and
+      responsibilities, the information assets and ICT assets supporting those
+      functions, and their roles and dependencies in relation to ICT risk.
+    note: The quote is Article 8(1), first sentence.
+    verified: "2026-10-02"
+    actions: [G3]
+    integration: Phase 1 extends Article 8 identification of ICT assets and their dependencies.
+  - id: dora.art-10
+    source: dora
+    reference: Article 10
+    title: Detection
+    verified: "2026-10-02"
+    actions: [D1, D3, D4]
+  - id: dora.art-11
+    source: dora
+    reference: Article 11
+    title: Response and recovery
+    verified: "2026-10-02"
+    actions: [D3, R1, R2, G4]
+  - id: dora.art-12
+    source: dora
+    reference: Article 12
+    title: Backup policies and procedures, restoration and recovery procedures and methods
+    verified: "2026-10-02"
+    actions: [R1]
+  - id: dora.art-17
+    source: dora
+    reference: Article 17
+    title: ICT-related incident management process
+    verified: "2026-10-02"
+    actions: [G4]
+  - id: dora.art-19
+    source: dora
+    reference: Article 19
+    title: Reporting of major ICT-related incidents and voluntary notification of significant cyber threats
+    quote: >-
+      Financial entities shall report major ICT-related incidents to the
+      relevant competent authority as referred to in Article 46 in accordance
+      with paragraph 4 of this Article.
+    note: The quote is Article 19(1), first sentence.
+    verified: "2026-10-02"
+    actions: [G5]
+  - id: dora.art-24
+    source: dora
+    reference: Article 24
+    title: General requirements for the performance of digital operational resilience testing
+    verified: "2026-10-02"
+    actions: [G3]
+  - id: dora.art-25
+    source: dora
+    reference: Article 25
+    title: Testing of ICT tools and systems
+    verified: "2026-10-02"
+    actions: [V1, G3]
+    integration: Phase 2 provides infrastructure failure scenarios for Article 25-26 resilience testing.
+  - id: dora.art-26
+    source: dora
+    reference: Article 26
+    title: Advanced testing of ICT tools, systems and processes based on TLPT
+    verified: "2026-10-02"
+    actions: [G3]
+    integration: Phase 2 provides infrastructure failure scenarios for Article 25-26 resilience testing.
+  - id: dora.art-28
+    source: dora
+    reference: Article 28
+    title: General principles
+    note: Chapter V, Section I (key principles for a sound management of ICT third-party risk).
+    verified: "2026-10-02"
+    actions: [V3, V5, G3]
+  - id: dora.art-28.8
+    source: dora
+    reference: Article 28(8)
+    title: General principles
+    quote: >-
+      For ICT services supporting critical or important functions, financial
+      entities shall put in place exit strategies.
+    note: First sentence of Article 28(8).
+    verified: "2026-10-02"
+    actions: [R3]
+  - id: dora.art-29
+    source: dora
+    reference: Article 29
+    title: Preliminary assessment of ICT concentration risk at entity level
+    verified: "2026-10-02"
+    actions: [V5, R5, G3]
+  - id: dora.art-30
+    source: dora
+    reference: Article 30
+    title: Key contractual provisions
+    verified: "2026-10-02"
+    actions: [V2, V4, V5, G3]
+    integration: Phase 3 strengthens Article 30 SLA and audit requirements.
+  - id: dora.reg-2025-301.art-5
+    source: dora-incident-reporting
+    reference: Delegated Regulation (EU) 2025/301, Article 5
+    title: Time limits for the initial notification, and for the intermediate and final reports
+    quote: >-
+      for the initial report: as early as possible, but in any case, within
+      four hours from the classification of the ICT-related incident as a
+      major ICT-related incident and no later than 24 hours from the moment
+      the financial entity has become aware of the ICT-related incident;
+    note: >-
+      The quote is Article 5(1)(a). The intermediate report is due at the
+      latest within 72 hours from the submission of the initial notification
+      (5(1)(b)); the final report no later than one month after the
+      intermediate report or the latest updated intermediate report (5(1)(c)).
+      Where an incident is classified as major after 24 hours, the initial
+      notification is due within four hours of classification (5(2)).
+    verified: "2026-10-02"

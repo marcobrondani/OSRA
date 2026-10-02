@@ -38,6 +38,10 @@ pipeline:
   - ranking.order
 reporting:
   - ranking.primary-output
-# Regulatory mappings (DORA, NIS2, the EU AI Act) are added in slice 0.3,
-# once every clause has been checked against the primary text (TR-16a).
-mappings: []
+# Regulatory mappings. Every clause in them has been checked against the
+# primary text on EUR-Lex, and records the date (TR-16a). Changing a mapping
+# never changes a category or a score (TR-16).
+mappings:
+  - mappings/dora.yaml
+  - mappings/nis2.yaml
+  - mappings/ai-act.yaml

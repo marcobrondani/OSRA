@@ -60,7 +60,7 @@ def confirm_all(store):
 
 def test_create_writes_valid_files_and_a_history(store):
     docs = store.documents()
-    assert set(docs) == {"assessment", "substrate", "failures", "trust", "scoring"}
+    assert set(docs) == {"assessment", "substrate", "failures", "trust", "scoring", "summary"}
     assert docs["assessment"]["method_pack"] == {"id": "osra", "version": "1.2"}
     assert docs["assessment"]["agent_access"] == "read-only"
     assert store.integrity() == []

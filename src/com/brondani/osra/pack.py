@@ -93,6 +93,21 @@ class MethodPack:
                 return rule
         raise KeyError(rule_id)
 
+    def mappings(self) -> list[dict[str, Any]]:
+        """The regulatory mapping sets in the pack (TR-16a)."""
+        return [self.documents[p] for p in self.manifest.get("mappings", []) if p in self.documents]
+
+    def clause_ids(self) -> set[str]:
+        return {c["id"] for m in self.mappings() for c in m.get("clauses", [])}
+
+    def clause(self, clause_id: str) -> dict[str, Any]:
+        for mapping in self.mappings():
+            for clause in mapping.get("clauses", []):
+                if clause["id"] == clause_id:
+                    return {**clause, "regime": mapping["regime"], "mapping": mapping["id"],
+                            "mapping_version": mapping["version"]}
+        raise KeyError(clause_id)
+
     def computed_fields(self) -> frozenset[str]:
         """Fields the engine computes, which no caller may enter (FR-32)."""
         outputs = {r["output"] for r in self.rules() if "output" in r}
@@ -255,6 +270,7 @@ def check_pack(pack: MethodPack) -> list[Diagnostic]:
     problems += _check_scoring(pack)
     problems += _check_catalogue(pack)
     problems += _check_pipeline(pack)
+    problems += _check_mappings(pack)
     return problems
 
 
@@ -480,4 +496,35 @@ def _check_pipeline(pack: MethodPack) -> list[Diagnostic]:
         for register in value["requires"]:
             if register not in registers:
                 problems.append(_inconsistent(f"assessment type {value['id']}", f"requires unknown register '{register}'"))
+    return problems
+
+
+def _check_mappings(pack: MethodPack) -> list[Diagnostic]:
+    """Every mapping is listed, valid, and carries only verified clauses
+    whose identifiers are unique and name their mapping (TR-16a)."""
+    problems = []
+    listed = list(pack.manifest.get("mappings", []))
+    present = sorted(p for p in pack.documents if p.startswith("mappings/"))
+    if sorted(listed) != present:
+        problems.append(_inconsistent("pack.yaml", f"mappings lists {listed} but the pack holds {present}"))
+    actions = {a["id"] for a in pack.catalogue["actions"]}
+    seen: set[str] = set()
+    for path in present:
+        doc = pack.doc(path)
+        problems += pack.schemas.check("mapping.schema.json", doc, file=path)
+        if not isinstance(doc, dict):
+            continue
+        sources = {s.get("id") for s in doc.get("sources", [])}
+        for clause in doc.get("clauses", []):
+            cid = clause.get("id", "?")
+            if cid in seen:
+                problems.append(diagnostic("OSRA-E403", entity=cid, file=path))
+            seen.add(cid)
+            if not str(cid).startswith(f"{doc.get('id')}."):
+                problems.append(_inconsistent(cid, f"the clause identifier must start with '{doc.get('id')}.'"))
+            if clause.get("source") not in sources:
+                problems.append(_inconsistent(cid, f"source '{clause.get('source')}' is not listed in the mapping"))
+            for action in clause.get("actions", []):
+                if action not in actions:
+                    problems.append(_inconsistent(cid, f"action {action} is not in the catalogue"))
     return problems

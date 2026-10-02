@@ -1,0 +1,70 @@
+# NIS2 clauses cited by OSRA, each checked against the primary text on
+# EUR-Lex (TR-16a). The Official Journal text is the original, not a
+# consolidated version. `actions` lists the Action Catalogue entries whose
+# regulatory alignment cites the clause.
+schema_version: 1
+kind: mapping
+id: nis2
+regime: NIS2
+version: "1.0"
+verified: "2026-10-02"
+sources:
+  - id: nis2
+    instrument: Directive (EU) 2022/2555 on measures for a high common level of cybersecurity across the Union
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022L2555
+    text: Official Journal text, OJ L 333/80, 27.12.2022 (original, not consolidated)
+clauses:
+  - id: nis2.art-20
+    source: nis2
+    reference: Article 20
+    title: Governance
+    quote: >-
+      Member States shall ensure that the management bodies of essential and
+      important entities approve the cybersecurity risk-management measures
+      taken by those entities in order to comply with Article 21, oversee its
+      implementation and can be held liable for infringements by the entities
+      of that Article.
+    note: The quote is Article 20(1).
+    verified: "2026-10-02"
+    actions: [G2]
+  - id: nis2.art-21
+    source: nis2
+    reference: Article 21
+    title: Cybersecurity risk-management measures
+    verified: "2026-10-02"
+    actions: [G1]
+  - id: nis2.art-21.2.d
+    source: nis2
+    reference: Article 21(2)(d)
+    title: Cybersecurity risk-management measures
+    quote: >-
+      supply chain security, including security-related aspects concerning
+      the relationships between each entity and its direct suppliers or
+      service providers;
+    verified: "2026-10-02"
+  - id: nis2.art-22
+    source: nis2
+    reference: Article 22
+    title: Union level coordinated security risk assessments of critical supply chains
+    verified: "2026-10-02"
+  - id: nis2.art-23
+    source: nis2
+    reference: Article 23
+    title: Reporting obligations
+    verified: "2026-10-02"
+    actions: [G5]
+  - id: nis2.art-23.4.a
+    source: nis2
+    reference: Article 23(4)(a)
+    title: Reporting obligations
+    quote: >-
+      without undue delay and in any event within 24 hours of becoming aware
+      of the significant incident, an early warning, which, where applicable,
+      shall indicate whether the significant incident is suspected of being
+      caused by unlawful or malicious acts or could have a cross-border
+      impact;
+    note: >-
+      Article 23(4)(b) requires an incident notification within 72 hours of
+      becoming aware; 23(4)(d) a final report not later than one month after
+      the submission of that incident notification.
+    verified: "2026-10-02"
