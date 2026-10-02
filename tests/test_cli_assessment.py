@@ -153,3 +153,38 @@ def test_record_and_locked(assessment, capsys):
 ])
 def test_command_line_values(raw, value):
     assert parse_value(raw) == value
+
+
+def test_mode_c_from_capture_to_board_output(assessment, tmp_path, capsys):
+    """Slice 0.3 is done when an assessment runs from capture to board output
+    without an agent (PRD section 9)."""
+    capture(assessment)
+    d = str(assessment)
+    assert main(["summary", "DEP-01", d, "what_converges=Silent change, no monitoring, unverified benchmark",
+                 "recommended_action=Validate weekly", "actions=[D2, V1]", "clauses=[dora.art-8]"]) == 0
+    for register in ("substrate", "failures", "trust", "scoring", "summary"):
+        assert main(["confirm", register, d, "--yes"]) == 0
+    assert main(["score", d]) == 0
+    capsys.readouterr()
+    assert main(["report", d, "board", "--as", "md", "docx"]) == 0
+    out = capsys.readouterr().out
+    assert "board: reports/run-0001/board.json, reports/run-0001/board.md, reports/run-0001/board.docx" in out
+    board = (assessment / "reports/run-0001/board.md").read_text()
+    assert "Silent change, no monitoring, unverified benchmark" in board and "DORA Article 8: Identification" in board
+
+
+def test_export_import_and_templates(assessment, tmp_path, capsys):
+    capture(assessment)
+    assert main(["export", str(assessment), str(tmp_path / "wb")]) == 0
+    workbooks = sorted((tmp_path / "wb").glob("*.xlsx"))
+    assert len(workbooks) == 4
+    assert main(["import", str(tmp_path / "copy"), *map(str, workbooks)]) == 0
+    assert "revised OSRA workbooks" in capsys.readouterr().out
+    for name in ("substrate.yaml", "failures.yaml", "trust.yaml", "scoring.yaml"):
+        assert (tmp_path / "copy" / name).read_bytes() == (assessment / name).read_bytes()
+    assert main(["templates", str(tmp_path / "blank")]) == 0
+    assert len(list((tmp_path / "blank").glob("*.xlsx"))) == 4
+
+
+def test_unknown_report(assessment, capsys):
+    assert main(["report", str(assessment), "annual"]) == 2

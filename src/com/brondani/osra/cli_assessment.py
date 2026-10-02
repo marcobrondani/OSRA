@@ -190,6 +190,45 @@ def cmd_report(args, pack) -> int:
     return exit_code(warnings)
 
 
+def cmd_export(args, pack) -> int:
+    from .workbook import export
+
+    store = Store(args.directory, pack)
+    documents = store.documents()
+    if "assessment" not in documents:
+        _print_diagnostics([diagnostic("OSRA-E303", entity="assessment.yaml", file="assessment.yaml")])
+        return 3
+    for path in export(documents, store.results(), pack, args.out):
+        print(path)
+    return 0
+
+
+def cmd_import(args, pack) -> int:
+    from .workbook import import_workbooks
+
+    imported = import_workbooks(list(args.workbooks), pack)
+    if args.boundary and "assessment" in imported.documents:
+        imported.documents["assessment"]["system"]["boundary"] = args.boundary
+    errors = [n for n in imported.notes if n.code.startswith("OSRA-E")]
+    _print_diagnostics(imported.notes)
+    if errors:
+        return exit_code(errors)
+    actor = _actor(args)
+    Store(args.directory, pack).import_documents(Actor(author=actor.author, surface="import"), imported.documents,
+                                                 source=[p.name for p in args.workbooks], attribute=not imported.revised)
+    kind = "revised OSRA workbooks" if imported.revised else "workbooks as published in v1.2 (imported as draft)"
+    print(f"imported {len(imported.documents)} file(s) from {kind} into {args.directory}")
+    return exit_code(imported.notes)
+
+
+def cmd_templates(args, pack) -> int:
+    from .workbook import export
+
+    for path in export({}, None, pack, args.out):
+        print(path)
+    return 0
+
+
 def cmd_record(args, pack) -> int:
     changed = _store(args, pack).record(_actor(args))
     print("nothing to record" if not changed else "recorded: " + ", ".join(changed))
@@ -346,6 +385,23 @@ def add_commands(commands, with_pack) -> None:
                    help="any of: " + ", ".join(BUILDERS) + " (default: every report the assessment type produces)")
     p.add_argument("--as", dest="formats", nargs="+", choices=["md", "html", "docx"], default=["md", "html", "docx"])
     p.set_defaults(func=cmd_report, needs_pack=True)
+
+    p = commands.add_parser("export", help="write the assessment to the four OSRA workbooks")
+    p.add_argument("directory", type=Path)
+    p.add_argument("out", type=Path, help="directory for the workbooks")
+    with_pack(p)
+    p.set_defaults(func=cmd_export, needs_pack=True)
+
+    p = commands.add_parser("import", help="create an assessment from OSRA workbooks (revised or as published in v1.2)")
+    writer(p)
+    p.add_argument("workbooks", nargs="+", type=Path)
+    p.add_argument("--boundary", help="the system boundary (Phase 1, Step 1.1), which the v1.2 workbooks do not carry")
+    p.set_defaults(func=cmd_import, needs_pack=True)
+
+    p = commands.add_parser("templates", help="generate the blank workbooks from the method pack")
+    p.add_argument("out", type=Path)
+    with_pack(p)
+    p.set_defaults(func=cmd_templates, needs_pack=True)
 
     p = commands.add_parser("record", help="record changes made to the files outside osra-code")
     writer(p)

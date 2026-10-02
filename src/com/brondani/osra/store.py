@@ -265,6 +265,39 @@ class Store:
                 files[FILES[kind]] = history.file_hash(self._path(FILES[kind]))
             history.append(self.root, self._entry(actor, "create", files=files))
 
+    def import_documents(self, actor: Actor, documents: dict[str, Any], *, source: list[str],
+                         attribute: bool = True) -> None:
+        """Create an assessment from imported documents (from the workbooks).
+        With ``attribute``, entries that carry no provenance are attributed to
+        this import; revised workbooks carry their own and are kept as they
+        are."""
+        if self._path(FILES["assessment"]).exists():
+            raise StoreError([diagnostic("OSRA-E611", entity=str(self.root))])
+        with self._locked(actor):
+            at = self.clock()
+            record = actor.record(at)
+            documents = copy.deepcopy(documents)
+            assessment = documents.get("assessment")
+            if attribute and assessment is not None:
+                assessment.setdefault("provenance", {"created": record})
+                assessment.setdefault("deployment_mode", {"declared": "C"}).setdefault("provenance", record)
+            for kind, list_key in (_LIST_KEYS.items() if attribute else ()):
+                for entry in (documents.get(kind) or {}).get(list_key, []):
+                    if isinstance(entry, dict):
+                        entry.setdefault("provenance", {"created": record})
+                for resolution in (documents.get(kind) or {}).get("tie_resolutions", []):
+                    resolution.setdefault("provenance", {"created": record})
+            problems = [p for p in check_assessment(self.pack, documents) if p.code.startswith("OSRA-E")]
+            if "assessment" not in documents:
+                problems.append(diagnostic("OSRA-E303", entity=FILES["assessment"], file=FILES["assessment"]))
+            if problems:
+                raise StoreError(problems)
+            files = {}
+            for kind, doc in documents.items():
+                write_atomic(self._path(FILES[kind]), yaml_text(doc, f"{kind}.schema.json", self.pack.schemas))
+                files[FILES[kind]] = history.file_hash(self._path(FILES[kind]))
+            history.append(self.root, self._entry(actor, "import", detail={"source": source}, files=files))
+
     def _register(self, kind: str) -> dict[str, Any]:
         return self.read(kind) or _empty_register(kind)
 

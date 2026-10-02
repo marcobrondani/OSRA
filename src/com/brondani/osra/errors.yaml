@@ -239,3 +239,8 @@ errors:
     message: "{entity}: the {value} report is not produced by a {expected} assessment."
     remedy: Choose a report the assessment type produces (FR-05).
     exit_code: 1
+  OSRA-W622:
+    title: Not carried by the workbook
+    message: "{entity}: {detail}."
+    remedy: Review the imported assessment and supply what the workbook could not carry before confirming it.
+    exit_code: 0
