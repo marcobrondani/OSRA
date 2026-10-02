@@ -206,4 +206,4 @@ def test_preview_reports_invalid_proposals(agent):
 
 def test_verify_through_the_agent(agent):
     result = agent.verify()
-    assert result["reproduced"] and result["draft_inputs"] == 34
+    assert result["reproduced"] and result["draft_inputs"] == 0

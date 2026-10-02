@@ -1,7 +1,7 @@
 # Reference scenario: Autopilot (IT managed services, agentic).
 # Generated from the calibration document and weight_sensitivity.py; the
 # fixture tests check it against both. Findings are in remediation order.
-# Values under `drafts` await author review and are never published values.
+# No value awaits author review (calibration settled, October 2026).
 schema_version: 1
 kind: reference-scenario
 id: autopilot

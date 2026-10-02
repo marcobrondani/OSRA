@@ -13,7 +13,7 @@ def test_every_published_reference_result_is_reproduced(pack, fixtures):
     report = verify(pack, fixtures)
     assert [p.render() for p in report.problems] == []
     assert sum(s.findings for s in report.scenarios) == 30
-    assert report.drafts == 34
+    assert report.drafts == 0  # no release called v1 may depend on a draft value (FR-104)
 
 
 def test_every_rule_is_applied_by_verification(pack, fixtures):
@@ -50,7 +50,7 @@ def test_a_changed_factor_breaks_the_score_and_rank(pack, fixtures):
 
 
 def test_draft_inputs_are_counted_in_the_results(pack, fixtures):
-    outcome = run_scenario(fixtures.scenarios["eurobank-sentinel"], pack)
-    assert outcome.results["run"]["draft_inputs"] == 9
-    outcome = run_scenario(fixtures.scenarios["autopilot"], pack)
-    assert outcome.results["run"]["draft_inputs"] == 0
+    scenario = copy.deepcopy(fixtures.scenarios["eurobank-sentinel"])
+    scenario["findings"][3]["drafts"] = {"severity": "Awaiting review.", "trust_gap": "Awaiting review."}
+    assert run_scenario(scenario, pack).results["run"]["draft_inputs"] == 2
+    assert run_scenario(fixtures.scenarios["autopilot"], pack).results["run"]["draft_inputs"] == 0

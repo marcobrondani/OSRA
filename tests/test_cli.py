@@ -18,7 +18,7 @@ def test_check_passes_and_reports_drafts(capsys):
     assert main(["check"]) == 0
     out = capsys.readouterr().out
     assert "6 reference scenarios, 30 findings" in out
-    assert "34 values marked draft, awaiting author review:" in out
+    assert "no reference value is marked draft" in out
     assert out.rstrip().endswith("ok")
 
 
@@ -97,13 +97,13 @@ def test_verify_reproduces_the_reference_results(capsys):
     out = capsys.readouterr().out
     assert "category rule, 16 cases: reproduced" in out
     assert "weight sensitivity: reproduced" in out
-    assert "depend on 34 draft reference values" in out
+    assert "draft reference values" not in out
 
 
 def test_verify_json(capsys):
     assert main(["verify", "--format", "json"]) == 0
     payload = json.loads(capsys.readouterr().out)
-    assert payload["draft_inputs"] == 34
+    assert payload["draft_inputs"] == 0
     assert all(s["reproduced"] for s in payload["scenarios"])
 
 
