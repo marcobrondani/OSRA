@@ -47,7 +47,10 @@ its evidence, its calibration, and the documents for turning it into software
   referred to generically ("background-IP carve-out required in client
   contracts").
 - Decisions that belong to the author — licence, contributor terms, naming,
-  business model, IP owner — are presented as options, never made.
+  business model, IP owner — are presented as options, never made. Decided
+  so far: software under Apache-2.0, methodology content under CC BY-SA 4.0,
+  contributions through public pull requests, package `com.brondani.osra`
+  with command `osra-code`. Still open: the method pack's licence.
 - Commit only when asked. Branch from `main`; never commit to `main` directly.
 - Before claiming a count or a figure, count it. "22 actions" and "five
   restated severities" were both wrong in published files.

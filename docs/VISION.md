@@ -68,8 +68,9 @@ For now, participation is through issues and discussion:
 - **Report ambiguities.** If two readings of the specification lead to different categories or scores, open an issue describing the case.
 - **Challenge the evidence.** The framework matrix, incident chains and methodology survey are in `evidence/`, so a disagreement can point at a specific cell.
 - **Offer to run OSRA independently** against the worked example, and say so in an issue. Results from real estates contain sensitive information: don't post them publicly. Arrange to share them privately.
-- **Suggest scenarios to calibrate,** such as sectors or agentic patterns not yet covered, as a description in an issue. Contributions of scenario content and code will open once contribution terms are published.
+- **Suggest scenarios to calibrate,** such as sectors or agentic patterns not yet covered, as a description in an issue.
+- **Contribute code or content** through public pull requests on this repository ([CONTRIBUTING.md](../CONTRIBUTING.md)).
 
-The software licence and contribution terms will be decided and published before code contributions are accepted. The published methodology versions are licensed under [CC BY-SA 4.0](../LICENSE).
+The software, OSRA-CODE, is licensed under the Apache License 2.0; the published methodology versions are licensed under CC BY-SA 4.0 ([LICENSE](../LICENSE)). The licence of the method pack, the methodology in machine-readable form, is still to be decided. Contributions are made through public pull requests.
 
 To get in touch, open an issue or contact the author through [marcobrondani.com](https://marcobrondani.com).

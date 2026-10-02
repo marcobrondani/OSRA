@@ -3,7 +3,7 @@
 **A four-phase methodology for identifying where AI operational risk converges beneath the governance layer.**
 
 [![Version](https://img.shields.io/badge/version-1.2-blue)]()
-[![License](https://img.shields.io/badge/license-CC%20BY--SA%204.0-green)](LICENSE)
+[![Methodology licence](https://img.shields.io/badge/methodology-CC%20BY--SA%204.0-green)](LICENSE) [![Software licence](https://img.shields.io/badge/software-Apache%202.0-blue)](LICENSE)
 
 ---
 
@@ -62,7 +62,7 @@ Each phase produces a specific artefact. Each artefact translates to three audie
 ```
 osra/
 ├── README.md                              ← You are here
-├── LICENSE                                ← CC BY-SA 4.0
+├── LICENSE                                ← CC BY-SA 4.0 for the methodology, Apache 2.0 for the software
 ├── methodology/
 │   └── OSRA_Architecture_v1.2.md          ← Complete methodology specification
 ├── templates/
@@ -175,13 +175,15 @@ OSRA is built on work that can be inspected:
 
 ## License
 
-This work is licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSE).
+The methodology and its published content (the architecture document, calibration, action catalogue, evidence, templates and documentation) are licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSES/CC-BY-SA-4.0.txt). You are free to use, adapt, and redistribute OSRA for any purpose, including commercial use, provided you give appropriate credit and distribute any derivative works under the same licence.
 
-You are free to use, adapt, and redistribute OSRA for any purpose, including commercial use, provided you give appropriate credit and distribute any derivative works under the same licence.
+The software, OSRA-CODE (`src/`, `tests/`), is licensed under the [Apache License 2.0](LICENSES/Apache-2.0.txt). The licence of the method pack (`method/`), the methodology in machine-readable form, is still to be decided. [LICENSE](LICENSE) and `REUSE.toml` say which licence applies where.
 
 ## Contributing
 
 OSRA v1.2 is published and in use. The next step is independent execution: practitioners who did not design OSRA running the same system through it and comparing maps, scores, convergence findings and remediation priorities. If you run it, against the worked example or against your own estate, the author would like to see the output. Open an issue or contact the author directly.
+
+Code and content are contributed through public pull requests on this repository; [CONTRIBUTING.md](CONTRIBUTING.md) sets out the terms and what a pull request needs. Report security issues privately ([SECURITY.md](SECURITY.md)).
 
 ---
 
