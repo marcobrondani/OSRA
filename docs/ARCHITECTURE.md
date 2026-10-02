@@ -183,11 +183,14 @@ Running OSRA on OSRA as code, treating its own MCP server, model providers, agen
 
 ## 13. Open items
 
-Technical questions T-1 to T-6 are listed in the TRD. The ones that most affect this architecture:
-- whether assessments need a rebuildable index (T-1);
-- how the method pack is distributed (T-2);
-- report formats, which decide whether a rendering dependency enters the dependency set (T-3);
-- concurrent writes from an agent and a UI session (T-4).
+The technical questions T-1 to T-8 were decided in September 2026 and are recorded in the TRD, section 11. The ones that most shaped this architecture:
+- no rebuildable index in v1; assessments are read one at a time (T-1);
+- the method pack ships inside the release, and an external pack may be loaded by path once verified (T-2, ADR-0012);
+- Markdown, self-contained HTML and DOCX reports, with no PDF generation in v1 (T-3, ADR-0007);
+- the single-writer lock with atomic rename is sufficient for concurrent writes from an agent and a UI session (T-4, ADR-0010);
+- history is hash-chained and snapshots record the hashes of their inputs (T-8).
+
+Still open: how the method pack is laid out inside the installable package, given that ADR-0004 keeps content and code in separate directories and ADR-0012 ships them together. This is settled when packaging is built, before 1.0.
 
 ---
 
