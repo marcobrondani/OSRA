@@ -53,13 +53,10 @@ its evidence, its calibration, and the documents for turning it into software
   restated severities" were both wrong in published files.
 
 ## Open items
-- Calibration drafts (horizon scores for scenarios 1–4, six restated
-  severities) await author review; the fixtures mark them, and
-  `osra-code check` counts every draft value. Scheduled before 1.0, not before the
-  fixtures: early slices may build on draft values, marked as draft.
-- EuroBank Sentinel: per-condition breakdown for CP4 and CP5 still to be
-  recorded in the calibration document, also before 1.0.
-- `osra-code templates` now generates data-entry-only workbooks from the
-  pack (ADR-0008), but `templates/` still holds the published v1.2 workbooks
-  with formulas. Replacing them is the author's call: until OSRA-CODE is
-  installable, spreadsheet-only users would lose the automatic categories.
+- Calibration settled (October 2026): the author confirmed the draft horizon
+  scores and restated severities unchanged, and the EuroBank CP4/CP5
+  breakdown is recorded. No fixture value is draft; keep it that way for v1
+  (FR-104).
+- `templates/`: decided (October 2026) to keep the published v1.2 workbooks
+  with formulas for now. `osra-code templates` generates the data-entry-only
+  ones (ADR-0008); replace `templates/` only when the author says so.

@@ -82,10 +82,13 @@ def cmd_check(args: argparse.Namespace) -> int:
         total_drafts = sum(sum(c.values()) for c in summary["drafts"].values())
         print(f"method pack {pack.id} {pack.version} ({pack.checksum})")
         print(f"{len(summary['scenarios'])} reference scenarios, {findings} findings")
-        print(f"{total_drafts} values marked draft, awaiting author review:")
-        for sid, counts in summary["drafts"].items():
-            detail = ", ".join(f"{field} {n}" for field, n in counts.items()) or "none"
-            print(f"  {sid}: {detail}")
+        if total_drafts == 0:
+            print("no reference value is marked draft")
+        else:
+            print(f"{total_drafts} values marked draft, awaiting author review:")
+            for sid, counts in summary["drafts"].items():
+                detail = ", ".join(f"{field} {n}" for field, n in counts.items()) or "none"
+                print(f"  {sid}: {detail}")
     print("ok" if not problems else f"{len(problems)} problem(s)")
     return exit_code(problems)
 

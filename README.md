@@ -151,7 +151,7 @@ OSRA is built on work that can be inspected:
 - Dependency identifiers link the four artefacts. Trust gaps include verification whose scope does not cover the claim.
 - An Agent and Tool Layer (Phase 1) and an agent and tool delegation trust category (Phase 3) cover AI agents, MCP servers and model providers as operational dependencies.
 - The templates are brought to v1.2: anchors, identifiers, input validation, the full category rule, and ranking formulas. They previously carried v1.1 anchors and the incorrect 9.5 to 42.5 range.
-- Calibration extended to six scenarios and 30 findings, all classified and scored on six factors; the horizon scores added to the four original scenarios are drafts pending author review. The sensitivity check is rerun and its claim restated.
+- Calibration extended to six scenarios and 30 findings, all classified and scored on six factors; the horizon scores added to the four original scenarios, and six restated severities, were confirmed on the author's review in October 2026, when the EuroBank per-condition breakdown was also recorded. The sensitivity check is rerun and its claim restated.
 - The action catalogue is stated as 23 actions (D1-D6, V1-V6, R1-R5, G1-G6); the count of 22 published since v1.1 was wrong, and no action changed.
 - Regulatory citations corrected: DORA Articles 5, 8, 10 and 29, DORA and AI Act incident deadlines, ISO/IEC 42001 Annex A.10, AI Act Article 6(1) with Annex I for medical devices.
 

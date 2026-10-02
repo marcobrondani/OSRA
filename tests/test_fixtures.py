@@ -23,8 +23,6 @@ SCENARIO_KEYS = {
     "gridsense": "GridSense (energy)",
     "autopilot": "Autopilot (IT managed services, agentic)",
 }
-# The calibration's "scenarios 1 to 4", whose horizon scores are drafts.
-SCENARIOS_1_TO_4 = {"streampay", "medassist", "routeoptima", "gridsense"}
 CATEGORY_NAMES = {
     "Critical Convergence": "critical-convergence",
     "Convergence Point": "convergence-point",
@@ -110,20 +108,10 @@ def test_fixture_matches_the_calibration_table(fixtures, sid):
         assert expected["score"] == row["score"], finding["id"]
         assert finding["factors"]["materialisation_horizon"] == row["horizon"], finding["id"]
         assert finding["single_point"] == yn[row["single"]], finding["id"]
+        assert drafts == {}, finding["id"]
         for key, cell in (("silent_failure", row["silent"]), ("trust_gap", row["unverified"])):
-            if cell == "to record":
-                assert key in drafts, (finding["id"], key)
-            else:
-                assert finding[key] == yn[cell], (finding["id"], key)
-        severity = row["severity"]
-        if severity == "to record":
-            assert "severity" in drafts, finding["id"]
-        elif severity == "Critical or High":
-            assert finding["severity"] in ("critical", "high")
-            assert "severity" in drafts, finding["id"]
-        else:
-            assert finding["severity"] == severity.rstrip("*").lower(), finding["id"]
-            assert ("severity" in drafts) == severity.endswith("*"), finding["id"]
+            assert finding[key] == yn[cell], (finding["id"], key)
+        assert finding["severity"] == row["severity"].rstrip("*").lower(), finding["id"]
 
 
 def test_eurobank_factor_table(fixtures):
@@ -217,39 +205,30 @@ def test_sensitivity_reference_matches_the_script(fixtures, sensitivity_script):
     assert seen == set(expected)
 
 
-# -- draft marks (TR-100a) ----------------------------------------------
+# -- draft marks (TR-100a, FR-104) -------------------------------------------
 
 
-def test_every_draft_the_calibration_names_is_marked(fixtures):
-    counts = draft_summary(fixtures)
-    horizons = sum(c["factors.materialisation_horizon"] for c in counts.values())
-    restated = sum(
-        1
-        for sid, rows in TABLE.items()
-        for row in rows
-        if row["severity"].endswith("*")
-    )
-    assert restated == 6
-    assert horizons == sum(len(fixtures.scenarios[s]["findings"]) for s in SCENARIOS_1_TO_4) == 19
-    for sid in SCENARIOS_1_TO_4:
-        for finding in fixtures.scenarios[sid]["findings"]:
-            assert "factors.materialisation_horizon" in finding["drafts"], finding["id"]
-    assert counts["autopilot"] == {}
+def test_no_reference_value_is_draft(fixtures):
+    """The author's review settled the calibration in October 2026; a v1
+    release may depend on no draft value (FR-104)."""
+    assert all(not counts for counts in draft_summary(fixtures).values())
+    assert "[DRAFT" not in CAL and "to record" not in TABLE.__repr__()
 
 
-def test_eurobank_conditions_not_in_the_calibration_are_drafts(fixtures):
+def test_the_calibration_records_the_eurobank_conditions(fixtures):
     findings = by_id(fixtures.scenarios["eurobank-sentinel"])
-    for ident in ("CP4", "CP5"):
-        assert set(findings[ident]["drafts"]) == {"severity", "silent_failure", "trust_gap"}, ident
-    for ident in ("CP1", "CP2", "CP3"):
-        assert set(findings[ident]["drafts"]) == {"severity"}, ident
+    assert (findings["CP4"]["severity"], findings["CP4"]["silent_failure"], findings["CP4"]["trust_gap"]) == ("high", False, True)
+    assert (findings["CP5"]["severity"], findings["CP5"]["silent_failure"], findings["CP5"]["trust_gap"]) == ("high", True, False)
+    assert {findings[c]["severity"] for c in ("CP1", "CP2", "CP3")} == {"critical"}
 
 
-def test_draft_reasons_say_so(fixtures):
-    for scenario in fixtures.scenarios.values():
-        for finding in scenario["findings"]:
-            for key, reason in finding.get("drafts", {}).items():
-                assert "DRAFT" in reason or "worked example" in reason, (finding["id"], key)
+def test_draft_values_are_still_counted_when_present(pack, fixtures):
+    import copy
+
+    marked = copy.deepcopy(fixtures)
+    marked.scenarios["streampay"]["findings"][0]["drafts"] = {"factors.materialisation_horizon": "Awaiting review. [DRAFT]"}
+    assert check_fixtures(pack, marked) == []
+    assert draft_summary(marked)["streampay"] == {"factors.materialisation_horizon": 1}
 
 
 # -- the category rule -----------------------------------------------------

@@ -1,7 +1,7 @@
 # Reference scenario: MedAssist AI (healthcare).
 # Generated from the calibration document and weight_sensitivity.py; the
 # fixture tests check it against both. Findings are in remediation order.
-# Values under `drafts` await author review and are never published values.
+# No value awaits author review (calibration settled, October 2026).
 schema_version: 1
 kind: reference-scenario
 id: medassist
@@ -36,10 +36,6 @@ findings:
     - P6M
     score: '35.0'
     rank: 1
-  drafts:
-    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
-      scored in the calibration run; this value applies the anchors to the scenario text.
-      [DRAFT — author review]
 - id: MH-CP4
   name: physician over-reliance
   severity: critical
@@ -62,10 +58,6 @@ findings:
     - P30D
     score: '33.0'
     rank: 2
-  drafts:
-    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
-      scored in the calibration run; this value applies the anchors to the scenario text.
-      [DRAFT — author review]
 - id: MH-CP2
   name: EHR integration fragility
   severity: high
@@ -88,10 +80,6 @@ findings:
     - P30D
     score: '28.0'
     rank: 3
-  drafts:
-    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
-      scored in the calibration run; this value applies the anchors to the scenario text.
-      [DRAFT — author review]
 - id: MH-CP3
   name: MDR certification scope
   severity: critical
@@ -115,12 +103,6 @@ findings:
     - P90D
     score: '20.5'
     rank: 4
-  drafts:
-    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
-      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
-    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
-      scored in the calibration run; this value applies the anchors to the scenario text.
-      [DRAFT — author review]
 - id: MH-CP5
   name: cross-border patient data
   severity: high
@@ -143,9 +125,3 @@ findings:
     - P90D
     score: '15.5'
     rank: 5
-  drafts:
-    severity: Restated under the v1.2 severity rule (Phase 2, Step 2.4), which takes severity
-      from impact and fallback only; differs from the calibration run. [DRAFT — author review]
-    factors.materialisation_horizon: Materialisation Horizon for scenarios 1 to 4 was not
-      scored in the calibration run; this value applies the anchors to the scenario text.
-      [DRAFT — author review]

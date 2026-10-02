@@ -46,13 +46,13 @@ Design aims:
 
 ## Where the method stands
 
-OSRA's calibration was designed and scored by one author. Within v1.2, draft horizon scores and restated severities were added to four of the calibration scenarios; they await the author's review. No independent practitioner has yet run OSRA and compared results. The software is meant to make that comparison easy, not to make unreviewed scores look authoritative.
+OSRA's calibration was designed and scored by one author. Within v1.2, horizon scores and restated severities were added to four of the calibration scenarios; the author reviewed and confirmed them in October 2026. No independent practitioner has yet run OSRA and compared results. The software is meant to make that comparison easy, not to make unreviewed scores look authoritative.
 
 ## Roadmap
 
 A likely sequence, without dates. The order may change.
 
-1. **Settle the calibration.** Author review of the draft scores added within v1.2.
+1. **Settle the calibration.** Author review of the draft scores added within v1.2. Done, October 2026.
 2. **Specification and fixtures.** Schemas for the four artefacts, and the calibration scenarios, EuroBank Sentinel included, as machine-readable fixtures.
 3. **Engine and command line.** Conditions, categories, scoring and ranking, reproducing every reference result.
 4. **Reports and spreadsheets.** Audience reports; import from and export to the Excel templates. At this point OSRA can be run end to end without an agent.

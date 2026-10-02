@@ -1,7 +1,7 @@
 # Reference scenario: EuroBank Sentinel (finance).
 # Generated from the calibration document and weight_sensitivity.py; the
 # fixture tests check it against both. Findings are in remediation order.
-# Values under `drafts` await author review and are never published values.
+# No value awaits author review (calibration settled, October 2026).
 schema_version: 1
 kind: reference-scenario
 id: eurobank-sentinel
@@ -13,8 +13,6 @@ source:
   also:
   - calibration/weight_sensitivity.py, SCENARIOS (per-factor scores)
   - 'calibration/OSRA_Scoring_Calibration_v1.2.md, EuroBank Sentinel: six-factor scoring'
-  - EuroBank Sentinel worked example page, convergence mapping table (CP4 and CP5 conditions,
-    CP1 to CP3 severity)
 findings:
 - id: CP1
   name: base model behaviour change
@@ -38,10 +36,6 @@ findings:
     - P6M
     score: '33.0'
     rank: 1
-  drafts:
-    severity: The calibration document records 'Critical or High'. Critical is taken from
-      the convergence mapping table of the EuroBank Sentinel worked example page; condition
-      1 is met either way.
 - id: CP2
   name: sanctions data integrity
   severity: critical
@@ -64,10 +58,6 @@ findings:
     - P6M
     score: '31.0'
     rank: 2
-  drafts:
-    severity: The calibration document records 'Critical or High'. Critical is taken from
-      the convergence mapping table of the EuroBank Sentinel worked example page; condition
-      1 is met either way.
 - id: CP3
   name: co-located monitoring
   severity: critical
@@ -90,10 +80,6 @@ findings:
     - P6M
     score: '29.5'
     rank: 3
-  drafts:
-    severity: The calibration document records 'Critical or High'. Critical is taken from
-      the convergence mapping table of the EuroBank Sentinel worked example page; condition
-      1 is met either way.
 - id: CP5
   name: GPU silent data corruption
   severity: high
@@ -115,16 +101,6 @@ findings:
     - P90D
     score: '23.5'
     rank: 4
-  drafts:
-    severity: Not yet recorded in the calibration document (author action, scheduled before
-      v1.0 of the software). Taken from the convergence mapping table of the EuroBank Sentinel
-      worked example page.
-    silent_failure: Not yet recorded in the calibration document (author action, scheduled
-      before v1.0 of the software). Taken from the convergence mapping table of the EuroBank
-      Sentinel worked example page.
-    trust_gap: Not yet recorded in the calibration document (author action, scheduled before
-      v1.0 of the software). Taken from the convergence mapping table of the EuroBank Sentinel
-      worked example page.
 - id: CP4
   name: vendor knowledge concentration
   severity: high
@@ -146,13 +122,3 @@ findings:
     - P90D
     score: '19.0'
     rank: 5
-  drafts:
-    severity: Not yet recorded in the calibration document (author action, scheduled before
-      v1.0 of the software). Taken from the convergence mapping table of the EuroBank Sentinel
-      worked example page.
-    silent_failure: Not yet recorded in the calibration document (author action, scheduled
-      before v1.0 of the software). Taken from the convergence mapping table of the EuroBank
-      Sentinel worked example page.
-    trust_gap: Not yet recorded in the calibration document (author action, scheduled before
-      v1.0 of the software). Taken from the convergence mapping table of the EuroBank Sentinel
-      worked example page.

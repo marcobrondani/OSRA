@@ -1,6 +1,6 @@
 # The OSRA Method Pack — Format
 
-**Status:** Draft, slice 0.2. Open for comment.
+**Status:** Draft, slice 1.0. Open for comment.
 **Applies to:** method pack `osra 1.2` (`method/osra-1.2/`), schema version 1.
 **Reads with:** [ADR-0003](adr/0003-rules-as-data.md) (why the method is data), [ADR-0004](adr/0004-content-code-separation.md) (why it is a separate directory), [ADR-0012](adr/0012-packaging-and-pack-distribution.md) (how it ships), and TRD sections 4, 6 and 9.
 
@@ -154,16 +154,9 @@ Because the calibration publishes horizon *scores* and not the Phase 2 horizon v
 
 ### 6.1 Draft values
 
-A value the calibration marks as awaiting author review is listed under the finding's `drafts`, with the reason (TR-100a). `osra-code check` counts them. As of this version there are 34:
+A value the calibration marks as awaiting author review is listed under the finding's `drafts`, with the reason (TR-100a). `osra-code check` counts them, and every run records how many draft values its results depended on. No release described as v1 may depend on a draft value (FR-104).
 
-| Draft | Count | Source of the mark |
-|---|---|---|
-| Materialisation Horizon, scenarios 1 to 4 (StreamPay, MedAssist, RouteOptima, GridSense) | 19 | `[DRAFT — author review]` in the calibration document |
-| Severities restated under the v1.2 rule (SP-CP4, MH-CP3, MH-CP5, TL-CP3, TL-CP5, NW-CP5) | 6 | the asterisked severities in the calibration document |
-| EuroBank Sentinel CP4 and CP5: severity, silent failure, trust gap | 6 | "to record" in the calibration document; values taken from the worked example page |
-| EuroBank Sentinel CP1 to CP3: severity Critical | 3 | the calibration document records "Critical or High"; Critical is from the worked example page |
-
-No release described as v1 may depend on a draft value (FR-104). The author's review of these values is scheduled for slice 1.0.
+As of October 2026 there are none. The 19 horizon scores for scenarios 1 to 4 and the six restated severities, published within v1.2 as drafts, were confirmed unchanged on the author's review, and the EuroBank Sentinel per-condition breakdown is recorded in the calibration document. Every fixture value can therefore be rebuilt from the repository alone.
 
 ---
 

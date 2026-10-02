@@ -472,9 +472,10 @@ A consistency review before encoding OSRA in software found places where the spe
 4. **Identifiers across phases.** Every dependency has an identifier in the Substrate Map, and the Failure Surface and Trust Surface Registers refer to it, so the Phase 4 conditions can be read per dependency. Trust gaps include verification whose scope does not cover the claim relied on.
 5. **Agent and Tool Layer** added to Phase 1, and **agent and tool delegation** added to the Phase 3 trust signal categories, so AI agents, the tools and MCP servers they call, and the model providers that drive tool selection are mapped as operational dependencies.
 6. **Templates brought to v1.2.** The workbooks carried v1.1 anchors and the incorrect 9.5 to 42.5 range, and the Convergence Matrix formula had no Concentration Risk branch. They now carry the v1.2 anchors, identifiers, input validation, the full category rule, and weights and ranking as formulas.
-7. **Calibration extended.** Every calibration finding is classified with the category rule and scored on six factors, with draft horizon scores for the four scenarios that predate the sixth factor, pending author review. A sixth scenario, an agentic system at an IT managed service provider, calibrates the new layer. The weight sensitivity check is rerun and its claim restated.
+7. **Calibration extended.** Every calibration finding is classified with the category rule and scored on six factors, with horizon scores for the four scenarios that predate the sixth factor, applied from the anchors to the scenario text. A sixth scenario, an agentic system at an IT managed service provider, calibrates the new layer. The weight sensitivity check is rerun and its claim restated.
 8. **Action count corrected.** The catalogue has 23 actions (D1-D6, V1-V6, R1-R5, G1-G6), not the 22 stated since v1.1. No action was added or removed; the count was wrong.
 9. **Regulatory citations corrected.** DORA asset and dependency identification is Article 8 (not 6), detection is Article 10 (not 11), management body responsibility is Article 5 (the "Article 15 question" is withdrawn; Article 15 is a mandate for technical standards), and concentration risk is Article 29. Incident deadlines in the Action Catalogue are corrected. ISO/IEC 42001 supplier relationships are Annex A.10 (not A.9). A medical device AI system is high-risk under AI Act Article 6(1) and Annex I (not Annex III). The DORA "2% of turnover" penalty figure, which is not in the Regulation, is removed.
+10. **Calibration settled (October 2026).** The author reviewed the horizon scores for calibration scenarios 1 to 4 and the six restated severities, published within v1.2 as drafts, and confirmed them unchanged. The per-condition breakdown of EuroBank Sentinel CP4 and CP5, and the severity of CP1 to CP3, are now recorded in the calibration document, so every reference result can be rebuilt from the repository alone.
 
 ### Completed (v1.1)
 
@@ -494,11 +495,9 @@ A consistency review before encoding OSRA in software found places where the spe
 
 4. **Relationship to Compound Vulnerability.** OSRA extends the Compound Vulnerability thesis into a specific applied domain (AI operational resilience). The relationship should be acknowledged, and OSRA should stand independently.
 
-5. **Author review of the v1.2 calibration drafts.** The Materialisation Horizon scores for calibration scenarios 1 to 4 and six restated severities are drafts that apply the published anchors to the scenario text. They need the author's review before they are treated as calibration.
+5. **Anchor questions raised by the v1.2 calibration.** Trust Depth has no anchor for an internal signal that is relied on but not verified, such as a human approval step. Materialisation Horizon scores 5 for almost every silent failure, which makes it re-count condition 2. Trust Depth 4 or 5 for a frontier model reached through an API needs a stated position.
 
-6. **Anchor questions raised by the v1.2 calibration.** Trust Depth has no anchor for an internal signal that is relied on but not verified, such as a human approval step. Materialisation Horizon scores 5 for almost every silent failure, which makes it re-count condition 2. Trust Depth 4 or 5 for a frontier model reached through an API needs a stated position.
-
-7. **Remediation actions for the Agent and Tool Layer.** The Action Catalogue maps agentic findings to existing actions, but none directly covers least-privilege and per-tenant agent credentials, pinning MCP servers and checking their tool descriptions, or sampling the quality of human approvals.
+6. **Remediation actions for the Agent and Tool Layer.** The Action Catalogue maps agentic findings to existing actions, but none directly covers least-privilege and per-tenant agent credentials, pinning MCP servers and checking their tool descriptions, or sampling the quality of human approvals.
 
 ---
 
