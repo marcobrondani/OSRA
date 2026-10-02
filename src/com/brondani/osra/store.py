@@ -32,6 +32,7 @@ from typing import Any, Callable, Iterator
 from . import __version__, history, yamlio
 from .canonical import write_atomic, yaml_text
 from .engine import RunOutcome, id_number, run
+from .render import RENDERERS
 from .errors import Diagnostic, diagnostic
 from .pack import MethodPack
 from .validate import FILES, check_assessment
@@ -456,6 +457,75 @@ class Store:
             history.append(self.root, self._entry(actor, "score", detail={"snapshot": snapshot}, files=files))
             return outcome
 
+    def _snapshots(self) -> list[int]:
+        return sorted(int(p.name.split("-")[1]) for p in self._path("snapshots").glob("run-*"))
+
+    def report(self, actor: Actor, kinds: list[str] | None = None,
+               formats: tuple[str, ...] = ("md", "html", "docx")) -> tuple[dict[str, list[str]], list[Diagnostic]]:
+        """Build reports from the current run and write each as its document
+        model and in every requested format, under reports/run-NNNN/. Returns
+        the files written per report and any warnings."""
+        from . import reports
+
+        with self._locked(actor):
+            self._preflight()
+            docs = self.documents()
+            results = self.results()
+            if results is None:
+                raise StoreError([diagnostic("OSRA-E613", entity=str(self.root.name))])
+            assessment = docs["assessment"]
+            offered = reports.available(assessment["assessment_type"])
+            kinds = kinds or [k for k in offered if k != "refresh" or len(self._snapshots()) > 1]
+            problems: list[Diagnostic] = []
+            for kind in kinds:
+                if kind not in offered:
+                    problems.append(diagnostic("OSRA-E621", entity=str(self.root.name), value=kind,
+                                               expected=assessment["assessment_type"]))
+                    continue
+                for register in reports.REPORTS[kind][1]:
+                    doc = docs.get(register)
+                    if doc is None:
+                        problems.append(diagnostic("OSRA-E605", entity=FILES[register], value=assessment["assessment_type"]))
+                    elif doc.get("state") != "confirmed":
+                        problems.append(diagnostic("OSRA-E604", entity=FILES[register], value=doc.get("state")))
+            runs = self._snapshots()
+            previous = None
+            if "refresh" in kinds:
+                if len(runs) < 2:
+                    problems.append(diagnostic("OSRA-E620", entity=str(self.root.name),
+                                               value=f"{len(runs)} run{'s' if len(runs) != 1 else ''}"))
+                else:
+                    base = self._path(f"snapshots/run-{runs[-2]:04d}")
+                    substrate = base / FILES["substrate"]
+                    previous = (yamlio.load(substrate) if substrate.is_file() else None, yamlio.load(base / RESULTS))
+            if problems:
+                raise StoreError(list(dict.fromkeys(problems)))
+            registers = {k: v for k, v in docs.items() if k != "assessment"}
+            warnings = reports.secret_warnings(docs, FILES)
+            written: dict[str, list[str]] = {}
+            files: dict[str, str | None] = {}
+            folder = f"reports/run-{runs[-1]:04d}" if runs else "reports/current"
+            for kind in kinds:
+                ctx = reports.Context(pack=self.pack, assessment=assessment, registers=registers, results=results,
+                                      agent_fields=_agent_fields(docs), previous=previous,
+                                      run_number=runs[-1] if runs else None)
+                model = reports.BUILDERS[kind](ctx)
+                paths = [f"{folder}/{kind}.json"]
+                write_atomic(self._path(paths[0]), json.dumps(model, indent=2, ensure_ascii=False) + "\n")
+                for fmt in formats:
+                    path = f"{folder}/{kind}.{fmt}"
+                    data = RENDERERS[fmt](model)
+                    self._path(path).parent.mkdir(parents=True, exist_ok=True)
+                    tmp = self._path(path + ".tmp")
+                    tmp.write_bytes(data)
+                    os.replace(tmp, self._path(path))
+                    paths.append(path)
+                for path in paths:
+                    files[path] = history.file_hash(self._path(path))
+                written[kind] = paths
+            history.append(self.root, self._entry(actor, "report", detail={"reports": kinds}, files=files))
+            return written, warnings
+
     def record(self, actor: Actor) -> list[str]:
         """Bring changes made outside OSRA-CODE into the history. A register
         changed outside while confirmed returns to draft (FR-03)."""
@@ -484,3 +554,26 @@ class Store:
             history.append(self.root, self._entry(actor, "record-external", detail={"returned_to_draft": reopened},
                                                   files=files))
             return changed
+
+
+def _agent_fields(documents: dict[str, Any]) -> int:
+    """How many field values were written through an agent, as recorded in
+    the provenance (FR-83: observed, as distinct from the declared mode)."""
+    count = 0
+
+    def walk(node: Any) -> None:
+        nonlocal count
+        if isinstance(node, dict):
+            provenance = node.get("provenance")
+            if isinstance(provenance, dict):
+                records = [provenance.get("created", {}), *(provenance.get("fields") or {}).values()]
+                count += sum(1 for r in records if isinstance(r, dict) and r.get("author_type") == "agent")
+            for key, value in node.items():
+                if key != "provenance":
+                    walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(documents)
+    return count

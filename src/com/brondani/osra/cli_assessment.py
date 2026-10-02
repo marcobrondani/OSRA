@@ -177,6 +177,19 @@ def cmd_score(args, pack) -> int:
     return exit_code(outcome.diagnostics)
 
 
+def cmd_report(args, pack) -> int:
+    from .reports import BUILDERS
+
+    unknown = [r for r in args.reports if r not in BUILDERS]
+    if unknown:
+        raise UsageError(f"unknown report {', '.join(unknown)}; choose from {', '.join(BUILDERS)}")
+    written, warnings = _store(args, pack).report(_actor(args), args.reports or None, tuple(args.formats))
+    _print_diagnostics(warnings)
+    for kind, paths in written.items():
+        print(f"{kind}: " + ", ".join(paths))
+    return exit_code(warnings)
+
+
 def cmd_record(args, pack) -> int:
     changed = _store(args, pack).record(_actor(args))
     print("nothing to record" if not changed else "recorded: " + ", ".join(changed))
@@ -325,6 +338,14 @@ def add_commands(commands, with_pack) -> None:
     p = commands.add_parser("score", help="run the engine over the confirmed registers")
     writer(p)
     p.set_defaults(func=cmd_score, needs_pack=True)
+
+    from .reports import BUILDERS
+    p = commands.add_parser("report", help="produce reports from the current run (Markdown, HTML, DOCX)")
+    writer(p)
+    p.add_argument("reports", nargs="*", metavar="REPORT",
+                   help="any of: " + ", ".join(BUILDERS) + " (default: every report the assessment type produces)")
+    p.add_argument("--as", dest="formats", nargs="+", choices=["md", "html", "docx"], default=["md", "html", "docx"])
+    p.set_defaults(func=cmd_report, needs_pack=True)
 
     p = commands.add_parser("record", help="record changes made to the files outside osra-code")
     writer(p)
