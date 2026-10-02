@@ -39,14 +39,17 @@ from .validate import FILES, check_assessment
 LOCK = ".osra.lock"
 FINDINGS = "findings.yaml"
 RESULTS = "results/results.yaml"
-REGISTERS = ("substrate", "failures", "trust", "scoring")
+REGISTERS = ("substrate", "failures", "trust", "scoring")  # the inputs to a run
+NARRATIVE = "summary"  # written after a run; changing it does not withdraw results
+CONFIRMABLE = (*REGISTERS, NARRATIVE)
 ENTITY_KINDS = {
     "dependency": ("substrate", "dependencies", "DEP"),
     "failure-mode": ("failures", "failure_modes", "FM"),
     "trust-signal": ("trust", "trust_signals", "TS"),
 }
 _PREFIXES = {prefix: kind for kind, (_, _, prefix) in ENTITY_KINDS.items()}
-_LIST_KEYS = {"substrate": "dependencies", "failures": "failure_modes", "trust": "trust_signals", "scoring": "scores"}
+_LIST_KEYS = {"substrate": "dependencies", "failures": "failure_modes", "trust": "trust_signals", "scoring": "scores",
+              "summary": "entries"}
 _PROTECTED = ("id", "provenance")
 
 
@@ -250,7 +253,8 @@ class Store:
             }
             types = {t["id"]: t for t in self.pack.taxonomy("execution")["assessment_types"]["values"]}
             required = types[assessment_type]["requires"] if assessment_type in types else []
-            changed = {"assessment": assessment, **{kind: _empty_register(kind) for kind in required}}
+            kinds = [*required, NARRATIVE] if "scoring" in required else list(required)
+            changed = {"assessment": assessment, **{kind: _empty_register(kind) for kind in kinds}}
             problems = [p for p in check_assessment(self.pack, changed) if p.code.startswith("OSRA-E")]
             if problems:
                 raise StoreError(problems)
@@ -341,6 +345,29 @@ class Store:
                 entry.setdefault("provenance", {"created": record}).setdefault("fields", {})[f"factors.{name}"] = record
             self._reopen(doc)
             self._commit(actor, "rate", {"scoring": doc}, entity=f"scoring of {dependency}", changes=changes)
+
+    def summarise(self, actor: Actor, dependency: str, values: dict[str, Any]) -> None:
+        """Write the Convergence Risk Summary narrative for one finding. The
+        text is the practitioner's; the store records who wrote it."""
+        for path in values:
+            if path.split(".")[0] in ("dependency", "provenance"):
+                raise StoreError([diagnostic("OSRA-E105", entity=f"summary of {dependency}", field=path)])
+        with self._locked(actor):
+            self._preflight()
+            doc = self._register(NARRATIVE)
+            entry = next((e for e in doc["entries"] if e.get("dependency") == dependency), None)
+            record = actor.record(self.clock())
+            if entry is None:
+                entry = {"dependency": dependency, "provenance": {"created": record}}
+                doc["entries"].append(entry)
+                doc["entries"].sort(key=lambda e: id_number(e["dependency"]))
+            changes = []
+            for path, value in sorted(values.items()):
+                changes.append({"field": path, "before": copy.deepcopy(_get_path(entry, path)), "after": value})
+                _set_path(entry, path, copy.deepcopy(value))
+                entry.setdefault("provenance", {"created": record}).setdefault("fields", {})[path] = record
+            self._reopen(doc)
+            self._commit(actor, "summarise", {NARRATIVE: doc}, entity=f"summary of {dependency}", changes=changes)
 
     def resolve_tie(self, actor: Actor, order: list[str], reason: str) -> None:
         with self._locked(actor):
@@ -443,7 +470,7 @@ class Store:
             reopened = []
             for name in changed:
                 kind = next((k for k, v in FILES.items() if v == name), None)
-                if kind in REGISTERS:
+                if kind in CONFIRMABLE:
                     doc = self.read(kind)
                     if doc is not None and doc.get("state") == "confirmed":
                         self._reopen(doc)

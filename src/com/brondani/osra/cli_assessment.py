@@ -17,7 +17,7 @@ from typing import Any
 from . import history, yamlio
 from .compare import MATCHING_RULES, compare
 from .errors import Diagnostic, diagnostic, exit_code
-from .store import ENTITY_KINDS, REGISTERS, Actor, Store, StoreError
+from .store import CONFIRMABLE, ENTITY_KINDS, Actor, Store, StoreError
 
 FACTORS = ("regulatory_exposure", "detection_deficit", "trust_depth", "blast_radius", "remediation_complexity")
 
@@ -136,6 +136,14 @@ def cmd_rate(args, pack) -> int:
                 factors[name]["between_anchors"] = True
     _store(args, pack).rate(_actor(args), args.dependency, factors)
     print(f"scores recorded for {args.dependency}")
+    return 0
+
+
+def cmd_summary(args, pack) -> int:
+    if not args.fields:
+        raise UsageError("nothing to write; give FIELD=VALUE pairs, such as what_converges=TEXT or 'actions=[D1, V1]'")
+    _store(args, pack).summarise(_actor(args), args.dependency, parse_assignments(args.fields))
+    print(f"summary recorded for {args.dependency}")
     return 0
 
 
@@ -296,6 +304,12 @@ def add_commands(commands, with_pack) -> None:
                    help="the finding sat between two anchors and the lower score was taken, for this reason")
     p.set_defaults(func=cmd_rate, needs_pack=True)
 
+    p = commands.add_parser("summary", help="write the Convergence Risk Summary narrative for a finding")
+    p.add_argument("dependency", metavar="DEP")
+    writer(p)
+    p.add_argument("fields", nargs="*", metavar="FIELD=VALUE")
+    p.set_defaults(func=cmd_summary, needs_pack=True)
+
     p = commands.add_parser("resolve-tie", help="record the order of findings the tie-break cannot separate")
     writer(p)
     p.add_argument("--order", nargs="+", required=True, metavar="DEP")
@@ -303,7 +317,7 @@ def add_commands(commands, with_pack) -> None:
     p.set_defaults(func=cmd_resolve_tie, needs_pack=True)
 
     p = commands.add_parser("confirm", help="confirm a register (a person only)")
-    p.add_argument("register", choices=list(REGISTERS))
+    p.add_argument("register", choices=list(CONFIRMABLE))
     writer(p)
     p.add_argument("--yes", action="store_true", help="confirm without the prompt; recorded as not interactive")
     p.set_defaults(func=cmd_confirm, needs_pack=True)
