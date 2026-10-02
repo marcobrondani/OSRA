@@ -173,10 +173,12 @@ def run(
     }
     files = {r["id"]: pack.doc(path) for path in pack.documents if path.startswith("rules/")
              for r in pack.doc(path).get("rules", [])}
+    opened = False
     for rule_id in pack.manifest["pipeline"]:
         rule = pack.rule(rule_id)
-        if rule["scope"] == "finding" and not state.findings:
+        if rule["scope"] == "finding" and not opened:
             _open_findings(state, entered.get("scoring") or {}, ids)
+            opened = True
         handlers[rule["form"]](state, rule, files[rule_id], entered)
 
     results = {

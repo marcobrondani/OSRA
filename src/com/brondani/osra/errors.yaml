@@ -189,3 +189,18 @@ errors:
     message: "{entity}: an assessment already exists in this directory."
     remedy: Choose an empty directory for a new assessment.
     exit_code: 1
+  OSRA-E612:
+    title: Confirmation refused
+    message: "{entity}: a register cannot be confirmed through {value}; only a person, through the command line or the web UI, can confirm."
+    remedy: Review the register yourself and confirm it with 'osra-code confirm' (FR-31, ADR-0005).
+    exit_code: 1
+  OSRA-E613:
+    title: No results
+    message: "{entity}: the assessment has no current results."
+    remedy: Confirm the registers and run 'osra-code score' first.
+    exit_code: 1
+  OSRA-E614:
+    title: Unrecorded changes
+    message: "{entity}: {value} changed outside OSRA-CODE since it was last recorded; nothing was written."
+    remedy: Review the change, record it with 'osra-code record', then repeat the command.
+    exit_code: 1

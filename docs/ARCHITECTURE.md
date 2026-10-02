@@ -119,10 +119,13 @@ assessments/eurobank-sentinel/
   failures.yaml        FM-01.. linked to dependency ids
   trust.yaml           TS-01.. with links to dependency ids
   scoring.yaml         factor scores entered by a person, with reasons
+  findings.yaml        finding identifiers, kept by the store across runs
   results/             generated: conditions, categories, ranking, reports
   history.jsonl        append-only, hash-chained: who, what, when, surface
-  snapshots/           immutable copies of previous runs
+  snapshots/           immutable copies of the inputs and results of each run
 ```
+
+Each history entry records the SHA-256 of every file it wrote. A file whose content no longer matches its last recorded hash was changed outside the software. Validation reports it, and writes are refused until `osra-code record` brings the change into the history. A register changed that way while confirmed returns to draft (FR-03).
 
 Text files were chosen so an assessment can be reviewed, diffed and version-controlled by the organisation that owns it, and so two independent runs can be compared with ordinary tools (ADR-0002). Serialisation is canonical, so identical data produces identical bytes (TR-70a). Concurrency is a single-writer lock per assessment with a conflict report (ADR-0010), and identifiers are allocated and retired by the store (ADR-0009).
 

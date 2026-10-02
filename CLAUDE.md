@@ -26,7 +26,9 @@ its evidence, its calibration, and the documents for turning it into software
 - `src/com/brondani/osra/` — OSRA-CODE, Python package `com.brondani.osra`,
   command `osra-code`. Python 3.12 or later.
 - Setup: `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`.
-  Checks: `.venv/bin/osra-code check` and `.venv/bin/pytest`.
+  Checks: `.venv/bin/osra-code check`, `.venv/bin/osra-code verify` (the
+  release gate: every published reference result) and `.venv/bin/pytest`.
+  CLI usage: `docs/CLI.md`.
 
 ## Conventions
 - British spelling. Method terms are fixed: Phase, Surface, Artefact,

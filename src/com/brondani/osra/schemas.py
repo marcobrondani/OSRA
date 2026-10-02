@@ -136,7 +136,7 @@ class SchemaSet:
             detail = error.message
         return [diagnostic("OSRA-E108", entity=entity, field=field, rule=rule, example=example, file=file, detail=detail)]
 
-    def _resolve(self, fragment: Any, base: str) -> Any:
+    def resolve(self, fragment: Any, base: str) -> Any:
         """Follow $ref chains, trying the document's own schema first and then
         the shared definitions. Returns None if the reference cannot be found."""
         seen = 0
@@ -156,7 +156,7 @@ class SchemaSet:
         return fragment
 
     def _example(self, fragment: Any, base: str) -> str | None:
-        fragment = self._resolve(fragment, base)
+        fragment = self.resolve(fragment, base)
         if not isinstance(fragment, dict):
             return None
         if "const" in fragment:
