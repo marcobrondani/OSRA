@@ -190,6 +190,29 @@ def cmd_report(args, pack) -> int:
     return exit_code(warnings)
 
 
+def cmd_assessment(args, pack) -> int:
+    if not args.fields:
+        raise UsageError("nothing to change; give FIELD=VALUE pairs such as system.boundary=TEXT or agent_access=draft")
+    _store(args, pack).update_assessment(_actor(args), parse_assignments(args.fields))
+    print("assessment updated")
+    return 0
+
+
+def cmd_mcp(args, pack) -> int:
+    try:
+        from .mcp_server import serve
+    except ImportError as exc:
+        raise UsageError(str(exc)) from None
+    author = args.author or os.environ.get("OSRA_AUTHOR")
+    if not author:
+        raise UsageError("say whom the agent works for with --author NAME, or set OSRA_AUTHOR")
+    args.workspace.mkdir(parents=True, exist_ok=True)
+    print(f"osra-code MCP server on stdio, workspace {args.workspace}, "
+          f"{'drafting allowed where agent access is draft' if args.writes else 'read-only'}", file=sys.stderr)
+    serve(args.workspace, pack, author, args.writes)
+    return 0
+
+
 def cmd_export(args, pack) -> int:
     from .workbook import export
 
@@ -385,6 +408,20 @@ def add_commands(commands, with_pack) -> None:
                    help="any of: " + ", ".join(BUILDERS) + " (default: every report the assessment type produces)")
     p.add_argument("--as", dest="formats", nargs="+", choices=["md", "html", "docx"], default=["md", "html", "docx"])
     p.set_defaults(func=cmd_report, needs_pack=True)
+
+    p = commands.add_parser("assessment", help="change the system description, status, agent access or declared mode")
+    writer(p)
+    p.add_argument("fields", nargs="*", metavar="FIELD=VALUE",
+                   help="system.<field>, status (active|abandoned), agent_access (refused|read-only|draft), deployment_mode.declared (A|B|C)")
+    p.set_defaults(func=cmd_assessment, needs_pack=True)
+
+    p = commands.add_parser("mcp", help="run the MCP server for agents, over stdio (needs the 'mcp' extra)")
+    p.add_argument("workspace", type=Path, help="directory holding the assessments, one sub-directory each")
+    p.add_argument("--author", help="the person the agent works for, recorded with every write (default: $OSRA_AUTHOR)")
+    p.add_argument("--writes", action="store_true",
+                   help="let the agent draft into assessments whose agent access is 'draft' (default: read-only)")
+    p.add_argument("--pack", type=Path, default=None)
+    p.set_defaults(func=cmd_mcp, needs_pack=True)
 
     p = commands.add_parser("export", help="write the assessment to the four OSRA workbooks")
     p.add_argument("directory", type=Path)
