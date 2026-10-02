@@ -42,6 +42,16 @@ or, in a client configured with JSON:
 }
 ```
 
+## Mode B: keeping content inside the organisation
+
+The OSRA server is the same in every mode; what changes is where the agent's model runs. For mode B, use an agent client that can work with a model you host, or with a model reached through your organisation's own AI gateway, and point it at that endpoint instead of a hosted provider. Many clients accept an OpenAI-compatible or Anthropic-compatible endpoint, which local runtimes and gateways commonly offer. Then declare the mode, so the assessment and every report state it:
+
+```sh
+osra-code assessment ~/osra-assessments/screening deployment_mode.declared=B --by "A. Assessor"
+```
+
+Whether content stays inside depends on how that host or gateway is configured; OSRA cannot check it, which is why the mode is recorded as declared. **[ASSUMPTION: these steps have not yet been followed end to end with a local model runtime; doing so, and recording the runtime and model used, is a release checklist item (docs/RELEASE.md, FR-82a).]** No model runtime or model configuration ships with OSRA-CODE.
+
 ## What the agent may do
 
 You decide, per assessment and per server:
