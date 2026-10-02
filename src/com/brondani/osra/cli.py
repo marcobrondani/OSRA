@@ -7,6 +7,19 @@ Commands:
   osra-code validate DIR       validate an assessment directory
   osra-code pack rehash [DIR]  record new checksums for a method pack
 
+  osra-code create DIR ...     create an assessment
+  osra-code add KIND DIR F=V   add a dependency, failure mode or trust signal
+  osra-code set ID DIR F=V     change fields of an entity
+  osra-code remove ID DIR      remove an entity, retiring its identifier
+  osra-code rate DEP DIR F=N   score a finding's entered factors
+  osra-code resolve-tie DIR    order findings the tie-break leaves level
+  osra-code confirm REG DIR    confirm a register (a person only)
+  osra-code score DIR          run the engine and write the results
+  osra-code record DIR         record changes made outside osra-code
+  osra-code history DIR        show the history and check its chain
+  osra-code results DIR        show the current results
+  osra-code compare A B        compare two assessments
+
 Exit codes: 0 no problems (warnings allowed), 1 invalid data or a failed
 verification, 2 usage error, 3 a file that cannot be read, 4 an invalid method
 pack, 5 the assessment is locked by another writer.
@@ -23,6 +36,8 @@ from . import __version__
 from .errors import Diagnostic, exit_code
 from .fixtures import check_fixtures, draft_summary, load_fixtures
 from .pack import PackError, check_pack, default_pack_path, load_pack, write_checksums
+from . import cli_assessment
+from .store import Store
 from .validate import validate_assessment_dir
 from .verify import verify
 
@@ -82,10 +97,20 @@ def cmd_validate(args: argparse.Namespace) -> int:
             print(f"osra-code: {args.directory} is not a directory", file=sys.stderr)
             return 2
         problems += validate_assessment_dir(args.directory, pack)
+        if (args.directory / "history.jsonl").is_file():
+            problems += Store(args.directory, pack).integrity()
     _report(problems, args.format)
     if args.format == "text":
-        print("ok" if not problems else f"{len(problems)} problem(s)")
+        print(_summary(problems))
     return exit_code(problems)
+
+
+def _summary(problems: list[Diagnostic]) -> str:
+    warnings = sum(1 for p in problems if p.code.startswith("OSRA-W"))
+    errors = len(problems) - warnings
+    if errors:
+        return f"{errors} problem(s)" + (f", {warnings} warning(s)" if warnings else "")
+    return "ok" + (f", {warnings} warning(s)" if warnings else "")
 
 
 def cmd_verify(args: argparse.Namespace) -> int:
@@ -155,6 +180,8 @@ def build_parser() -> argparse.ArgumentParser:
     with_pack(verify_parser)
     verify_parser.set_defaults(func=cmd_verify)
 
+    cli_assessment.add_commands(commands, with_pack)
+
     pack = commands.add_parser("pack", help="method pack maintenance")
     pack_commands = pack.add_subparsers(dest="pack_command", required=True)
     rehash = pack_commands.add_parser("rehash", help="record new checksums after a deliberate change to the pack")
@@ -169,4 +196,12 @@ def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="backslashreplace")
     args = build_parser().parse_args(argv)
-    return args.func(args)
+    if not hasattr(args, "needs_pack"):
+        return args.func(args)
+    pack = None
+    if args.needs_pack:
+        pack, problems = _load(args)
+        if pack is None:
+            _report(problems, "text")
+            return exit_code(problems)
+    return cli_assessment.run_command(args.func, args, pack)
