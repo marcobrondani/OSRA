@@ -66,7 +66,9 @@ def append(root: Path, entry: dict[str, Any]) -> dict[str, Any]:
     flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_BINARY", 0)
     fd = os.open(root / FILE, flags, 0o644)
     try:
-        os.write(fd, data)
+        view = memoryview(data)
+        while view:  # os.write may write less than asked
+            view = view[os.write(fd, view):]
         os.fsync(fd)
     finally:
         os.close(fd)
