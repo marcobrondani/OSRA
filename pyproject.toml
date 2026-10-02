@@ -9,11 +9,10 @@ readme = "README.md"
 requires-python = ">=3.12"
 dynamic = ["version"]
 authors = [{ name = "Marco Brondani" }]
-# No licence is declared for the code yet. The decision belongs to the author
-# and is pending (docs/VISION.md, ADR-0004). The repository's LICENSE covers
-# the published methodology (CC BY-SA 4.0) and is deliberately not attached
-# to the package.
-license-files = []
+# The software is under the Apache License 2.0; the methodology it applies is
+# published separately under CC BY-SA 4.0 (LICENSE, REUSE.toml).
+license = "Apache-2.0"
+license-files = ["LICENSES/Apache-2.0.txt", "NOTICE"]
 dependencies = [
   "PyYAML>=6.0",
   "jsonschema>=4.21",

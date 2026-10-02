@@ -1,0 +1,15 @@
+# Which licence applies to which path (https://reuse.software). Full texts in
+# LICENSES/. The method pack (method/) is not listed: its licence is still to
+# be decided (ADR-0004).
+version = 1
+
+[[annotations]]
+path = ["src/**", "tests/**", "pyproject.toml", ".github/**", "NOTICE", ".gitattributes", ".gitignore"]
+SPDX-FileCopyrightText = "2026 Marco Brondani"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["methodology/**", "calibration/**", "action-catalogue/**", "evidence/**", "templates/**", "one-pager/**",
+        "docs/**", "README.md", "CONTRIBUTING.md", "SECURITY.md", "CLAUDE.md", "LICENSE", "REUSE.toml"]
+SPDX-FileCopyrightText = "2026 Marco Brondani"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
